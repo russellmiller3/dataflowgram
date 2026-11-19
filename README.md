@@ -74,41 +74,47 @@ The agent writes a short description of the parts and steps, checks it, and buil
 
 ### Not sure how your process works?
 
-Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. It is laid out like the finished page: the same boxes in the same rows, with a numbered arrow for each step. Each ❓ is a guess. Here is one for a team that files notes by forwarding emails:
+Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. It is laid out like the finished page, and it teaches as it goes: one picture (a mailroom) carried through every box, and one real email followed through every step. Each ❓ is a guess. Here is one for a team that files notes by forwarding emails:
 
 ```
-┌───────────────┐
-│  Sam's phone  │
-└───────────────┘
-     │      ▲
-   1 │      │ 8  what I filed
-     ▼      │
-┌───────────────┐
-│  Notes inbox  │
-└───────────────┘
-     │      ▲
-   2 │      │ 8   (2 checks the sender ❓)
-     ▼      │
-┌───────────────┐  4 email text   ┌───────────────┐
-│    The hub    │───────────────▶ │   AI model    │
-│               │◀─────────────── │   (outside)   │
-└───────────────┘  5 summary+task └───────────────┘
-   ▲   │    │
- 3 │   │ 6  └──────────────┐ 7 attachment ❓
-   │   ▼                   ▼
-┌───────────────┐  ┌───────────────┐
-│     Lists     │  │ File library  │
-└───────────────┘  └───────────────┘
- 3 company row ▲   6 2 new rows ▼ ❓
+                              📱
+                                ┌────────────────┐
+                                │  Sam's phone   │
+                                │  (the sender)  │
+                                └────────────────┘
+                 1) Acme email 📧 ↓ │        ▲ ↑ 8) receipt 🧾 "1 note, 1 task"
+                        + Q3.pdf 📄 │        │
+                              📥    ▼        │
+                                ┌────────────────┐
+                                │  Notes inbox   │
+                                │(the mail slot) │
+                                └────────────────┘
+                  2) the email 📧 ↓ │        ▲ ↑ 8) the receipt 🧾
+                  ❓ who may send?  ▼        │
+                                ┌────────────────┐ 💻                            ┌────────────────┐
+                                │    The hub     │─ 4) email text 📝 ───────────▶│    AI model    │
+                                │  (the clerk)   │◀───── 5) ✅ "call Dana Fri." ─│(outside reader)│  ⚠️ leaves the company
+                                └────────────────┘                            🤖 └────────────────┘
+                 6) 2 new rows ➕ ↓ │   ▲      └─ 7) 📄 ──────────┐
+                   ❓ which rows?   │   │ ↑ 3) Acme Corp row 📇   │ ↓ 7) Q3.pdf 📄 ❓ where does it go?
+                          📋        ▼   │              📁         ▼
+                            ┌────────────────┐            ┌────────────────┐
+                            │     Lists      │            │  File library  │
+                            │(filing cabinet)│            │(folder drawer) │
+                            └────────────────┘            └────────────────┘
 ```
 
 Then it asks at most 3 questions, one per ❓, each with lettered choices:
 
 1. Step 2: who may file a note? **a)** anyone on the team list **b)** anyone at the company's email domain
-2. Step 6: what gets written? **a)** 1 note row only **b)** 1 note row plus 1 task row for each follow-up
-3. Step 7: where do attachments go? **a)** the file library, tagged by company **b)** attached to the note row
+2. Step 6: which rows get written? **a)** 1 note row only **b)** 1 note row plus 1 task row for each follow-up
+3. Step 7: where does the attachment go? **a)** the file library, tagged by company **b)** attached to the note row
 
 You answer "1a 2b 3a". It fixes the sketch, then builds the page.
+
+## Khan: explain anything
+
+The package also installs a second skill, **khan**. Say "khan" or "explain this like Khan Academy" and the agent explains the current topic again in plain words: one picture carried all the way through, one real example followed step by step, a diagram, and the tricky part named out loud. The guess-first sketch above uses the same method.
 
 ## Build one by hand
 

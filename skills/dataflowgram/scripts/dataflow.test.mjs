@@ -1,4 +1,5 @@
 // Tests for the data-flow builder. Each test uses the builder the way a person would and checks the result.
+import { checkSketch } from './sketch-check.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -648,4 +649,16 @@ test('an icon that holds anything but plain shapes is refused', () => {
   assert.throws(() => cleanIcon('bad', [['path', { d: 'M0 0', onload: 'alert(1)' }]]), /attribute not allowed: onload/);
   assert.throws(() => cleanIcon('bad', [['path', { d: 'M0 0"/><script>' }]]), /value not allowed in d/);
   assert.throws(() => cleanIcon('bad', [['path', { d: 'M0 0', 'xlink:href': 'http://x' }]]), /attribute not allowed/);
+});
+
+test('the sketch check finds every line an emoji would bend, and passes a straight sketch', () => {
+  // 19 November 2026: "all the vertical lines need to line up"
+  const straight = ['📧 a │   ▲', '📄 b ▼   │', '┌─────────┐'].join('\n');
+  assert.deepEqual(checkSketch(straight), [], '1 emoji to the left on every row of the stretch');
+  const bent = ['   a │   ▲', '📄 b ▼   │'].join('\n');
+  const faults = checkSketch(bent);
+  assert.equal(faults.length, 2, 'both lines shift on the row with the emoji');
+  assert.deepEqual(faults.map((f) => f.row), [2, 2]);
+  const box = ['┌────┐', '│ 📱 │', '└────┘'].join('\n');
+  assert.ok(checkSketch(box).length > 0, 'an emoji inside a box bends its right edge');
 });

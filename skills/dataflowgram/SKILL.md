@@ -74,38 +74,42 @@ Most people cannot list the parts and steps of a process from memory, but they c
 2. **Show a rough sketch in the chat** before you write any description file, in a code block, in the shape below. Use 8 steps at most. Put ❓ on each step you guessed.
 3. **Ask 3 questions at most, about the ❓ marks only.** Number them, and give each lettered choices, so the user answers "1a 2b 3a". Never ask "describe the process".
 
-The sketch is laid out like the finished page, so the user sees the real paths:
+The sketch is laid out like the finished page, and it teaches as it goes (the method of the khan skill, which ships in this package):
 
-- **The same boxes in the same rows** as the description file will have: who starts it at the top, the main program in the middle, the stores along the bottom, outside companies to the side.
-- **A numbered arrow for each step**, with a few words on what moves. A line used both ways gets 2 arrows side by side (`│ ▲`), each with its own number.
-- **Room to breathe:** a blank column between boxes in a row, and 3 lines of arrow between rows.
-- **Plain digits for step numbers,** and ❓ only at the end of a line. Emoji and circled digits are wider in some fonts and push the lines out of place.
-- **At most 60 characters wide.** Before you show it, check that each `│` sits in the same column as the box edge or arrow it joins.
+- **The same boxes in the same places** as the page: who starts it at the top, the main program in the middle, outside companies to the side, stores below.
+- **One picture for the whole system,** as each box's second line ("the mail slot", "the clerk"). **One real example** followed through every step ("Acme email", "Q3.pdf").
+- **Each arrow carries its own label, right beside it:** the step number with a `)`, then what moves. A line going down has its label on its left; a line going up has its label on its right.
+- **Widen the gap between 2 side-by-side boxes until each arrow's label fits on the arrow itself.** A label that floats away from its arrow is a fault.
+- **An emoji right beside the word it stands for** ("Acme email 📧"). Each box's emoji sits just outside its top-left corner.
+- **A red ❓ on each guessed step**, with the question in a few words. Name any step that sends data outside the company.
+- **Straight lines.** On screen an emoji is a little wider than 2 letters, so it pushes everything after it on the same row. Every row a line passes through must have the same number of emoji to the left of that line. Never put an emoji inside a box. Check before you show it: `node <skill>/scripts/sketch-check.mjs sketch.txt` names every line that would look bent.
 
 ```
-┌───────────────┐
-│  Sam's phone  │
-└───────────────┘
-     │      ▲
-   1 │      │ 8  what I filed
-     ▼      │
-┌───────────────┐
-│  Notes inbox  │
-└───────────────┘
-     │      ▲
-   2 │      │ 8   (2 checks the sender ❓)
-     ▼      │
-┌───────────────┐  4 email text   ┌───────────────┐
-│    The hub    │───────────────▶ │   AI model    │
-│               │◀─────────────── │   (outside)   │
-└───────────────┘  5 summary+task └───────────────┘
-   ▲   │    │
- 3 │   │ 6  └──────────────┐ 7 attachment ❓
-   │   ▼                   ▼
-┌───────────────┐  ┌───────────────┐
-│     Lists     │  │ File library  │
-└───────────────┘  └───────────────┘
- 3 company row ▲   6 2 new rows ▼ ❓
+                              📱
+                                ┌────────────────┐
+                                │  Sam's phone   │
+                                │  (the sender)  │
+                                └────────────────┘
+                 1) Acme email 📧 ↓ │        ▲ ↑ 8) receipt 🧾 "1 note, 1 task"
+                        + Q3.pdf 📄 │        │
+                              📥    ▼        │
+                                ┌────────────────┐
+                                │  Notes inbox   │
+                                │(the mail slot) │
+                                └────────────────┘
+                  2) the email 📧 ↓ │        ▲ ↑ 8) the receipt 🧾
+                  ❓ who may send?  ▼        │
+                                ┌────────────────┐ 💻                            ┌────────────────┐
+                                │    The hub     │─ 4) email text 📝 ───────────▶│    AI model    │
+                                │  (the clerk)   │◀───── 5) ✅ "call Dana Fri." ─│(outside reader)│  ⚠️ leaves the company
+                                └────────────────┘                            🤖 └────────────────┘
+                 6) 2 new rows ➕ ↓ │   ▲      └─ 7) 📄 ──────────┐
+                   ❓ which rows?   │   │ ↑ 3) Acme Corp row 📇   │ ↓ 7) Q3.pdf 📄 ❓ where does it go?
+                          📋        ▼   │              📁         ▼
+                            ┌────────────────┐            ┌────────────────┐
+                            │     Lists      │            │  File library  │
+                            │(filing cabinet)│            │(folder drawer) │
+                            └────────────────┘            └────────────────┘
 ```
 
 Questions for that sketch: "1. Step 2: who may file a note? a) anyone on the team list b) anyone at the company's email domain", and so on.
