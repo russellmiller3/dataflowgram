@@ -134,3 +134,4 @@ Tests: 35 of 35 pass (run through Runner).
   play controls, so choosing what to watch looked the same as running it. They are now underlined tabs under a
   "Walkthrough" label. "Step by step / Everything at once" moved below the steps, beside "Moving tags", since both only
   change how the diagram is shown. Checked in a browser: switching walkthrough and view both work. Tests 49 of 49.
+  README pictures retaken with the new controls.
