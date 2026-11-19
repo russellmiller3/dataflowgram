@@ -114,7 +114,21 @@
       var Y = function (f) { return f * s.h; };
       g.innerHTML = '';
       // nothing reacts to a note leaving the page, so removing the one being typed in cannot start a second redraw
-      l.querySelectorAll('.mk-note').forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+      l.querySelectorAll('.mk-note, .mk-x').forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
+      // the selected mark carries a small x in its top right corner that removes it
+      var cross = function (i, cx, cy) {
+        if (!on || i !== sel || aiming === i) return;
+        var b = document.createElement('button');
+        b.type = 'button';
+        b.className = 'mk-x';
+        b.title = 'Remove this mark (Delete key)';
+        b.setAttribute('aria-label', 'Remove this mark');
+        b.dataset.x = i;
+        b.textContent = '×';
+        b.style.left = (cx - 11) + 'px';
+        b.style.top = (cy - 11) + 'px';
+        l.appendChild(b);
+      };
       data.items.forEach(function (it, i) {
         if (it.anchor !== id) return;
         var mine = i === sel ? ' mk-sel' : '';
@@ -140,6 +154,7 @@
             }
             if (on && i === sel) g.appendChild(svgEl('circle', { cx: tx, cy: ty, r: 7, 'data-i': i, 'data-h': 'tip' }, 'mk-handle'));
           }
+          cross(i, n.offsetLeft + n.offsetWidth, n.offsetTop);
           return;
         }
         var x = Math.min(X(it.x1), X(it.x2)), y = Math.min(Y(it.y1), Y(it.y2));
@@ -164,6 +179,7 @@
             if (on && i === sel && aiming !== i) g.appendChild(svgEl('circle', { cx: mx, cy: my, r: 7, 'data-i': i, 'data-h': 'to' }, 'mk-handle mk-handle-move'));
           }
         }
+        cross(i, x + w, y);
       });
     });
   }
@@ -218,6 +234,8 @@
       e.preventDefault();
       return;
     }
+    var xb = e.target.closest('.mk-x');
+    if (xb) { remember(); drop(Number(xb.dataset.x)); save(); render(); e.preventDefault(); return; }
     var hit = e.target.closest('[data-i]');
     if (hit) {
       var i = Number(hit.getAttribute('data-i'));
@@ -346,7 +364,7 @@
   bar.setAttribute('aria-label', 'Mark up tools');
   bar.innerHTML = TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-t-' + k[0] + '">' + k[1] + '</button>'; }).join('') +
     '<span class="mk-hint"></span>' +
-    '<button type="button" data-act="undo">Undo</button><button type="button" data-act="remove">Remove mark</button>' +
+    '<button type="button" data-act="undo">Undo</button>' +
     '<button type="button" data-act="clear">Clear all</button>' +
     '<button type="button" data-act="done" class="mk-done">Done</button>';
   document.body.appendChild(bar);
@@ -364,7 +382,6 @@
     if (b.dataset.tool) { setTool(b.dataset.tool); return; }
     var act = b.dataset.act;
     if (act === 'undo' && undoStack.length) { data.items = JSON.parse(undoStack.pop()); sel = -1; aiming = -1; save(); render(); }
-    else if (act === 'remove' && data.items[sel]) { remember(); drop(sel); save(); render(); }
     else if (act === 'clear' && data.items.length) {
       // every mark on every tab; Undo brings them all back
       var n = data.items.length;

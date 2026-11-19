@@ -170,3 +170,5 @@ Tests: 35 of 35 pass (run through Runner).
   strip's real height (it wraps to 2 rows on a narrow window). Checked by hand in a browser: 0 errors.
 - **Skill rule: name the client's people only as the client named them, else by role.** A client page used an invented
   teammate, "Dave", in 8 places; the client asked who Dave was. Replaced with "the analyst".
+- **"Remove mark" button replaced by a × on the selected mark** (owner: Undo and Remove mark looked the same). Undo takes
+  back the last action; the × removes the mark it sits on. Checked by hand: × removed a Delete mark, Undo restored it.

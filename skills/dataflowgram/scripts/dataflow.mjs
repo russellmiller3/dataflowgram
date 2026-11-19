@@ -899,6 +899,8 @@ body.mk-on .mk-svg rect[data-i]{pointer-events:all}
 .mk-move.mk-sel,.mk-del.mk-sel{stroke-width:5;filter:drop-shadow(0 0 4px rgba(0,0,0,.25))}
 .mk-handle{fill:#fff;stroke:#6B4423;stroke-width:3;cursor:grab!important}
 .mk-handle-move{stroke:#2563EB}
+.mk-x{position:absolute;width:22px;height:22px;border-radius:50%;border:0;background:#422006;color:#FDE047;font:700 15px/22px "Inter",ui-sans-serif,system-ui,sans-serif;text-align:center;padding:0;cursor:pointer;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2}
+.mk-x:hover{background:#BE123C;color:#fff}
 .mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FDF6A3;border:1px solid #C9B847;border-radius:4px;color:#4A2E14;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:none}
 body.mk-on .mk-note{pointer-events:auto}
 body.mk-on .mk-note{cursor:move}
