@@ -11,9 +11,9 @@
   var NS = 'http://www.w3.org/2000/svg';
   var TOOLS = [['note', 'Note'], ['move', 'Move this'], ['del', 'Delete this']];
   var HINTS = {
-    note: 'Click the thing, then type. Drag the note away and an arrow follows.',
-    move: 'Box it, then click where it goes.',
-    del: 'Box the thing to delete.',
+    note: 'Now click the thing, then type. Drag the note away for an arrow.',
+    move: 'Now box the thing, then click where it goes.',
+    del: 'Now box the thing to delete.',
   };
 
   function load() {
@@ -24,6 +24,8 @@
       if (here && Array.isArray(here.items)) d.items = here.items;
     } catch (e) { /* storage blocked: the marks in the file still show */ }
     if (!Array.isArray(d.items)) d.items = [];
+    // a note left empty when the page closed is dropped, not shown as a blank box
+    d.items = d.items.filter(function (it) { return it && (it.type !== 'note' || String(it.text || '').trim()); });
     d.v = 3;
     return d;
   }
@@ -373,7 +375,14 @@
     aiming = -1;
     if (sel >= 0) { select(-1); save(); render(); }
     bar.querySelectorAll('[data-tool]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.tool === t ? 'true' : 'false'); });
-    bar.querySelector('.mk-hint').textContent = HINTS[t];
+    // the instruction flashes each time a tool is picked, so a click on the tool already in use still shows a response
+    var hint = bar.querySelector('.mk-hint');
+    hint.textContent = HINTS[t];
+    hint.classList.remove('mk-flash');
+    void hint.offsetWidth;
+    hint.classList.add('mk-flash');
+    clearTimeout(setTool.timer);
+    setTool.timer = setTimeout(function () { hint.classList.remove('mk-flash'); }, 1200);
     document.body.setAttribute('data-mk-tool', t);
   }
   bar.addEventListener('click', function (e) {

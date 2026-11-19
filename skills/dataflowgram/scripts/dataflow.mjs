@@ -899,7 +899,7 @@ body.mk-on .mk-svg rect[data-i]{pointer-events:all}
 .mk-move.mk-sel,.mk-del.mk-sel{stroke-width:5;filter:drop-shadow(0 0 4px rgba(0,0,0,.25))}
 .mk-handle{fill:#fff;stroke:#6B4423;stroke-width:3;cursor:grab!important}
 .mk-handle-move{stroke:#2563EB}
-.mk-x{position:absolute;width:22px;height:22px;border-radius:50%;border:0;background:#422006;color:#FDE047;font:700 15px/22px "Inter",ui-sans-serif,system-ui,sans-serif;text-align:center;padding:0;cursor:pointer;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2}
+.mk-x{position:absolute;width:22px;height:22px;border-radius:50%;border:0;background:#4A3510;color:#F8E3A3;font:700 15px/22px "Inter",ui-sans-serif,system-ui,sans-serif;text-align:center;padding:0;cursor:pointer;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2}
 .mk-x:hover{background:#BE123C;color:#fff}
 .mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FDF6A3;border:1px solid #C9B847;border-radius:4px;color:#4A2E14;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:none}
 body.mk-on .mk-note{pointer-events:auto}
@@ -907,15 +907,21 @@ body.mk-on .mk-note{cursor:move}
 .mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(107,68,35,.25),0 3px 10px rgba(0,0,0,.18)}
 .mk-note.mk-sel{border-color:#6B4423}
 .mk-note:empty::before{content:"Type a note";color:#9CA3AF}
-/* marking up: a highlighter-yellow strip across the top; the page moves down so the strip covers nothing */
-.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#FDE047;color:#422006;padding:7px 12px;border-bottom:1px solid #CA8A04;box-shadow:0 2px 10px rgba(66,32,6,.18);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
+/* marking up: a soft butter-yellow strip across the top; the page moves down so the strip covers nothing */
+.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#F8E3A3;color:#4A3510;padding:7px 12px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
 body.mk-on .mk-bar{display:flex}
-.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#422006;background:rgba(255,255,255,.35);border:1px solid rgba(66,32,6,.3);border-radius:6px;padding:5px 10px;cursor:pointer}
-.mk-bar button:hover{background:rgba(255,255,255,.7)}
-.mk-bar button[aria-pressed="true"]{background:#422006;color:#FDE047;border-color:#422006}
-.mk-bar .mk-done{background:#422006;color:#fff;border-color:#422006}
-.mk-hint{font-size:.875rem;color:#713F12;margin:0 8px}
-.pg-markup[aria-pressed="true"]{background:#FDE047!important;color:#422006!important;border-color:#CA8A04!important}
+.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#4A3510;background:rgba(255,255,255,.5);border:1px solid rgba(74,53,16,.25);border-radius:6px;padding:5px 10px;cursor:pointer;transition:background .12s,transform .08s}
+.mk-bar button:hover{background:rgba(255,255,255,.85)}
+.mk-bar button[aria-pressed="true"]{background:#4A3510;color:#F8E3A3;border-color:#4A3510}
+.mk-bar .mk-done{background:#4A3510;color:#fff;border-color:#4A3510}
+.mk-hint{font-size:.875rem;color:#6B4E16;margin:0 8px;padding:2px 8px;border-radius:4px;transition:background .3s}
+.mk-hint.mk-flash{background:#fff;font-weight:700}
+/* Mark up stands out a little when off (pale yellow), and matches the strip when on */
+.pg-markup{background:#FFF7DC!important;border-color:#E6CB78!important;color:#5B4513!important}
+.pg-markup[aria-pressed="true"]{background:#F8E3A3!important;color:#4A3510!important;border-color:#D9B556!important}
+/* every button visibly presses in when clicked */
+button{transition:transform .08s,filter .08s}
+button:active{transform:translateY(1px) scale(.97);filter:brightness(.9)}
 @media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.mk-bar,.mk-layer{display:none!important}}
 ${extraCss}</style>
 </head>

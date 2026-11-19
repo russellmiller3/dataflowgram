@@ -172,3 +172,8 @@ Tests: 35 of 35 pass (run through Runner).
   teammate, "Dave", in 8 places; the client asked who Dave was. Replaced with "the analyst".
 - **"Remove mark" button replaced by a × on the selected mark** (owner: Undo and Remove mark looked the same). Undo takes
   back the last action; the × removes the mark it sits on. Checked by hand: × removed a Delete mark, Undo restored it.
+- **Buttons press in when clicked; picking a tool flashes its instruction; softer yellow** (owner: "click note, nothing
+  happens"; strip too bright). Could not reproduce a fault: Note was already the chosen tool, so clicking it changed
+  nothing visible. Now every button dips when pressed, and the instruction ("Now click the thing, then type") flashes on
+  each tool click. Strip and the on-state Mark up button are soft butter yellow (#F8E3A3); off, Mark up is pale yellow.
+  Also fixed: a note left empty when the page closed came back as a blank box; empty notes are now dropped on load.
