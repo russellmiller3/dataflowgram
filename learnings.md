@@ -190,3 +190,7 @@ Tests: 35 of 35 pass (run through Runner).
   Light / dark. Light / dark had been found as "the first header button", so moving it would have wired Mark up to the
   theme; it now has its own name. A test checks the order, the name and that Save is not red. Checked in a browser: a
   real note made Save appear beside Mark up, light / dark switched both ways, 0 page errors.
+- **The "Everything at once" list reads in step order** (owner, 19 November 2026: "steps should always be in order").
+  Rows were grouped by line, so a reply on the same line as step 1 sat second: the list read 1, 8, 2, 8, 3. Each row
+  now sits by its first step. A test runs the page in headless Chrome in that view and reads the numbers top to bottom;
+  with the sort removed it read 1, 7, 2, 7, 3 and failed. Checked on 6 client diagrams in a browser: all in order.

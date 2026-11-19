@@ -3,6 +3,8 @@ import { checkSketch } from './sketch-check.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape, readNotes } from './dataflow.mjs';
@@ -379,6 +381,19 @@ test('the page stays calm: the key and the full step list fold away, and progres
   assert.match(html, /<span class="df-dots" aria-hidden="true"><\/span>/, 'a place for the progress dots');
   assert.match(html, /class="df-info" aria-live="polite" hidden/, 'the tapped-box line is hidden until a box is tapped');
   assert.match(html, /\.df-cap \.df-carry\{display:none!important\}/, 'the step card does not repeat the tag');
+});
+
+const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+test('"Everything at once" lists every send in step order, not grouped by line', { skip: !fs.existsSync(CHROME) && 'needs Google Chrome to run the page' }, () => {
+  // 19 November 2026, owner: "steps should always be in order". The list read step 1, 8, 2, 8, 3 because a reply on
+  // the same line as step 1 was listed with it. A real browser runs the page in the "Everything at once" view and the
+  // test reads the step numbers top to bottom, as a reader would.
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'df-order-')), 'page.html');
+  fs.writeFileSync(file, renderPage(example()));
+  const dom = execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--virtual-time-budget=3000', '--dump-dom', 'file://' + file + '#df=all'], { encoding: 'utf8', timeout: 60000, stdio: ['ignore', 'pipe', 'ignore'] });
+  const steps = [...dom.matchAll(/class="df-all-step">steps? (\d+)/g)].map((m) => Number(m[1]));
+  assert.ok(steps.length >= 5, 'the list has its rows (' + steps.length + ')');
+  assert.deepEqual(steps, [...steps].sort((a, b) => a - b), 'rows read in step order: ' + steps.join(', '));
 });
 
 test('on a phone the page fits the screen: the stacked column can shrink, and the step buttons go 2 by 2', () => {
