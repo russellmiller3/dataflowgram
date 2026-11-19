@@ -68,3 +68,5 @@ Tests: 35 of 35 pass (run through Runner).
 - **The guess-first sketch needed a set shape.** A cramped first example (side-by-side boxes, steps on the lines) was hard to
   scan. The skill and the README now show one shape: one part per line, blank space between parts, numbered steps, side
   trips as one line out and one back, ❓ on guesses, and lettered choices for the questions.
+- **The README sketch was too simple to show the method.** It now uses the notes-inbox example: 8 steps, side trips to
+  the lists and the AI model, and 3 guesses with lettered questions. Client names stay out of the public README.
