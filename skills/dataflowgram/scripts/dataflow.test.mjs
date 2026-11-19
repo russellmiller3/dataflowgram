@@ -424,20 +424,23 @@ test('marks drawn on the page itself are read back with their tab and the box un
   const [a, b] = Object.values(c.nodes);
   const mid = (n) => [n.x + n.w / 2, n.y + n.h / 2];
   const plan = { title: 'Plan', html: '<p>Week 1</p>' };
-  const marks = { v: 2, items: [
-    { anchor: 'p2', type: 'arrow', x1: 0.1, y1: 0.1, x2: 0.2, y2: 0.2, on: 'd2', from: mid(a), at: mid(b) },
-    { anchor: 'p2', type: 'note', x1: 0.3, y1: 0.3, text: ' wrong system ', on: 'd2', at: mid(b) },
-    { anchor: 'p1', type: 'ellipse', x1: 0.4, y1: 0.4, x2: 0.6, y2: 0.5 },
-    { anchor: 'p1', type: 'note', x1: 0.5, y1: 0.5, text: 'Week 1 is too soon' },
+  // the 3 marks say what the reader wants: move this there, delete this, a question about this
+  const marks = { v: 3, items: [
+    { anchor: 'p2', type: 'move', x1: 0.1, y1: 0.1, x2: 0.2, y2: 0.2, to: [0.5, 0.5], on: 'd2', from: mid(a), at: mid(b) },
+    { anchor: 'p2', type: 'note', x1: 0.3, y1: 0.3, tip: [0.25, 0.25], text: ' wrong system? ', on: 'd2', at: mid(b) },
+    { anchor: 'p2', type: 'del', x1: 0.4, y1: 0.4, x2: 0.5, y2: 0.5, on: 'd2', at: mid(a) },
+    { anchor: 'p1', type: 'note', x1: 0.5, y1: 0.5, tip: null, text: 'Week 1 is too soon' },
   ] };
   const page = renderBook({ title: 'Deck', diagrams: [plan, spec] });
   const back = page.replace('<script type="application/json" id="df-marks">{}</script>', `<script type="application/json" id="df-marks">${JSON.stringify(marks)}</script>`);
   const notes = readNotes(back, [plan, spec]);
   assert.equal(notes.length, 4);
-  assert.deepEqual(notes[0], { diagram: c.title, kind: 'Arrow', text: '', at: b.label, from: a.label });
-  assert.deepEqual(notes[1], { diagram: c.title, kind: 'Note', text: 'wrong system', at: b.label, from: '' });
-  assert.deepEqual(notes[2], { diagram: 'Plan', kind: 'Circle', text: '', at: '', from: '' }, 'a mark on a plain page tab names its tab');
-  assert.equal(notes[3].text, 'Week 1 is too soon');
+  assert.deepEqual(notes[0], { diagram: c.title, kind: 'Move', text: '', at: b.label, from: a.label }, 'move what, to where');
+  assert.deepEqual(notes[1], { diagram: c.title, kind: 'Note', text: 'wrong system?', at: b.label, from: '' }, 'a note names the box its arrow points at');
+  assert.deepEqual(notes[2], { diagram: c.title, kind: 'Delete', text: '', at: a.label, from: '' }, 'delete what');
+  assert.deepEqual(notes[3], { diagram: 'Plan', kind: 'Note', text: 'Week 1 is too soon', at: '', from: '' }, 'a note on a plain page tab names its tab');
+  // the page offers exactly the 3 marks
+  assert.match(page, /var TOOLS = \[\['note', 'Note'\], \['move', 'Move this'\], \['del', 'Delete this'\]\];/);
 });
 
 test('printing gives one page per diagram, turned to suit its shape, with every step listed', async () => {

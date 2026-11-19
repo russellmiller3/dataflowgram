@@ -9,7 +9,7 @@ To change a line, change the tool's opening docstring or comment, then run `node
 
 - [`dataflow.mjs`](skills/dataflowgram/scripts/dataflow.mjs) — Builds an interactive data-flow diagram from a short description of parts, lines and steps.
 - [`make-icons.mjs`](skills/dataflowgram/scripts/make-icons.mjs) — Turns the Lucide icon package's "icon-nodes.json" into the icon file this skill ships.
-- [`markup.js`](skills/dataflowgram/scripts/markup.js) — Lets a reader mark up the page itself: arrows, circles, boxes, typed notes and pen marks, drawn straight on top of
+- [`markup.js`](skills/dataflowgram/scripts/markup.js) — Lets a reader mark up the page itself with 3 marks that say what they want: a Note (a question, with an optional
 - [`runtime.mjs`](skills/dataflowgram/scripts/runtime.mjs) — The part of a data-flow diagram that runs in the reader's browser.
 - [`sketch-check.mjs`](skills/dataflowgram/scripts/sketch-check.mjs) — Checks a text sketch before it is shown in a chat.
 

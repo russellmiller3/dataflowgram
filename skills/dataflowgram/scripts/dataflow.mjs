@@ -882,20 +882,31 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 main,.pg-panel{position:relative}
 .mk-layer{position:absolute;inset:0;z-index:20;pointer-events:none}
 body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
-body.mk-on[data-mk-tool="note"] .mk-layer{cursor:text}
 .mk-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
-.mk-shape{fill:none;stroke:#E11D48;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
-body.mk-on .mk-shape{pointer-events:stroke;cursor:move}
-.mk-shape.mk-sel{stroke:#9F1239;stroke-width:5;filter:drop-shadow(0 0 3px rgba(225,29,72,.6))}
-.mk-head{fill:#E11D48}
-.mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FFF7D6;border:1.5px solid #E11D48;border-radius:4px;color:#111827;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:auto}
+.mk-svg *{pointer-events:none}
+body.mk-on .mk-svg [data-i]{pointer-events:visiblePainted;cursor:move}
+body.mk-on .mk-svg rect[data-i]{pointer-events:all}
+.mk-note-line{stroke:#6B4423;stroke-width:3;stroke-linecap:round}
+.mk-ah{fill:#6B4423}
+.mk-move{fill:rgba(37,99,235,.06);stroke:#2563EB;stroke-width:3;stroke-dasharray:8 5}
+.mk-move-line{stroke:#2563EB;stroke-width:3.5;stroke-linecap:round}
+.mk-mh{fill:#2563EB}
+.mk-move-t{fill:#1D4ED8;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.mk-del{fill:rgba(225,29,72,.08);stroke:#E11D48;stroke-width:3}
+.mk-del-x{stroke:#E11D48;stroke-width:3;stroke-linecap:round}
+.mk-del-t{fill:#BE123C;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.mk-move.mk-sel,.mk-del.mk-sel{stroke-width:5;filter:drop-shadow(0 0 4px rgba(0,0,0,.25))}
+.mk-handle{fill:#fff;stroke:#6B4423;stroke-width:3;cursor:grab!important}
+.mk-handle-move{stroke:#2563EB}
+.mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FDF6A3;border:1px solid #C9B847;border-radius:4px;color:#4A2E14;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:none}
+body.mk-on .mk-note{pointer-events:auto}
 body.mk-on .mk-note{cursor:move}
-.mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(225,29,72,.25),0 3px 10px rgba(0,0,0,.18)}
-.mk-note.mk-sel{border-width:2.5px}
+.mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(107,68,35,.25),0 3px 10px rgba(0,0,0,.18)}
+.mk-note.mk-sel{border-color:#6B4423}
 .mk-note:empty::before{content:"Type a note";color:#9CA3AF}
-.mk-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;background:#111827;color:#fff;padding:8px 10px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+.mk-bar{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:1000;display:none;flex-wrap:nowrap;white-space:nowrap;justify-content:center;gap:4px;align-items:center;background:#111827;color:#fff;padding:5px 6px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
 body.mk-on .mk-bar{display:flex}
-.mk-bar button{font:inherit;font-size:.95rem;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:6px;padding:7px 12px;cursor:pointer}
+.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:6px;padding:5px 9px;cursor:pointer}
 .mk-bar button[aria-pressed="true"]{background:#fff;color:#111827;border-color:#fff}
 .mk-bar .mk-done{background:#E11D48;border-color:#E11D48}
 .mk-hint{font-size:.875rem;color:#CBD5E1;margin:0 6px}
@@ -998,7 +1009,7 @@ export function readNotes(html, specs) {
     return near ? `near ${near[1].label}` : '';
   };
   // marks drawn on the page itself: each knows its tab, and, when it sits on a diagram, the point in drawing units
-  const KIND = { arrow: 'Arrow', ellipse: 'Circle', rect: 'Box', note: 'Note', pen: 'Pen' };
+  const KIND = { note: 'Note', move: 'Move', del: 'Delete', arrow: 'Arrow', ellipse: 'Circle', rect: 'Box', pen: 'Pen' };
   for (const it of Array.isArray(marks.items) ? marks.items : []) {
     const byBlock = /^d(\d+)$/.exec(it.on || '');
     const byTab = /^p(\d+)$/.exec(it.anchor || '');
@@ -1074,7 +1085,14 @@ if (isMain) {
         : [src];
       const notes = readNotes(fs.readFileSync(a, 'utf8'), specs);
       if (!notes.length) console.log('no marks in this page');
-      notes.forEach((n, i) => console.log(`${i + 1}. [${n.diagram}] ${n.kind}${n.text ? `: "${n.text}"` : ''}${n.from ? ` from ${n.from}` : ''}${n.at ? ` at ${n.at}` : ''}`));
+      // each mark as the instruction it gives: move what, to where; delete what; a question about what
+      const say = (n) => {
+        if (n.kind === 'Move') return `Move ${n.from || 'the boxed part'} to ${n.at || 'the marked spot'}`;
+        if (n.kind === 'Delete') return `Delete ${n.at || 'the crossed-out part'}`;
+        if (n.kind === 'Note') return `Note${n.at ? ` on ${n.at}` : ''}: "${n.text}"`;
+        return `${n.kind}${n.text ? `: "${n.text}"` : ''}${n.from ? ` from ${n.from}` : ''}${n.at ? ` at ${n.at}` : ''}`;
+      };
+      notes.forEach((n, i) => console.log(`${i + 1}. [${n.diagram}] ${say(n)}`));
     } else if ((cmd === 'build' || cmd === 'fragment') && a && b) {
       const spec = JSON.parse(fs.readFileSync(a, 'utf8'));
       fs.writeFileSync(b, cmd === 'build' ? renderPage(spec) : renderFragment(spec, c || 'df'));

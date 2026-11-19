@@ -146,3 +146,8 @@ Tests: 35 of 35 pass (run through Runner).
   testing and fixed). Pages are 140 KB smaller. Checked by hand in a browser: drew, typed, moved, deleted, undid, reloaded,
   opened a sent-back copy, read it back with the notes command. Tests 50 of 50; the new test fails without the reader.
   Limit: on a text tab a mark can shift slightly if the window width changes, because the text rewraps.
+- **Mark up has 3 marks that say what the reader wants, not 5 drawing tools.** Owner: "wrong primitives". Note (legal-pad
+  yellow, brown text, optional arrow to the thing it asks about; the note moves, the arrow keeps pointing), Move this
+  (blue dashed box plus a "Move here" arrow) and Delete this (red box with an X). The notes command now reads them as
+  instructions: "Move The hub to near Claude", "Delete the founder's phone", "Note on notes@ inbox: ...". Toolbar cut to one
+  row. Checked by hand in a browser: drew all 3, typed, read back from a copy. Tests 50 of 50.

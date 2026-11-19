@@ -20,7 +20,7 @@
 - 👣 **A trail** keeps earlier steps faintly coloured, so the last step shows the whole path.
 - ▶️ **Play** runs the steps by themselves, for a screen share or a demo.
 - 🖨️ **Print** gives one page per diagram, turned sideways or upright to suit its shape, with every line named and every step listed below the drawing.
-- ✏️ **Mark up** lets a reader draw arrows, circles, boxes and pen marks, and type notes, straight on the page, on any tab. "Save a copy with my notes" gives them the same page as one file with their marks inside, to email back. Nothing to install, and nothing leaves their computer. Your agent then reads each mark and the box it points at.
+- ✏️ **Mark up** gives a reader 3 marks, drawn straight on any tab: a **Note** (a question, with an optional arrow to the thing it is about), **Move this** (a box with an arrow to where it should go) and **Delete this** (a box with an X). "Save a copy with my notes" gives them the same page as one file with their marks inside, to email back. Nothing to install, and nothing leaves their computer. Your agent then reads each mark and the box it points at.
 - 🗺️ **Everything at once** is a still picture: every line lit, every item named on it with its direction, and a list of who sends what to whom. A line used both ways is drawn as 2 lanes.
 
 Every part has its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, so you can always tell whose data is whose. Every kind of part (a person, a mailbox, a program, an AI model, a table...) and every kind of step (send, read, think, write, reply...) has its own [Lucide](https://lucide.dev) icon.
