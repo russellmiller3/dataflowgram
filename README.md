@@ -10,16 +10,18 @@
 
 ## What each step shows
 
-- 🟦 **The line that moves data lights up** in the step's colour, with an arrow for the direction.
-- 🏷️ **A tag rides the line** and names what is moving: "$19.00 card charge", "2 new rows", "confirm link".
+- 🟦 **The line that moves data lights up** in the colour of the part that sends it, with an arrow for the direction.
+- 🏷️ **A tag sits on the line** and names what is moving, with an arrow for its direction: "$19.00 card charge →", "2 new rows ↓".
+- 🧘 **Calm by default.** Nothing moves until you switch "Motion" on; then the tag travels its line.
 - 🗂️ **A side panel shows the real item**: the email, the new row, the request, with its fields.
 - 🔴 **Data that leaves your system is flagged**, such as a card sent to a payment provider or an email sent to an AI model.
 - 🟡 **"If not" lines** say what happens when a check fails.
 - ⏱️ **Times** say how long a step takes.
 - 👣 **A trail** keeps earlier steps faintly coloured, so the last step shows the whole path.
 - ▶️ **Play** runs the steps by themselves, for a screen share or a demo.
+- 🗺️ **Everything at once** is a still picture: every line lit, every item named on it with its direction, and a list of who sends what to whom. A line used both ways is drawn as 2 lanes.
 
-Every kind of part (a person, a mailbox, a program, an AI model, a table...) and every kind of step (send, read, think, write, reply...) has its own colour and [Lucide](https://lucide.dev) icon.
+Every part has its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, so you can always tell whose data is whose. Every kind of part (a person, a mailbox, a program, an AI model, a table...) and every kind of step (send, read, think, write, reply...) has its own [Lucide](https://lucide.dev) icon.
 
 ## Examples
 
@@ -65,6 +67,8 @@ Ask your agent in plain words:
 > Make an interactive data flow of what happens when a customer pays on our website.
 
 > Show me, step by step, how our support emails get sorted and who sees them.
+
+> Read the checkout folder and draw its data flow. Flag everything that leaves our system.
 
 The agent writes a short description of the parts and steps, checks it, and builds the page.
 

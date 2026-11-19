@@ -4,23 +4,46 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sign-up with an email check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<script>
+(function(){try{var q=/[?&]theme=(light|dark)/.exec(location.search);var s=q?q[1]:localStorage.getItem('df-theme');if(s==='light'||s==='dark')document.documentElement.setAttribute('data-df-theme',s);}catch(e){}})();
+</script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#E9EFF6;color:#14233A;font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.5}
-main{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
-h1{font-size:1.7rem;line-height:1.2;margin:0}
-.lede{color:#51627A;max-width:680px;margin:8px 0 20px}
+:root{--pg-bg:#f4f5f9;--pg-ink:#141824;--pg-ink2:#596174;--pg-dot:rgba(20,24,36,.075);--pg-glow1:rgba(99,102,241,.13);--pg-glow2:rgba(20,184,166,.09);--pg-line:rgba(20,24,36,.14);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
+  background-color:var(--pg-bg);
+  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px);
+  background-size:100% 100%,100% 100%,24px 24px;background-repeat:no-repeat,no-repeat,repeat;background-attachment:fixed,fixed,fixed}
+main{max-width:1720px;margin:0 auto;padding:28px clamp(16px,3vw,48px) 56px}
+.pg-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pg-kicker{display:flex;align-items:center;gap:12px;margin:0;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pg-ink2)}
+.pg-kicker::before{content:"";width:34px;height:1.5px;background:currentColor}
+h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:clamp(2rem,4.2vw,3rem);line-height:1.08;letter-spacing:-.03em;margin:14px 0 0}
+.lede{color:var(--pg-ink2);max-width:680px;margin:12px 0 28px;font-size:1.08rem}
+.pg-mode{white-space:nowrap;flex:none;font:inherit;font-size:.9rem;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;cursor:pointer;color:var(--pg-ink);
+  background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.pg-mode svg{width:16px;height:16px}
 </style>
 </head>
 <body>
 <main>
+<div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
+<button type="button" class="pg-mode" aria-label="Switch light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg><span>Light / dark</span></button></div>
 <h1>Sign-up with an email check</h1>
 <p class="lede">A new user signs up, and the account only goes live once they click the link in their email.</p>
 <style>
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
-.df-grid{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:28px;align-items:start}
+.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,560px);justify-content:start;gap:28px;align-items:start}
+.df-grid>div:first-child{position:sticky;top:20px}
 .df-grid>div{min-width:0}
-.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+@media (max-width:560px){.df-svg{min-width:500px}}
+.df-svg{width:100%;height:auto;max-height:calc(100vh - 250px);display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
 .df-svg text{font-family:inherit;fill:var(--df-ink)}
 .df-node{cursor:pointer;transition:opacity .15s}
 .df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
@@ -40,6 +63,8 @@ h1{font-size:1.7rem;line-height:1.2;margin:0}
 @keyframes df-march{to{stroke-dashoffset:-12}}
 @media (prefers-reduced-motion:reduce){.df-edge.fwd,.df-edge.rev{animation:none;stroke-dasharray:none}}
 .df-packet{pointer-events:none}
+.df-dot{pointer-events:none;filter:drop-shadow(0 0 6px currentColor)}
+.df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
 .df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -61,7 +86,32 @@ h1{font-size:1.7rem;line-height:1.2;margin:0}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
-.df-credit{margin:18px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
+.df-credit{margin:56px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
+.df-allview :is(.df-cap,.df-nav,.df-item,.df-steps,.df-only-steps){display:none}
+.df:not(.df-allview) .df-only-all{display:none}
+.df-key .df-ln{width:34px;height:10px}
+.df-ln path{fill:none;stroke-width:3;stroke-linecap:round}
+.df-ln-now{stroke:#3B82F6;stroke-dasharray:7 5}
+.df-ln-past{stroke:#3B82F6;opacity:.4}
+.df-ln-all{stroke:#3B82F6}
+.df-ln-idle{stroke:#8A99AD;stroke-width:2}
+.df-outzone{fill:rgba(190,18,60,.06);stroke:rgba(190,18,60,.45);stroke-width:1.2}
+.df .df-svg text.df-outzone-l{font-size:13px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
+.df .df-svg text.df-out-l{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#E0607E}
+/* a send picked in the everything view: the rest steps back */
+.df-pick .df-edge.on:not(.df-hot),.df-pick .df-packet:not(.df-hot){opacity:.14}
+.df-pick .df-node:not(.df-hot){opacity:.35}
+.df-pick .df-edge.df-hot{stroke-width:5}
+.df-all-row[aria-pressed="true"]{border-color:var(--a);box-shadow:inset 3px 0 0 var(--a),0 0 0 3px color-mix(in srgb,var(--a) 22%,transparent)}
+.df-all-row:hover{border-color:color-mix(in srgb,var(--a) 60%,var(--df-line))}
+.df-all-list{display:grid;gap:6px}
+.df-all-row{display:grid;gap:3px;padding:7px 10px;cursor:pointer;border:1px solid var(--df-line);border-left:3px solid var(--a);border-radius:8px;background:var(--df-card)}
+.df-all-who{font-weight:600;font-size:1rem}
+.df-all-who span{color:var(--df-ink2);font-weight:500;padding:0 6px}
+.df-all-what{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.95rem}
+.df-all-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:6px;border:1.5px solid var(--a);font-weight:600}
+.df-all-chip svg{width:15px;height:15px;fill:none;stroke:var(--a);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.df-all-step{color:var(--df-ink2);font-size:.85rem}
 .df-credit a{color:var(--df-ink2);text-decoration:none;border-bottom:1px solid var(--df-line)}
 .df-credit a:hover{color:var(--df-ink);border-bottom-color:var(--df-ink)}
 .df-legend small{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--df-ink2);margin-right:2px}
@@ -78,7 +128,9 @@ h1{font-size:1.7rem;line-height:1.2;margin:0}
 .df-act{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:3px 8px 3px 6px}
 .df-act svg{width:15px;height:15px}
 .df-text{margin:6px 0 0;font-size:1.05rem}
-.df-nav{display:flex;gap:8px;margin-top:10px}
+.df-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.df-nav .df-motion{margin-left:auto;color:var(--df-ink2)}
+.df-nav .df-motion[aria-pressed="true"]{color:var(--df-ink);border-color:var(--df-ink)}
 .df-nav button{font:inherit;font-size:.95rem;border:1px solid var(--df-line);background:var(--df-card);border-radius:3px;padding:7px 14px;cursor:pointer;color:var(--df-ink)}
 .df-nav button:disabled{opacity:.4;cursor:default}
 .df-nav .df-next{background:var(--df-ink);border-color:var(--df-ink);color:#fff}
@@ -112,31 +164,92 @@ h1{font-size:1.7rem;line-height:1.2;margin:0}
 .df-chip{width:26px;height:26px;border-radius:3px;display:grid;place-items:center;color:#fff}
 .df-chip svg{width:15px;height:15px}
 .df-num{color:var(--df-ink2);font-variant-numeric:tabular-nums}
-@media (max-width:820px){.df-grid{grid-template-columns:1fr}}
+@media (max-width:860px){.df-grid{grid-template-columns:1fr}.df-grid>div:first-child{position:static}.df-svg{max-height:none}}
+
+/* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
+.df{
+  --df-ink:#141824;--df-ink2:#596174;--df-line:rgba(20,24,36,.11);--df-head:rgba(20,24,36,.035);
+  --df-card:rgba(255,255,255,.66);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(20,24,36,.20);
+  --df-glow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -28px rgba(30,40,80,.35);
+  --df-leaves-bg:#fdecec;--df-leaves-ink:#9b1c1c;--df-ifnot-bg:#fff4dc;--df-ifnot-ink:#7a4b00;
+  font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+.df [class^="df-k-"],.df [class*=" df-k-"]{--cs:var(--c)}
+@media (prefers-color-scheme:dark){html:not([data-df-theme="light"]) .df{
+  --df-ink:#e9ebf3;--df-ink2:#9ca3b8;--df-line:rgba(255,255,255,.09);--df-head:rgba(255,255,255,.045);
+  --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
+  --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
+  --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+}
+html:not([data-df-theme="light"]) .df [class^="df-k-"],html:not([data-df-theme="light"]) .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}}
+html[data-df-theme="dark"] .df{
+  --df-ink:#e9ebf3;--df-ink2:#9ca3b8;--df-line:rgba(255,255,255,.09);--df-head:rgba(255,255,255,.045);
+  --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
+  --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
+  --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+}
+html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}
+.df :is(.df-svg,.df-cap,.df-item-card,.df-seg,.df-key,.df-nav button){
+  background:var(--df-card);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border-color:var(--df-line);box-shadow:var(--df-glow)}
+.df .df-svg{border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
+.df :is(.df-cap,.df-item-card){border-radius:10px}
+.df :is(.df-seg,.df-key,.df-nav button,.df-carry){border-radius:8px}
+.df .df-node rect{fill:color-mix(in srgb,var(--c) 10%,var(--df-node));stroke:var(--cs)}
+.df .df-node .df-ico{stroke:var(--cs)}
+.df .df-node.on rect{fill:color-mix(in srgb,var(--c) 18%,var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
+.df .df-edge{stroke:var(--df-edge)}
+.df .df-zone{stroke:var(--df-ink2);opacity:.55}
+.df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
+.df .df-carry{background:var(--df-solid)}
+.df .df-key svg{color:var(--cs,currentColor)}
+.df .df-key.act{box-shadow:none;border-color:transparent}
+.df .df-leaves{background:var(--df-leaves-bg);color:var(--df-leaves-ink)}
+.df .df-ifnot{background:var(--df-ifnot-bg);color:var(--df-ifnot-ink)}
+.df .df-seg button[aria-pressed="true"],.df .df-nav .df-next{background:var(--df-ink);color:var(--df-solid);border-color:var(--df-ink)}
+.df .df-steps button[aria-current="step"]{background:var(--df-card);border-color:var(--df-line);box-shadow:var(--df-glow)}
+.df{--a-ink-mix:black;--a-ink-amt:22%}
+@media (prefers-color-scheme:dark){html:not([data-df-theme="light"]) .df{--a-ink-mix:white;--a-ink-amt:45%}}
+html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
+.df :is(.df-act,.df-chip,.df-key.act){background:color-mix(in srgb,var(--a) 14%,transparent)!important;color:color-mix(in srgb,var(--a),var(--a-ink-mix) var(--a-ink-amt))!important;border:1px solid color-mix(in srgb,var(--a) 30%,transparent)!important;box-shadow:none}
+.df .df-chip{border-radius:7px}
+.df .df-act{border-radius:999px;padding:2px 9px 2px 7px}
+.df .df-cap{border:1.5px solid color-mix(in srgb,var(--a) 62%,var(--df-line));background:linear-gradient(180deg,color-mix(in srgb,var(--a) 13%,transparent),color-mix(in srgb,var(--a) 4%,transparent)),var(--df-card);box-shadow:inset 4px 0 0 var(--a),0 0 0 4px color-mix(in srgb,var(--a) 10%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}
+.df .df-cap .df-text{font-size:1.2rem;font-weight:600;line-height:1.35}
+.df .df-cap.df-pulse{animation:df-cap-pulse .7s ease-out}
+@keyframes df-cap-pulse{0%{box-shadow:inset 4px 0 0 var(--a),0 0 0 0 color-mix(in srgb,var(--a) 55%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}100%{box-shadow:inset 4px 0 0 var(--a),0 0 0 4px color-mix(in srgb,var(--a) 10%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}}
+@media (prefers-reduced-motion:reduce){.df .df-cap.df-pulse{animation:none}}
+.df .df-steps button[aria-current="step"]{border-color:color-mix(in srgb,var(--a) 55%,var(--df-line));background:linear-gradient(90deg,color-mix(in srgb,var(--a) 14%,transparent),transparent 70%),var(--df-card);box-shadow:inset 3px 0 0 var(--a)}
+.df .df-item-card{border-top:1px solid var(--df-line);box-shadow:inset 0 2px 0 color-mix(in srgb,var(--a) 70%,transparent),var(--df-glow)}
+.df .df-item-h,.df .df-legend small,.df .df-count{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;letter-spacing:.08em}
 </style>
 <div class="df" id="df">
-  <div class="df-grid">
+  <div class="df-grid" style="--df-w:782.6px">
     <div>
-      <svg class="df-svg" viewBox="0 0 400 406" role="img" aria-label="Sign-up with an email check">
-        <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2563EB"/></marker><marker id="df-m-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#475569"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#15803D"/></marker></defs>
+      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 602 486" role="img" aria-label="Sign-up with an email check">
+        <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
         
-        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M160 96 L160 113 Q160 119 154 119 L109 119 Q103 119 103 125 L103 160"/><path class="df-edge" data-edge="e1" d="M196 203 L204 203" data-tag="200,138"/><path class="df-edge" data-edge="e2" d="M297 160 L297 143 Q297 137 291 137 L246 137 Q240 137 240 131 L240 96"/><path class="df-edge" data-edge="e3" d="M103 246 L103 272 Q103 278 109 278 L194 278 Q200 278 200 284 L200 310"/></g>
-        <g class="df-node df-k-person" data-node="visitor" tabindex="0" role="button" aria-label="New user"><rect x="80" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(189 20) scale(.9167)"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g><text class="df-t" x="200" y="63" text-anchor="middle">New user</text><text class="df-s" x="200" y="82" text-anchor="middle">on the sign-up page</text></g><g class="df-node df-k-program" data-node="app" tabindex="0" role="button" aria-label="App server"><rect x="10" y="160" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(92 170) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="103" y="213" text-anchor="middle">App server</text><text class="df-s" x="103" y="232" text-anchor="middle">our program</text></g><g class="df-node df-k-outside" data-node="mailer" tabindex="0" role="button" aria-label="Email service"><rect x="204" y="160" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(286 170) scale(.9167)"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></g><text class="df-t" x="297" y="213" text-anchor="middle">Email service</text><text class="df-s" x="297" y="232" text-anchor="middle">sends the link</text></g><g class="df-node df-k-store" data-node="users" tabindex="0" role="button" aria-label="Users table"><rect x="80" y="310" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(189 320) scale(.9167)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></g><text class="df-t" x="200" y="363" text-anchor="middle">Users table</text><text class="df-s" x="200" y="382" text-anchor="middle">1 row per account</text></g>
+        <rect class="df-outzone" x="395" y="193" width="204" height="122" rx="8"/><text class="df-outzone-l" x="497" y="307" text-anchor="middle">OUTSIDE YOUR SYSTEM</text>
+        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M261 96 L261 123 Q261 129 255 129 L111 129 Q105 129 105 135 L105 200"/><path class="df-edge" data-edge="e1" d="M200 243 L402 243" data-tag="301,178"/><path class="df-edge" data-edge="e2" d="M497 200 L497 173 Q497 167 491 167 L347 167 Q341 167 341 161 L341 96"/><path class="df-edge" data-edge="e3" d="M105 286 L105 332 Q105 338 111 338 L295 338 Q301 338 301 344 L301 390"/></g>
+        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="visitor" tabindex="0" role="button" aria-label="New user"><rect x="181" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(290 20) scale(.9167)"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g><text class="df-t" x="301" y="63" text-anchor="middle">New user</text><text class="df-s" x="301" y="82" text-anchor="middle">on the sign-up page</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="app" tabindex="0" role="button" aria-label="App server"><rect x="10" y="200" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(94 210) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="105" y="253" text-anchor="middle">App server</text><text class="df-s" x="105" y="272" text-anchor="middle">our program</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="mailer" tabindex="0" role="button" aria-label="Email service"><rect x="402" y="200" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(486 210) scale(.9167)"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></g><text class="df-t" x="497" y="253" text-anchor="middle">Email service</text><text class="df-s" x="497" y="272" text-anchor="middle">sends the link</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="users" tabindex="0" role="button" aria-label="Users table"><rect x="181" y="390" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(290 400) scale(.9167)"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></g><text class="df-t" x="301" y="443" text-anchor="middle">Users table</text><text class="df-s" x="301" y="462" text-anchor="middle">1 row per account</text></g>
         <g class="df-packets"></g>
-      </svg>
+      </svg></div>
       <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
-      <div class="df-legend"><small>Parts</small><span class="df-key" style="color:#1D4ED8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="color:var(--df-ink)">A person</span></span><span class="df-key" style="color:#334155"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span style="color:var(--df-ink)">Our program</span></span><span class="df-key" style="color:#BE123C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg><span style="color:var(--df-ink)">Another company's system</span></span><span class="df-key" style="color:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span style="color:var(--df-ink)">Stored rows</span></span></div>
-      <div class="df-legend"><small>Steps</small><span class="df-key act" style="background:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="background:#475569"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Check</span><span class="df-key act" style="background:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span></div>
+      <div class="df-legend"><small>Parts</small><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>A person</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span>Our program</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg><span>Another company's system</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>Stored rows</span></span></div>
+      <div class="df-legend"><small>Steps</small><span class="df-key act" style="--a:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="--a:#475569"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Check</span><span class="df-key act" style="--a:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span></div>
+      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span></div>
     </div>
     <div>
+      <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       
       <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
-      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button></div>
+      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button><button type="button" class="df-motion" aria-pressed="false" title="Switch the moving tags and dashes on or off">Motion: off</button></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <ol class="df-steps"></ol>
+      <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
-  <p class="df-credit">Made with <a href="https://github.com/russellmiller3/dataflowgram" target="_blank" rel="noopener">Dataflowgram</a> by <a href="https://russellmiller.io" target="_blank" rel="noopener">Russell Miller</a> · Free for personal use · Companies: <a href="mailto:rmiller@zavient.com?subject=Dataflowgram%20licence">rmiller@zavient.com</a></p>
+  <p class="df-credit">Made with <a href="https://github.com/russellmiller3/dataflowgram" target="_blank" rel="noopener">Dataflowgram</a> by <a href="https://russellmiller.io" target="_blank" rel="noopener">Russell Miller</a> · <a href="https://russellmiller.io" target="_blank" rel="noopener">russellmiller.io</a> · <a href="https://www.linkedin.com/in/russellmiller" target="_blank" rel="noopener">LinkedIn</a> · Free for personal use · Companies: <a href="mailto:rmiller@zavient.com?subject=Dataflowgram%20licence">rmiller@zavient.com</a></p>
 </div>
 <script>
 (function(){
@@ -153,9 +266,10 @@ function stepView(data, scenarioId, index) {
   st.edges.forEach((pair) => { edges[pair[0]] = pair[1]; });
   // the trail: lines and parts used by earlier steps, each line in the colour of its latest action
   const trail = {};
+  const trailFocus = {}; // edge id -> the focus part of the latest earlier step that used it
   const seen = [];
   scn.steps.slice(0, i).forEach((prev) => {
-    prev.edges.forEach((pair) => { if (!(pair[0] in edges)) trail[pair[0]] = prev.action; });
+    prev.edges.forEach((pair) => { if (!(pair[0] in edges)) { trail[pair[0]] = prev.action; trailFocus[pair[0]] = prev.focus; } });
     prev.nodes.forEach((n) => { if (st.nodes.indexOf(n) < 0 && seen.indexOf(n) < 0) seen.push(n); });
   });
   return {
@@ -166,6 +280,8 @@ function stepView(data, scenarioId, index) {
     text: st.text,
     edges, // edge id -> 'f' (along the line), 'b' (against it) or 'x' (both ways)
     nodes: st.nodes.slice(),
+    focus: st.focus, // the part that sends the data: its colour is the step's colour
+    trailFocus,
     trail, // edge id -> the action of the latest earlier step that used it
     seen, // parts used by earlier steps and not by this one
     carry: st.carry || null, // what travels on the line: { label, icon }
@@ -190,6 +306,93 @@ function shortText(text) {
 function tagOpacity(t, dir, stationary) {
   if (stationary || dir === 'x') return 1;
   const EDGE = 0.18;
+  return Math.max(0, Math.min(1, t / EDGE, (1 - t) / EDGE));
+}
+
+// Everything a scenario sends, grouped by line: for the view that shows all of it at once, with no movement.
+// Each line lists its sends in step order; the same thing sent the same way twice is listed once, with both steps.
+function overview(data, scenarioId) {
+  const scn = data.scenarios.find((s) => s.id === scenarioId);
+  if (!scn) throw new Error('unknown scenario: ' + scenarioId);
+  const wires = [];
+  const byEdge = {};
+  scn.steps.forEach((st, k) => {
+    (st.flows || []).forEach((f) => {
+      let wire = byEdge[f.edge];
+      if (!wire) { wire = byEdge[f.edge] = { edge: f.edge, sends: [] }; wires.push(wire); }
+      const label = st.carry ? st.carry.label : '';
+      const key = f.from + '>' + f.to + '|' + f.dir + '|' + label;
+      let send = wire.sends.find((s) => s.key === key);
+      if (!send) {
+        send = { key, from: f.from, to: f.to, dir: f.dir, label, icon: st.carry ? st.carry.icon : '', text: st.text, steps: [] };
+        wire.sends.push(send);
+      }
+      send.steps.push(k + 1);
+    });
+  });
+  return wires;
+}
+
+// A line that carries data both ways is drawn as separate lanes, one per direction, so the reader sees
+// which way each thing goes. Returns the lanes for one line: its direction ('f' along the line, 'b'
+// against it, 'x' both ways in one step), its sends, and its distance from the middle of the line.
+// Whether the picture moves. Movement is off unless the reader switches it on, and it stays off for a
+// reader whose computer asks for reduced motion. (18 November 2026: "the animation is distracting to my
+// ADHD brain. Make that optional, and by default just have the label there with clear arrows.")
+function moves(readerSwitchedOn, computerAsksForLess) {
+  return !!readerSwitchedOn && !computerAsksForLess;
+}
+
+// The words on a still tag, with an arrow that points the way the data goes on the page.
+// dir is 'f' (along the line), 'b' (against it) or 'x' (both ways); dx and dy run from the line's start to its end.
+function arrowLabel(label, dir, dx, dy) {
+  const flat = Math.abs(dx) > Math.abs(dy);
+  if (dir === 'x') return label + (flat ? ' \u2194' : ' \u2195');
+  const sign = (flat ? dx : dy) * (dir === 'b' ? -1 : 1);
+  if (flat) return sign >= 0 ? label + ' \u2192' : '\u2190 ' + label;
+  return label + (sign >= 0 ? ' \u2193' : ' \u2191');
+}
+
+function lanesOf(sends) {
+  const dirs = ['f', 'x', 'b'].filter((d) => sends.some((s) => s.dir === d));
+  const GAP = 34;
+  return dirs.map((d, k) => ({ dir: d, sends: sends.filter((s) => s.dir === d), offset: (k - (dirs.length - 1) / 2) * GAP }));
+}
+
+// Picks a place for a still tag so that it covers no tag placed before it. 'spots' are the candidate
+// centres in order of preference; 'placed' holds the boxes already taken. Returns the first free spot,
+// or the first spot when none is free.
+function freeSpot(spots, width, height, placed) {
+  const PAD = 4;
+  const hits = (s) => placed.some((b) => Math.abs(s.x - b.x) < (width + b.w) / 2 + PAD && Math.abs(s.y - b.y) < (height + b.h) / 2 + PAD);
+  const pick = spots.find((s) => !hits(s)) || spots[0];
+  placed.push({ x: pick.x, y: pick.y, w: width, h: height });
+  return pick;
+}
+
+// Where the travelling dot sits on its line, 0 (start) to 1 (end), at time t (0 to 1).
+// Forward lines run start to end, reply lines end to start, two-way lines go out and come back.
+function dotPosition(t, dir) {
+  if (dir === 'b') return 1 - t;
+  if (dir === 'x') return t < 0.5 ? t * 2 : 2 - t * 2;
+  return t;
+}
+
+// The dot fades in at the start of each trip and out at the end, so it never pops.
+// A tag exists to show data moving, so it rides its line. It stands still beside the line only
+// when the line is far shorter than the tag (3 boxes in one row with a long tag).
+function tagRides(lineLength, tagWidth) {
+  return lineLength >= tagWidth * 0.6;
+}
+
+// The width of a tag, from its words, when the page cannot measure the text.
+function tagWidth(label) {
+  return label.length * 6.9 + 34;
+}
+
+function dotOpacity(t, dir) {
+  if (dir === 'x') return 1;
+  const EDGE = 0.15;
   return Math.max(0, Math.min(1, t / EDGE, (1 - t) / EDGE));
 }
 
@@ -220,7 +423,10 @@ function mount(root, data, prefix) {
   const packetLayer = q('.df-packets');
   const svg = q('.df-svg');
   const NS = 'http://www.w3.org/2000/svg';
-  const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const asksForLess = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  let motionOn = false; // the reader's choice; kept for the next visit where the browser allows it
+  try { motionOn = window.localStorage.getItem('df-motion') === 'on'; } catch (e) { motionOn = false; }
+  const quiet = () => !moves(motionOn, asksForLess);
   let packets = [];
   let timer = null;
 
@@ -246,14 +452,15 @@ function mount(root, data, prefix) {
     packetLayer.appendChild(g);
     let tw = 0;
     try { tw = text.getComputedTextLength(); } catch (e) { tw = 0; }
-    if (!tw) tw = carry.label.length * 6.9; // the panel is hidden, so measure by count
-    const w = tw + 34;
+    const w = tw ? tw + 34 : tagWidth(carry.label); // the panel is hidden, so measure by count
     rect.setAttribute('x', String(-w / 2));
     rect.setAttribute('width', String(w));
     icon.setAttribute('transform', 'translate(' + (-w / 2 + 7) + ' -7) scale(.5833)');
     text.setAttribute('x', String(-w / 2 + 26));
     const tag = path.getAttribute('data-tag');
-    const fixed = tag ? tag.split(',').map(Number) : null;
+    const len0 = path.getTotalLength();
+    // The tag rides its line. Only when the line is far shorter than the tag does it sit beside the line instead.
+    const fixed = tag && !tagRides(len0, w) ? tag.split(',').map(Number) : null;
     return { g, path, dir, w, len: path.getTotalLength(), fixed };
   }
 
@@ -261,17 +468,54 @@ function mount(root, data, prefix) {
     let f = t;
     if (pk.dir === 'b') f = 1 - t;
     if (pk.dir === 'x') f = t < 0.5 ? t * 2 : 2 - t * 2;
-    if (still) f = 0.5;
+    if (quiet()) f = 0.5;
     const pt = pk.fixed ? { x: pk.fixed[0], y: pk.fixed[1] } : pk.path.getPointAtLength(pk.len * (0.12 + 0.76 * f));
     const vb = svg.viewBox.baseVal;
     const x = Math.max(pk.w / 2 + 2, Math.min(vb.width - pk.w / 2 - 2, pt.x));
     pk.g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + pt.y.toFixed(1) + ')');
-    pk.g.style.opacity = String(tagOpacity(t, pk.dir, !!pk.fixed || still));
+    pk.g.style.opacity = String(tagOpacity(t, pk.dir, !!pk.fixed || quiet()));
+  }
+
+  // A glowing dot that travels the whole lit line, so the direction of travel is plain even on a short line.
+  let dots = [];
+  function makeDot(path, dir, color, carry) {
+    // The thing that travels: the item's own icon in a small chip, so the reader sees the data
+    // itself go from one box to the next. A step with no item shows a plain dot.
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'df-dot');
+    g.style.color = color;
+    if (carry) {
+      const r = document.createElementNS(NS, 'rect');
+      r.setAttribute('x', '-15'); r.setAttribute('y', '-15');
+      r.setAttribute('width', '30'); r.setAttribute('height', '30'); r.setAttribute('rx', '8');
+      r.style.stroke = color;
+      const icon = document.createElementNS(NS, 'g');
+      icon.setAttribute('class', 'df-pico');
+      icon.setAttribute('transform', 'translate(-9 -9) scale(.75)');
+      icon.innerHTML = carry.icon;
+      icon.style.stroke = color;
+      g.appendChild(r);
+      g.appendChild(icon);
+    } else {
+      const c = document.createElementNS(NS, 'circle');
+      c.setAttribute('r', '6');
+      c.style.fill = color;
+      g.appendChild(c);
+    }
+    packetLayer.appendChild(g);
+    return { g, path, dir, len: path.getTotalLength() };
+  }
+  function placeDot(d, t) {
+    const pt = d.path.getPointAtLength(d.len * dotPosition(t, d.dir));
+    d.g.setAttribute('transform', 'translate(' + pt.x.toFixed(1) + ' ' + pt.y.toFixed(1) + ')');
+    d.g.style.opacity = quiet() ? '0' : String(dotOpacity(t, d.dir));
   }
 
   function tick(now) {
     const t = (now % 2200) / 2200;
     packets.forEach((pk) => place(pk, t));
+    const td = (now % 1800) / 1800;
+    dots.forEach((d) => placeDot(d, td));
     window.requestAnimationFrame(tick);
   }
 
@@ -285,7 +529,7 @@ function mount(root, data, prefix) {
   // The side panel: a sample of the real item that moves in this step.
   function showItem(v, color) {
     card.innerHTML = '';
-    card.style.borderTopColor = v.item ? color : '';
+    card.style.setProperty('--a', v.item ? color : 'transparent');
     card.classList.toggle('empty', !v.item);
     if (!v.item) {
       card.textContent = v.carry ? v.carry.label : 'No item moves in this step.';
@@ -323,37 +567,220 @@ function mount(root, data, prefix) {
     p.lastChild.textContent = text;
   }
 
-  function draw() {
-    const v = stepView(data, cur, i);
-    i = v.index; // a press past the last step stays on the last step
-    const act = data.actions[v.action];
+  let view = 'steps'; // 'steps' (one step at a time, moving) or 'all' (everything at once, still)
+  const allBox = q('.df-all');
+  const allList = q('.df-all-list');
+  function toneOfNode(id, fallback) {
+    const g = id ? q('[data-node="' + id + '"]') : null;
+    const c = g ? window.getComputedStyle(g).getPropertyValue('--cs').trim() : '';
+    return c || fallback;
+  }
+
+  // The whole scenario at once: every used line lit, every thing it carries named on it, nothing moving.
+  function drawAll() {
+    const wires = overview(data, cur);
+    const anyAction = Object.keys(data.actions)[0];
+    const marker = 'url(#' + prefix + '-m-' + anyAction + ')';
     packetLayer.innerHTML = '';
     packets = [];
+    dots = [];
+    allList.innerHTML = '';
+    root.classList.remove('df-pick');
+    qa('.df-hot').forEach((h) => h.classList.remove('df-hot'));
+    qa('.df-lane').forEach((l) => l.remove());
     qa('.df-edge').forEach((p) => {
       p.classList.remove('on', 'fwd', 'rev', 'trail');
       p.style.stroke = '';
+      p.style.visibility = '';
+      p.removeAttribute('marker-end');
+      p.removeAttribute('marker-start');
+    });
+    const used = {};
+    const placedTags = [];
+    // the boxes are taken too: a still tag must not cover a box's words
+    qa('.df-node').forEach((g) => {
+      const r = g.querySelector('rect');
+      if (!r) return;
+      const w = Number(r.getAttribute('width'));
+      const h = Number(r.getAttribute('height'));
+      placedTags.push({ x: Number(r.getAttribute('x')) + w / 2, y: Number(r.getAttribute('y')) + h / 2, w, h: h - 8 });
+    });
+    const vb = svg.viewBox.baseVal;
+    wires.forEach((wire) => {
+      const p = q('[data-edge="' + wire.edge + '"]');
+      const len = p.getTotalLength();
+      const start = p.getPointAtLength(0);
+      const end = p.getPointAtLength(len);
+      const flat = Math.abs(end.x - start.x) > Math.abs(end.y - start.y); // a line between 2 boxes in one row
+      const lanes = lanesOf(wire.sends);
+      if (lanes.length > 1) p.style.visibility = 'hidden'; // its lanes are drawn in its place
+      lanes.forEach((lane) => {
+        const ox = flat ? 0 : lane.offset;
+        const oy = flat ? lane.offset : 0;
+        let line = p;
+        if (lanes.length > 1) {
+          line = p.cloneNode(false);
+          line.removeAttribute('data-edge');
+          line.removeAttribute('data-tag');
+          line.setAttribute('class', 'df-edge df-lane');
+          line.style.visibility = '';
+          line.setAttribute('transform', 'translate(' + ox + ' ' + oy + ')');
+        }
+        line.classList.add('on');
+        line.style.stroke = toneOfNode(lane.sends[0].from, '');
+        if (lane.dir !== 'b') line.setAttribute('marker-end', marker);
+        if (lane.dir !== 'f') line.setAttribute('marker-start', marker);
+        edgeLayer.appendChild(line);
+        lane.sends.forEach((s) => { s.line = line; });
+        const named = lane.sends.filter((s) => s.label);
+        named.forEach((s, j) => {
+          // the tag itself says which way it goes, because a wide tag can cover its line's arrowhead
+          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''));
+          // candidate places: on its own lane first, then a little off it
+          const spots = [];
+          const stack = (j - (named.length - 1) / 2) * 30; // tags that share a lane start stacked around its middle
+          const along = flat ? [stack, 0, -15, 15, -30, 30] : [stack, 0, -15, 15, -30, 30, -45, 45];
+          along.forEach((d) => {
+            [0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8].forEach((f) => {
+              const pt = p.getPointAtLength(len * f);
+              // on an upright line the tag sits beside its lane, on the outer side, so 2 lanes never share words
+              const side = !flat && lanes.length > 1 && lane.offset !== 0 ? Math.sign(lane.offset) * (pk.w / 2 - 12) : 0;
+              const x = pt.x + ox + side;
+              spots.push({ x: Math.max(pk.w / 2 + 2, Math.min(vb.width - pk.w / 2 - 2, x)), y: pt.y + oy + d });
+            });
+          });
+          // last resort on a crowded upright line: slide the tag sideways, outward first, until it is clear
+          if (!flat) {
+            const out = Math.sign(lane.offset) || 1;
+            const mid = p.getPointAtLength(len * 0.5);
+            [stack, 0, -15, 15].forEach((d) => {
+              [30, 60, 90, 120, 160, 200, -30, -60, -90, -120, -160, -200].forEach((dx) => {
+                const x = mid.x + ox + out * dx;
+                spots.push({ x: Math.max(pk.w / 2 + 2, Math.min(vb.width - pk.w / 2 - 2, x)), y: mid.y + oy + d });
+              });
+            });
+          }
+          const at = freeSpot(spots, pk.w, 26, placedTags);
+          pk.g.setAttribute('transform', 'translate(' + at.x.toFixed(1) + ' ' + at.y.toFixed(1) + ')');
+          pk.g.style.opacity = '1';
+          s.tag = pk.g;
+        });
+      });
+      wire.sends.forEach((s) => {
+        used[s.from] = true;
+        used[s.to] = true;
+        const row = el('div', 'df-all-row');
+        row.setAttribute('role', 'button');
+        row.setAttribute('tabindex', '0');
+        row.setAttribute('aria-pressed', 'false');
+        const pick = () => {
+          const was = row.getAttribute('aria-pressed') === 'true';
+          qa('.df-hot').forEach((h) => h.classList.remove('df-hot'));
+          qa('.df-all-row').forEach((r) => r.setAttribute('aria-pressed', 'false'));
+          root.classList.toggle('df-pick', !was);
+          if (was) return; // a second press on the same row shows everything again
+          row.setAttribute('aria-pressed', 'true');
+          if (s.line) s.line.classList.add('df-hot');
+          if (s.tag) s.tag.classList.add('df-hot');
+          [s.from, s.to].forEach((id) => { const g = q('[data-node="' + id + '"]'); if (g) g.classList.add('df-hot'); });
+        };
+        row.addEventListener('click', pick);
+        row.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+        row.style.setProperty('--a', toneOfNode(s.from, 'currentColor'));
+        const who = el('div', 'df-all-who');
+        who.appendChild(document.createTextNode(data.nodes[s.from].label));
+        who.appendChild(el('span', '', s.dir === 'x' ? '\u2194' : '\u2192'));
+        who.appendChild(document.createTextNode(data.nodes[s.to].label));
+        const what = el('div', 'df-all-what');
+        if (s.label) {
+          const chip = el('span', 'df-all-chip');
+          chip.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"></svg><span></span>';
+          chip.firstChild.innerHTML = s.icon;
+          chip.lastChild.textContent = s.label;
+          what.appendChild(chip);
+        } else {
+          what.appendChild(el('span', '', shortText(s.text)));
+        }
+        what.appendChild(el('span', 'df-all-step', (s.steps.length > 1 ? 'steps ' : 'step ') + s.steps.join(', ')));
+        row.appendChild(who);
+        row.appendChild(what);
+        allList.appendChild(row);
+      });
+    });
+    qa('.df-node').forEach((g) => {
+      const on = !!used[g.getAttribute('data-node')];
+      g.classList.toggle('on', false);
+      g.classList.toggle('seen', false);
+      g.classList.toggle('dim', !on);
+    });
+  }
+
+  function setView(name) {
+    view = name === 'all' ? 'all' : 'steps';
+    if (view === 'all') stop();
+    root.classList.toggle('df-allview', view === 'all');
+    allBox.hidden = view !== 'all';
+    qa('.df-view button').forEach((b) => b.setAttribute('aria-pressed', b.getAttribute('data-view') === view ? 'true' : 'false'));
+    draw();
+  }
+
+  function draw() {
+    if (view === 'all') { drawAll(); return; }
+    const v = stepView(data, cur, i);
+    i = v.index; // a press past the last step stays on the last step
+    const act = data.actions[v.action];
+    // One colour per step: the colour of the part that sends the data. The line, the dot,
+    // the tag, the step card and the list row all take it, so the eye links them at once.
+    const toneOf = (id) => {
+      const g = id ? q('[data-node="' + id + '"]') : null;
+      const c = g ? window.getComputedStyle(g).getPropertyValue('--cs').trim() : '';
+      return c || act.color;
+    };
+    const tone = toneOf(v.focus);
+    packetLayer.innerHTML = '';
+    packets = [];
+    dots = [];
+    root.classList.remove('df-pick');
+    qa('.df-hot').forEach((h) => h.classList.remove('df-hot'));
+    qa('.df-lane').forEach((l) => l.remove());
+    qa('.df-edge').forEach((p) => {
+      p.classList.remove('on', 'fwd', 'rev', 'trail');
+      p.style.stroke = '';
+      p.style.visibility = '';
       p.removeAttribute('marker-end');
       p.removeAttribute('marker-start');
     });
     Object.keys(v.trail).forEach((id) => {
       const p = q('[data-edge="' + id + '"]');
       p.classList.add('trail');
-      p.style.stroke = data.actions[v.trail[id]].color;
+      p.style.stroke = toneOf(v.trailFocus[id]);
     });
     Object.keys(v.edges).forEach((id) => {
       const p = q('[data-edge="' + id + '"]');
       const dir = v.edges[id];
       const marker = 'url(#' + prefix + '-m-' + v.action + ')';
       p.classList.add('on');
-      p.style.stroke = act.color;
+      p.style.stroke = tone;
       if (dir !== 'b') p.setAttribute('marker-end', marker);
       if (dir !== 'f') p.setAttribute('marker-start', marker);
-      if (dir === 'f') p.classList.add('fwd');
-      if (dir === 'b') p.classList.add('rev');
+      if (!quiet() && dir === 'f') p.classList.add('fwd');
+      if (!quiet() && dir === 'b') p.classList.add('rev');
       edgeLayer.appendChild(p); // the moving line is drawn above the idle lines
-      if (v.carry) packets.push(makePacket(p, dir, v.carry, act.color));
+      if (v.carry) {
+        // with movement off, the tag stands on its line and carries an arrow for the direction
+        let carry = v.carry;
+        if (quiet()) {
+          const a = p.getPointAtLength(0);
+          const b = p.getPointAtLength(p.getTotalLength());
+          carry = { label: arrowLabel(v.carry.label, dir, b.x - a.x, b.y - a.y), icon: v.carry.icon };
+        }
+        packets.push(makePacket(p, dir, carry, tone));
+      }
+      const riding = v.carry && !packets[packets.length - 1].fixed; // a tag that travels the line already shows the movement
+      if (!riding) dots.push(makeDot(p, dir, tone, null));
     });
     packets.forEach((pk) => place(pk, 0.5));
+    dots.forEach((d) => placeDot(d, 0.5));
     qa('.df-node').forEach((g) => {
       const id = g.getAttribute('data-node');
       const on = v.nodes.indexOf(id) >= 0;
@@ -366,16 +793,20 @@ function mount(root, data, prefix) {
     const badge = q('.df-act');
     badge.innerHTML = act.icon + '<span></span>';
     badge.lastChild.textContent = act.label;
-    badge.style.background = act.color;
+    badge.style.setProperty('--a', act.color);
     setNote('.df-time', !!v.time, data.ui.clock, v.time);
-    q('.df-cap').style.borderLeftColor = act.color;
+    const capBox = q('.df-cap');
+    capBox.style.setProperty('--a', tone);
+    capBox.classList.remove('df-pulse');
+    void capBox.offsetWidth; // restart the pulse so each step change draws the eye
+    if (!quiet()) capBox.classList.add('df-pulse');
     const chip = q('.df-carry');
     if (v.carry) {
       chip.hidden = false;
-      chip.style.borderColor = act.color;
+      chip.style.borderColor = tone;
       chip.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"></svg><span></span>';
       chip.firstChild.innerHTML = v.carry.icon;
-      chip.firstChild.style.stroke = act.color;
+      chip.firstChild.style.stroke = tone;
       chip.lastChild.textContent = 'Carries: ' + v.carry.label;
     } else {
       chip.hidden = true;
@@ -383,11 +814,11 @@ function mount(root, data, prefix) {
     setNote('.df-leaves', v.leaves.length > 0, data.ui.out, 'Leaves your system: sent to ' + v.leaves.join(' and ') + '.');
     setNote('.df-ifnot', !!v.ifNot, data.ui.branch, 'If not: ' + v.ifNot);
     q('.df-text').textContent = v.text;
-    showItem(v, act.color);
+    showItem(v, tone);
     back.disabled = v.first;
     next.disabled = v.last;
     qa('.df-steps button').forEach((b, k) => {
-      if (k === v.index) b.setAttribute('aria-current', 'step');
+      if (k === v.index) { b.setAttribute('aria-current', 'step'); b.style.setProperty('--a', tone); }
       else b.removeAttribute('aria-current');
     });
     root.setAttribute('data-scenario', v.scenario);
@@ -425,7 +856,7 @@ function mount(root, data, prefix) {
       const num = document.createElement('span');
       const txt = document.createElement('span');
       chip.className = 'df-chip';
-      chip.style.background = act.color;
+      chip.style.setProperty('--a', act.color);
       chip.innerHTML = act.icon;
       chip.setAttribute('title', act.label);
       num.className = 'df-num';
@@ -441,17 +872,32 @@ function mount(root, data, prefix) {
     });
   }
 
-  qa('.df-seg button').forEach((b) => {
+  qa('.df-seg:not(.df-view) button').forEach((b) => {
     b.setAttribute('aria-pressed', b.getAttribute('data-s') === cur ? 'true' : 'false');
     b.addEventListener('click', () => {
       stop();
       cur = b.getAttribute('data-s');
       i = 0;
-      qa('.df-seg button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+      qa('.df-seg:not(.df-view) button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
       build();
       draw();
     });
   });
+  qa('.df-view button').forEach((b) => b.addEventListener('click', () => setView(b.getAttribute('data-view'))));
+  const motionBtn = q('.df-motion');
+  const showMotion = () => {
+    motionBtn.setAttribute('aria-pressed', motionOn ? 'true' : 'false');
+    motionBtn.textContent = motionOn ? 'Motion: on' : 'Motion: off';
+    motionBtn.hidden = asksForLess; // nothing to switch when the computer asks for no movement
+  };
+  motionBtn.addEventListener('click', () => {
+    motionOn = !motionOn;
+    try { window.localStorage.setItem('df-motion', motionOn ? 'on' : 'off'); } catch (e) { /* the choice lasts for this visit only */ }
+    showMotion();
+    draw();
+  });
+  showMotion();
+  if (new RegExp('[#&]' + prefix + '=all\\b').test(window.location.hash || '')) setView('all');
   back.addEventListener('click', () => { stop(); if (i > 0) { i -= 1; draw(); } });
   next.addEventListener('click', () => { stop(); i += 1; draw(); });
   play.addEventListener('click', () => { if (timer) stop(); else start(); });
@@ -478,12 +924,18 @@ function mount(root, data, prefix) {
   build();
   draw();
   window.requestAnimationFrame(tick);
+  if (window.MutationObserver) new MutationObserver(() => draw()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-df-theme'] });
 }
 
-mount(document.getElementById("df"), {"nodes":{"visitor":{"label":"New user","info":"Someone creating an account."},"app":{"label":"App server","info":"It checks the form, saves the account and asks for the email to be sent."},"mailer":{"label":"Email service","info":"An outside company that delivers the app's emails."},"users":{"label":"Users table","info":"Every account, with a column that says whether its email is confirmed."}},"actions":{"send":{"label":"Send","color":"#2563EB","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/>\u003cpath d=\"m21.854 2.147-10.94 10.939\"/>\u003c/svg>"},"check":{"label":"Check","color":"#475569","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/>\u003cpath d=\"m9 12 2 2 4-4\"/>\u003c/svg>"},"write":{"label":"Write","color":"#15803D","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M13 21h8\"/>\u003cpath d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/>\u003c/svg>"}},"scenarios":[{"id":"signup","label":"Sign up and confirm","steps":[{"action":"send","text":"The new user fills in the form and presses Sign up.","edges":[["e0","f"]],"nodes":["visitor","app"],"carry":{"label":"name + email","icon":"\u003cpath d=\"M13 19a4 4 0 00-8 0\"/>\u003cpath d=\"M16 10h2\"/>\u003cpath d=\"M16 14h2\"/>\u003ccircle cx=\"9\" cy=\"12\" r=\"3\"/>\u003crect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/>"},"leaves":[],"item":{"title":"Sign-up form","icon":"\u003cpath d=\"M13 19a4 4 0 00-8 0\"/>\u003cpath d=\"M16 10h2\"/>\u003cpath d=\"M16 14h2\"/>\u003ccircle cx=\"9\" cy=\"12\" r=\"3\"/>\u003crect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/>","fields":[["Name","Ana Ruiz"],["Email","ana@example.com"],["Password","(never stored as typed)"]],"body":""},"time":"","ifNot":""},{"action":"check","text":"The app checks that the email has no account yet.","edges":[["e3","x"]],"nodes":["app","users"],"carry":{"label":"is it taken?","icon":"\u003cpath d=\"m21 21-4.34-4.34\"/>\u003ccircle cx=\"11\" cy=\"11\" r=\"8\"/>"},"leaves":[],"item":null,"time":"","ifNot":"the form says \"this email already has an account\" and offers a sign-in link."},{"action":"write","text":"The app saves the account as not yet confirmed.","edges":[["e3","f"]],"nodes":["app","users"],"carry":{"label":"new account","icon":"\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>\u003cline x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/>\u003cline x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>"},"leaves":[],"item":{"title":"New row in Users","icon":"\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>\u003cline x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/>\u003cline x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","fields":[["Name","Ana Ruiz"],["Email","ana@example.com"],["Confirmed","No"]],"body":""},"time":"","ifNot":""},{"action":"send","text":"The app asks the email service to send a confirm link.","edges":[["e1","f"]],"nodes":["app","mailer"],"carry":{"label":"confirm link","icon":"\u003cpath d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/>\u003cpath d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>"},"leaves":["Email service"],"item":{"title":"Email to send","icon":"\u003cpath d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/>\u003cpath d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>","fields":[["To","ana@example.com"],["Link","app.example/confirm?k=7f3a"],["Expires","in 24 hours"]],"body":""},"time":"","ifNot":""},{"action":"send","text":"The new user gets the email.","edges":[["e2","f"]],"nodes":["mailer","visitor"],"carry":{"label":"confirm email","icon":"\u003cpath d=\"M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8\"/>\u003cpath d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>\u003cpath d=\"m16 19 2 2 4-4\"/>"},"leaves":[],"item":{"title":"Confirm your email","icon":"\u003cpath d=\"M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8\"/>\u003cpath d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>\u003cpath d=\"m16 19 2 2 4-4\"/>","fields":[["From","hello@app.example"]],"body":"Hi Ana, press the button to confirm your email.\n[ Confirm my email ]"},"time":"within 1 minute","ifNot":""},{"action":"send","text":"The user clicks the link, and the click comes back to the app.","edges":[["e0","f"]],"nodes":["visitor","app"],"carry":{"label":"link click","icon":"\u003cpath d=\"M14 4.1 12 6\"/>\u003cpath d=\"m5.1 8-2.9-.8\"/>\u003cpath d=\"m6 12-1.9 2\"/>\u003cpath d=\"M7.2 2.2 8 5.1\"/>\u003cpath d=\"M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z\"/>"},"leaves":[],"item":null,"time":"","ifNot":"after 24 hours the link stops working and the account stays unconfirmed."},{"action":"write","text":"The app marks the account confirmed. The user can now sign in.","edges":[["e3","f"]],"nodes":["app","users"],"carry":{"label":"confirmed","icon":"\u003cpath d=\"m16 11 2 2 4-4\"/>\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>"},"leaves":[],"item":{"title":"Changed row in Users","icon":"\u003cpath d=\"m16 11 2 2 4-4\"/>\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>","fields":[["Email","ana@example.com"],["Confirmed","Yes"]],"body":""},"time":"","ifNot":""}]}],"ui":{"play":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>\u003c/svg>","pause":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003crect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003crect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003c/svg>","clock":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003ccircle cx=\"12\" cy=\"12\" r=\"10\"/>\u003cpath d=\"M12 6v6l4 2\"/>\u003c/svg>","branch":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 6a9 9 0 0 0-9 9V3\"/>\u003ccircle cx=\"18\" cy=\"6\" r=\"3\"/>\u003ccircle cx=\"6\" cy=\"18\" r=\"3\"/>\u003c/svg>","out":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 3h6v6\"/>\u003cpath d=\"M10 14 21 3\"/>\u003cpath d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>\u003c/svg>"}}, "df");
+mount(document.getElementById("df"), {"nodes":{"visitor":{"label":"New user","info":"Someone creating an account."},"app":{"label":"App server","info":"It checks the form, saves the account and asks for the email to be sent."},"mailer":{"label":"Email service","info":"An outside company that delivers the app's emails."},"users":{"label":"Users table","info":"Every account, with a column that says whether its email is confirmed."}},"actions":{"send":{"label":"Send","color":"#2563EB","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/>\u003cpath d=\"m21.854 2.147-10.94 10.939\"/>\u003c/svg>"},"check":{"label":"Check","color":"#475569","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z\"/>\u003cpath d=\"m9 12 2 2 4-4\"/>\u003c/svg>"},"write":{"label":"Write","color":"#15803D","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M13 21h8\"/>\u003cpath d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/>\u003c/svg>"}},"scenarios":[{"id":"signup","label":"Sign up and confirm","steps":[{"action":"send","text":"The new user fills in the form and presses Sign up.","edges":[["e0","f"]],"flows":[{"edge":"e0","from":"visitor","to":"app","dir":"f"}],"nodes":["visitor","app"],"focus":"visitor","carry":{"label":"name + email","icon":"\u003cpath d=\"M13 19a4 4 0 00-8 0\"/>\u003cpath d=\"M16 10h2\"/>\u003cpath d=\"M16 14h2\"/>\u003ccircle cx=\"9\" cy=\"12\" r=\"3\"/>\u003crect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/>"},"leaves":[],"item":{"title":"Sign-up form","icon":"\u003cpath d=\"M13 19a4 4 0 00-8 0\"/>\u003cpath d=\"M16 10h2\"/>\u003cpath d=\"M16 14h2\"/>\u003ccircle cx=\"9\" cy=\"12\" r=\"3\"/>\u003crect x=\"2\" y=\"5\" width=\"20\" height=\"14\" rx=\"2\"/>","fields":[["Name","Ana Ruiz"],["Email","ana@example.com"],["Password","(never stored as typed)"]],"body":""},"time":"","ifNot":""},{"action":"check","text":"The app checks that the email has no account yet.","edges":[["e3","x"]],"flows":[{"edge":"e3","from":"app","to":"users","dir":"x"}],"nodes":["app","users"],"focus":"app","carry":{"label":"is it taken?","icon":"\u003cpath d=\"m21 21-4.34-4.34\"/>\u003ccircle cx=\"11\" cy=\"11\" r=\"8\"/>"},"leaves":[],"item":null,"time":"","ifNot":"the form says \"this email already has an account\" and offers a sign-in link."},{"action":"write","text":"The app saves the account as not yet confirmed.","edges":[["e3","f"]],"flows":[{"edge":"e3","from":"app","to":"users","dir":"f"}],"nodes":["app","users"],"focus":"app","carry":{"label":"new account","icon":"\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>\u003cline x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/>\u003cline x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>"},"leaves":[],"item":{"title":"New row in Users","icon":"\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>\u003cline x1=\"19\" x2=\"19\" y1=\"8\" y2=\"14\"/>\u003cline x1=\"22\" x2=\"16\" y1=\"11\" y2=\"11\"/>","fields":[["Name","Ana Ruiz"],["Email","ana@example.com"],["Confirmed","No"]],"body":""},"time":"","ifNot":""},{"action":"send","text":"The app asks the email service to send a confirm link.","edges":[["e1","f"]],"flows":[{"edge":"e1","from":"app","to":"mailer","dir":"f"}],"nodes":["app","mailer"],"focus":"app","carry":{"label":"confirm link","icon":"\u003cpath d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/>\u003cpath d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>"},"leaves":["Email service"],"item":{"title":"Email to send","icon":"\u003cpath d=\"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71\"/>\u003cpath d=\"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71\"/>","fields":[["To","ana@example.com"],["Link","app.example/confirm?k=7f3a"],["Expires","in 24 hours"]],"body":""},"time":"","ifNot":""},{"action":"send","text":"The new user gets the email.","edges":[["e2","f"]],"flows":[{"edge":"e2","from":"mailer","to":"visitor","dir":"f"}],"nodes":["mailer","visitor"],"focus":"mailer","carry":{"label":"confirm email","icon":"\u003cpath d=\"M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8\"/>\u003cpath d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>\u003cpath d=\"m16 19 2 2 4-4\"/>"},"leaves":[],"item":{"title":"Confirm your email","icon":"\u003cpath d=\"M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8\"/>\u003cpath d=\"m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7\"/>\u003cpath d=\"m16 19 2 2 4-4\"/>","fields":[["From","hello@app.example"]],"body":"Hi Ana, press the button to confirm your email.\n[ Confirm my email ]"},"time":"within 1 minute","ifNot":""},{"action":"send","text":"The user clicks the link, and the click comes back to the app.","edges":[["e0","f"]],"flows":[{"edge":"e0","from":"visitor","to":"app","dir":"f"}],"nodes":["visitor","app"],"focus":"visitor","carry":{"label":"link click","icon":"\u003cpath d=\"M14 4.1 12 6\"/>\u003cpath d=\"m5.1 8-2.9-.8\"/>\u003cpath d=\"m6 12-1.9 2\"/>\u003cpath d=\"M7.2 2.2 8 5.1\"/>\u003cpath d=\"M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z\"/>"},"leaves":[],"item":null,"time":"","ifNot":"after 24 hours the link stops working and the account stays unconfirmed."},{"action":"write","text":"The app marks the account confirmed. The user can now sign in.","edges":[["e3","f"]],"flows":[{"edge":"e3","from":"app","to":"users","dir":"f"}],"nodes":["app","users"],"focus":"app","carry":{"label":"confirmed","icon":"\u003cpath d=\"m16 11 2 2 4-4\"/>\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>"},"leaves":[],"item":{"title":"Changed row in Users","icon":"\u003cpath d=\"m16 11 2 2 4-4\"/>\u003cpath d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\"/>\u003ccircle cx=\"9\" cy=\"7\" r=\"4\"/>","fields":[["Email","ana@example.com"],["Confirmed","Yes"]],"body":""},"time":"","ifNot":""}]}],"ui":{"play":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>\u003c/svg>","pause":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003crect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003crect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003c/svg>","clock":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003ccircle cx=\"12\" cy=\"12\" r=\"10\"/>\u003cpath d=\"M12 6v6l4 2\"/>\u003c/svg>","branch":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 6a9 9 0 0 0-9 9V3\"/>\u003ccircle cx=\"18\" cy=\"6\" r=\"3\"/>\u003ccircle cx=\"6\" cy=\"18\" r=\"3\"/>\u003c/svg>","out":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 3h6v6\"/>\u003cpath d=\"M10 14 21 3\"/>\u003cpath d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>\u003c/svg>"}}, "df");
 })();
 </script>
 
 </main>
+<script>
+(function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
+var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
+</script>
 </body>
 </html>

@@ -38,11 +38,11 @@ export const ACTIONS = {
   reply: { label: 'Reply', color: '#C2410C', icon: 'reply' },
 };
 
-const W = 400;
 const PAD = 10;
-const GAPX = 8;
+const GAPX = 56;
+const BOX_W = { 1: 240, 2: 190, 3: 142 }; // box width by how many share a row
 const NODE_H = 86;
-const ROW_GAP = 64;
+const ROW_GAP = 104;
 const ZONE_TOP = 12;
 const ZONE_BOTTOM = 24;
 // The longest label and second line that fit a box, by how many boxes share the row.
@@ -54,6 +54,7 @@ const CREDIT = {
   site: 'https://russellmiller.io',
   repo: 'https://github.com/russellmiller3/dataflowgram',
   email: 'rmiller@zavient.com',
+  linkedin: 'https://www.linkedin.com/in/russellmiller',
 };
 const CARRY_MAX = 22;
 // Kinds of part that sit outside the owner's own system unless a part says otherwise.
@@ -110,6 +111,58 @@ function roundPath(points, radius = 6) {
 }
 
 // Checks the description and works out where every box and line goes.
+// The space between 2 boxes in one row: just wide enough to read the data moving across it, and no wider,
+// so the whole diagram can be taken in at a glance. It fits the longest tag on the diagram (with its
+// direction arrow) plus a visible stretch of line and arrowhead on each side. 'longest' is the longest
+// tag in characters; 'n' is how many boxes share the row. A row of 3 is capped so the drawing stays compact.
+export function gapFor(longest, n) {
+  const LINE_EACH_SIDE = 32;
+  const tag = longest * 6.9 + 34 + 14;
+  const want = Math.max(150, Math.min(300, Math.round(tag + 2 * LINE_EACH_SIDE)));
+  return n >= 3 ? Math.min(want, 160) : want;
+}
+
+// The box that holds every part outside the owner's system, when no inside part falls within it.
+// Takes parts with x, y, w, h and outside (true or false). Returns { x, y, w, h } with room for a label
+// along its bottom edge, or null when there are no outside parts or an inside part sits among them.
+export function regionOf(parts) {
+  const out = parts.filter((n) => n.outside);
+  if (out.length === 0) return null;
+  const M = 7;
+  const x0 = Math.min(...out.map((n) => n.x)) - M;
+  const y0 = Math.min(...out.map((n) => n.y)) - M;
+  const x1 = Math.max(...out.map((n) => n.x + n.w)) + M;
+  const y1 = Math.max(...out.map((n) => n.y + n.h)) + M + 22; // 22 for the label
+  const inside = parts.some((n) => !n.outside && n.x < x1 && n.x + n.w > x0 && n.y < y1 && n.y + n.h > y0);
+  return inside ? null : { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+}
+
+// Gives every part its own colour so that data, which takes its sender's colour, can be told apart.
+// Rule (map colouring): two parts joined by a line never share a colour, and where the palette allows,
+// neither do two parts that are joined to the same part. A part keeps its kind's colour when that is free.
+// 'order' lists part ids; 'kindOf' maps id to kind; 'pairs' lists [a, b] for every line.
+export function colourParts(order, kindOf, pairs) {
+  const palette = Object.values(KINDS).map((k) => ({ color: k.color, tint: k.tint }));
+  const near = {};
+  order.forEach((id) => { near[id] = new Set(); });
+  pairs.forEach(([a, b]) => { near[a].add(b); near[b].add(a); });
+  const out = {};
+  order.forEach((id) => {
+    const own = KINDS[kindOf[id]];
+    const beside = new Set(); // colours of parts joined to this one
+    const around = new Set(); // colours of parts one step further away
+    near[id].forEach((n) => {
+      if (out[n]) beside.add(out[n].color);
+      near[n].forEach((m) => { if (m !== id && out[m]) around.add(out[m].color); });
+    });
+    const wanted = [{ color: own.color, tint: own.tint }].concat(palette.filter((c) => c.color !== own.color));
+    out[id] = wanted.find((c) => !beside.has(c.color) && !around.has(c.color))
+      || wanted.find((c) => !beside.has(c.color))
+      || wanted[0];
+  });
+  return out;
+}
+
 export function compile(spec) {
   if (!spec || typeof spec !== 'object') fail('the description must be an object');
   const { rows, parts, lines = [], zones = [], scenarios } = spec;
@@ -118,11 +171,23 @@ export function compile(spec) {
   if (!Array.isArray(scenarios) || scenarios.length === 0) fail('"scenarios" must hold at least 1 scenario');
 
   // ---- parts and their place
+  let longest = 0; // the longest tag on the diagram, in characters
+  scenarios.forEach((s) => ((s && s.steps) || []).forEach((st) => {
+    if (st && st.carry && st.carry.label) longest = Math.max(longest, String(st.carry.label).length);
+  }));
+  // the drawing is as wide as its widest row needs, and no wider
+  const width = Math.max(420, ...rows.map((row) => {
+    const n = Math.max(1, Math.min(3, Array.isArray(row) ? row.length : 1));
+    return 2 * PAD + n * BOX_W[n] + (n - 1) * gapFor(longest, n);
+  }));
   const nodes = {};
   rows.forEach((row, r) => {
     if (!Array.isArray(row) || row.length < 1 || row.length > 3) fail(`row ${r + 1} must hold 1 to 3 parts; it holds ${Array.isArray(row) ? row.length : 0}`);
     const n = row.length;
-    const w = n === 1 ? 240 : (W - 2 * PAD - (n - 1) * GAPX) / n;
+    // Boxes stay only as wide as their text needs; the rest of the row goes to the gap, where the lines run.
+    const w = BOX_W[n];
+    const gap = n === 1 ? 0 : gapFor(longest, n);
+    const rowLeft = (width - (n * w + (n - 1) * gap)) / 2; // each row sits in the middle of the drawing
     row.forEach((id, c) => {
       if (!ID.test(String(id))) fail(`part name "${id}" must be lower-case letters, digits and hyphens`);
       if (nodes[id]) fail(`part "${id}" is placed twice in "rows"`);
@@ -135,7 +200,7 @@ export function compile(spec) {
       if ((part.sub || '').length > lim.sub) fail(`part "${id}": the second line "${part.sub}" has ${part.sub.length} characters; a row of ${n} fits ${lim.sub}`);
       const icon = part.icon || KINDS[part.kind].icon;
       if (!ICONS[icon]) fail(`part "${id}": icon "${icon}" is not in the Lucide set. Run: node dataflow.mjs icons <word>`);
-      const x = n === 1 ? (W - w) / 2 : PAD + c * (w + GAPX);
+      const x = rowLeft + c * (w + gap);
       if (part.outside !== undefined && typeof part.outside !== 'boolean') fail(`part "${id}": "outside" must be true or false`);
       const outside = part.outside === undefined ? OUTSIDE_KINDS.includes(part.kind) : part.outside;
       nodes[id] = { id, label: part.label, sub: part.sub || '', kind: part.kind, icon, info: part.info || '', outside, row: r, col: c, n, x, w, h: NODE_H };
@@ -253,7 +318,9 @@ export function compile(spec) {
       if (!ACTIONS[st.action]) fail(`${where}: action "${st.action}" is not known; use one of: ${Object.keys(ACTIONS).join(', ')}`);
       if (!st.text || !String(st.text).trim()) fail(`${where}: needs "text"`);
       const stepEdges = [];
+      const flows = []; // who sends to whom, on which line
       const lit = [];
+      let focus = null; // the part whose colour the step takes: the one that SENDS the data
       (st.flow || []).forEach((f) => {
         const m = /^([a-z][a-z0-9-]*)\s*(<>|>)\s*([a-z][a-z0-9-]*)$/.exec(String(f));
         if (!m) fail(`${where}: flow "${f}" must read "part>part" (one way) or "part<>part" (both ways)`);
@@ -262,12 +329,16 @@ export function compile(spec) {
         if (!nodes[b]) fail(`${where}: flow "${f}" names "${b}", which is not a part`);
         const edge = edges.find((e) => e.key === [a, b].sort().join('|'));
         if (!edge) fail(`${where}: no line joins "${a}" and "${b}"; add ["${a}", "${b}"] to "lines"`);
-        stepEdges.push([edge.id, op === '<>' ? 'x' : edge.from === a ? 'f' : 'b']);
+        const way = op === '<>' ? 'x' : edge.from === a ? 'f' : 'b';
+        stepEdges.push([edge.id, way]);
+        flows.push({ edge: edge.id, from: a, to: b, dir: way });
         [a, b].forEach((id) => { if (!lit.includes(id)) lit.push(id); });
+        if (!focus) focus = a;
       });
       (st.at || []).forEach((id) => {
         if (!nodes[id]) fail(`${where}: "at" names "${id}", which is not a part`);
         if (!lit.includes(id)) lit.push(id);
+        if (!focus) focus = id;
       });
       if (lit.length === 0) fail(`${where}: give "flow" (data that moves) or "at" (the part that works)`);
       let carry = null;
@@ -311,13 +382,23 @@ export function compile(spec) {
       if (time.length > ITEM_LIMITS.time) fail(`${where}: "time" has ${time.length} characters; ${ITEM_LIMITS.time} fit`);
       const ifNot = st.ifNot === undefined ? '' : String(st.ifNot);
       if (ifNot.length > ITEM_LIMITS.ifNot) fail(`${where}: "ifNot" has ${ifNot.length} characters; ${ITEM_LIMITS.ifNot} fit`);
-      return { action: st.action, text: String(st.text), edges: stepEdges, nodes: lit, carry, leaves, item, time, ifNot };
+      return { action: st.action, text: String(st.text), edges: stepEdges, flows, nodes: lit, focus, carry, leaves, item, time, ifNot };
     });
     return { id: s.id, label: s.label, steps };
   });
 
   if (spec.credit !== undefined && typeof spec.credit !== 'boolean') fail('"credit" must be true or false');
-  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width: W, height, nodes, edges, zones: zoneList, rowY, scenarios: scns };
+  // Where the parts outside the owner's system sit together, with no inside part among them, one shaded
+  // region is drawn around them. Otherwise each outside part carries its own small mark.
+  const outsideRegion = regionOf(Object.values(nodes));
+  let fullHeight = height;
+  if (outsideRegion) fullHeight = Math.max(height, outsideRegion.y + outsideRegion.h + 4);
+  const order = Object.values(nodes).sort((a, b) => a.row - b.row || a.col - b.col).map((n) => n.id);
+  const kindOf = {};
+  order.forEach((id) => { kindOf[id] = nodes[id].kind; });
+  const tones = colourParts(order, kindOf, edges.map((e) => [e.from, e.to]));
+  order.forEach((id) => { nodes[id].color = tones[id].color; nodes[id].tint = tones[id].tint; });
+  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns };
 }
 
 // The data the page's own script needs. "<" is written as a code so text can never close the script early.
@@ -346,9 +427,12 @@ function pageData(c) {
 
 const CSS = `
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
-.df-grid{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:28px;align-items:start}
+.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,560px);justify-content:start;gap:28px;align-items:start}
+.df-grid>div:first-child{position:sticky;top:20px}
 .df-grid>div{min-width:0}
-.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
+@media (max-width:560px){.df-svg{min-width:500px}}
+.df-svg{width:100%;height:auto;max-height:calc(100vh - 250px);display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
 .df-svg text{font-family:inherit;fill:var(--df-ink)}
 .df-node{cursor:pointer;transition:opacity .15s}
 .df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
@@ -368,6 +452,8 @@ const CSS = `
 @keyframes df-march{to{stroke-dashoffset:-12}}
 @media (prefers-reduced-motion:reduce){.df-edge.fwd,.df-edge.rev{animation:none;stroke-dasharray:none}}
 .df-packet{pointer-events:none}
+.df-dot{pointer-events:none;filter:drop-shadow(0 0 6px currentColor)}
+.df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
 .df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
@@ -380,7 +466,32 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
-.df-credit{margin:18px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
+.df-credit{margin:56px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
+.df-allview :is(.df-cap,.df-nav,.df-item,.df-steps,.df-only-steps){display:none}
+.df:not(.df-allview) .df-only-all{display:none}
+.df-key .df-ln{width:34px;height:10px}
+.df-ln path{fill:none;stroke-width:3;stroke-linecap:round}
+.df-ln-now{stroke:#3B82F6;stroke-dasharray:7 5}
+.df-ln-past{stroke:#3B82F6;opacity:.4}
+.df-ln-all{stroke:#3B82F6}
+.df-ln-idle{stroke:#8A99AD;stroke-width:2}
+.df-outzone{fill:rgba(190,18,60,.06);stroke:rgba(190,18,60,.45);stroke-width:1.2}
+.df .df-svg text.df-outzone-l{font-size:13px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
+.df .df-svg text.df-out-l{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#E0607E}
+/* a send picked in the everything view: the rest steps back */
+.df-pick .df-edge.on:not(.df-hot),.df-pick .df-packet:not(.df-hot){opacity:.14}
+.df-pick .df-node:not(.df-hot){opacity:.35}
+.df-pick .df-edge.df-hot{stroke-width:5}
+.df-all-row[aria-pressed="true"]{border-color:var(--a);box-shadow:inset 3px 0 0 var(--a),0 0 0 3px color-mix(in srgb,var(--a) 22%,transparent)}
+.df-all-row:hover{border-color:color-mix(in srgb,var(--a) 60%,var(--df-line))}
+.df-all-list{display:grid;gap:6px}
+.df-all-row{display:grid;gap:3px;padding:7px 10px;cursor:pointer;border:1px solid var(--df-line);border-left:3px solid var(--a);border-radius:8px;background:var(--df-card)}
+.df-all-who{font-weight:600;font-size:1rem}
+.df-all-who span{color:var(--df-ink2);font-weight:500;padding:0 6px}
+.df-all-what{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.95rem}
+.df-all-chip{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:6px;border:1.5px solid var(--a);font-weight:600}
+.df-all-chip svg{width:15px;height:15px;fill:none;stroke:var(--a);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.df-all-step{color:var(--df-ink2);font-size:.85rem}
 .df-credit a{color:var(--df-ink2);text-decoration:none;border-bottom:1px solid var(--df-line)}
 .df-credit a:hover{color:var(--df-ink);border-bottom-color:var(--df-ink)}
 .df-legend small{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--df-ink2);margin-right:2px}
@@ -397,7 +508,9 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-act{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:3px 8px 3px 6px}
 .df-act svg{width:15px;height:15px}
 .df-text{margin:6px 0 0;font-size:1.05rem}
-.df-nav{display:flex;gap:8px;margin-top:10px}
+.df-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.df-nav .df-motion{margin-left:auto;color:var(--df-ink2)}
+.df-nav .df-motion[aria-pressed="true"]{color:var(--df-ink);border-color:var(--df-ink)}
 .df-nav button{font:inherit;font-size:.95rem;border:1px solid var(--df-line);background:var(--df-card);border-radius:3px;padding:7px 14px;cursor:pointer;color:var(--df-ink)}
 .df-nav button:disabled{opacity:.4;cursor:default}
 .df-nav .df-next{background:var(--df-ink);border-color:var(--df-ink);color:#fff}
@@ -431,7 +544,64 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-chip{width:26px;height:26px;border-radius:3px;display:grid;place-items:center;color:#fff}
 .df-chip svg{width:15px;height:15px}
 .df-num{color:var(--df-ink2);font-variant-numeric:tabular-nums}
-@media (max-width:820px){.df-grid{grid-template-columns:1fr}}
+@media (max-width:860px){.df-grid{grid-template-columns:1fr}.df-grid>div:first-child{position:static}.df-svg{max-height:none}}
+
+/* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
+.df{
+  --df-ink:#141824;--df-ink2:#596174;--df-line:rgba(20,24,36,.11);--df-head:rgba(20,24,36,.035);
+  --df-card:rgba(255,255,255,.66);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(20,24,36,.20);
+  --df-glow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -28px rgba(30,40,80,.35);
+  --df-leaves-bg:#fdecec;--df-leaves-ink:#9b1c1c;--df-ifnot-bg:#fff4dc;--df-ifnot-ink:#7a4b00;
+  font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+.df [class^="df-k-"],.df [class*=" df-k-"]{--cs:var(--c)}
+@media (prefers-color-scheme:dark){html:not([data-df-theme="light"]) .df{
+  --df-ink:#e9ebf3;--df-ink2:#9ca3b8;--df-line:rgba(255,255,255,.09);--df-head:rgba(255,255,255,.045);
+  --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
+  --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
+  --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+}
+html:not([data-df-theme="light"]) .df [class^="df-k-"],html:not([data-df-theme="light"]) .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}}
+html[data-df-theme="dark"] .df{
+  --df-ink:#e9ebf3;--df-ink2:#9ca3b8;--df-line:rgba(255,255,255,.09);--df-head:rgba(255,255,255,.045);
+  --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
+  --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
+  --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+}
+html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}
+.df :is(.df-svg,.df-cap,.df-item-card,.df-seg,.df-key,.df-nav button){
+  background:var(--df-card);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
+  border-color:var(--df-line);box-shadow:var(--df-glow)}
+.df .df-svg{border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
+.df :is(.df-cap,.df-item-card){border-radius:10px}
+.df :is(.df-seg,.df-key,.df-nav button,.df-carry){border-radius:8px}
+.df .df-node rect{fill:color-mix(in srgb,var(--c) 10%,var(--df-node));stroke:var(--cs)}
+.df .df-node .df-ico{stroke:var(--cs)}
+.df .df-node.on rect{fill:color-mix(in srgb,var(--c) 18%,var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
+.df .df-edge{stroke:var(--df-edge)}
+.df .df-zone{stroke:var(--df-ink2);opacity:.55}
+.df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
+.df .df-carry{background:var(--df-solid)}
+.df .df-key svg{color:var(--cs,currentColor)}
+.df .df-key.act{box-shadow:none;border-color:transparent}
+.df .df-leaves{background:var(--df-leaves-bg);color:var(--df-leaves-ink)}
+.df .df-ifnot{background:var(--df-ifnot-bg);color:var(--df-ifnot-ink)}
+.df .df-seg button[aria-pressed="true"],.df .df-nav .df-next{background:var(--df-ink);color:var(--df-solid);border-color:var(--df-ink)}
+.df .df-steps button[aria-current="step"]{background:var(--df-card);border-color:var(--df-line);box-shadow:var(--df-glow)}
+.df{--a-ink-mix:black;--a-ink-amt:22%}
+@media (prefers-color-scheme:dark){html:not([data-df-theme="light"]) .df{--a-ink-mix:white;--a-ink-amt:45%}}
+html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
+.df :is(.df-act,.df-chip,.df-key.act){background:color-mix(in srgb,var(--a) 14%,transparent)!important;color:color-mix(in srgb,var(--a),var(--a-ink-mix) var(--a-ink-amt))!important;border:1px solid color-mix(in srgb,var(--a) 30%,transparent)!important;box-shadow:none}
+.df .df-chip{border-radius:7px}
+.df .df-act{border-radius:999px;padding:2px 9px 2px 7px}
+.df .df-cap{border:1.5px solid color-mix(in srgb,var(--a) 62%,var(--df-line));background:linear-gradient(180deg,color-mix(in srgb,var(--a) 13%,transparent),color-mix(in srgb,var(--a) 4%,transparent)),var(--df-card);box-shadow:inset 4px 0 0 var(--a),0 0 0 4px color-mix(in srgb,var(--a) 10%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}
+.df .df-cap .df-text{font-size:1.2rem;font-weight:600;line-height:1.35}
+.df .df-cap.df-pulse{animation:df-cap-pulse .7s ease-out}
+@keyframes df-cap-pulse{0%{box-shadow:inset 4px 0 0 var(--a),0 0 0 0 color-mix(in srgb,var(--a) 55%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}100%{box-shadow:inset 4px 0 0 var(--a),0 0 0 4px color-mix(in srgb,var(--a) 10%,transparent),0 14px 36px -18px color-mix(in srgb,var(--a) 75%,transparent)}}
+@media (prefers-reduced-motion:reduce){.df .df-cap.df-pulse{animation:none}}
+.df .df-steps button[aria-current="step"]{border-color:color-mix(in srgb,var(--a) 55%,var(--df-line));background:linear-gradient(90deg,color-mix(in srgb,var(--a) 14%,transparent),transparent 70%),var(--df-card);box-shadow:inset 3px 0 0 var(--a)}
+.df .df-item-card{border-top:1px solid var(--df-line);box-shadow:inset 0 2px 0 color-mix(in srgb,var(--a) 70%,transparent),var(--df-glow)}
+.df .df-item-h,.df .df-legend small,.df .df-count{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;letter-spacing:.08em}
 `;
 
 // The diagram as a block of markup, with its own styles and script. prefix must be unique on the page.
@@ -444,24 +614,29 @@ export function renderFragment(spec, prefix = 'df') {
   Object.values(c.nodes).forEach((n) => { if (!usedKinds.includes(n.kind)) usedKinds.push(n.kind); });
 
   const markers = usedActions
-    .map((a) => `<marker id="${prefix}-m-${a}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="${ACTIONS[a].color}"/></marker>`)
+    .map((a) => `<marker id="${prefix}-m-${a}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker>`)
     .join('');
   const zones = c.zones
     .map((z) => {
       const top = c.rowY[z.from] - ZONE_TOP;
       const bottom = c.rowY[z.to] + NODE_H + ZONE_BOTTOM;
-      return `<rect class="df-zone" x="4" y="${num(top)}" width="${W - 8}" height="${num(bottom - top)}" rx="4"/><text class="df-zone-l" x="14" y="${num(bottom - 8)}">${esc(z.label)}</text>`;
+      return `<rect class="df-zone" x="4" y="${num(top)}" width="${num(c.width - 8)}" height="${num(bottom - top)}" rx="4"/><text class="df-zone-l" x="14" y="${num(bottom - 8)}">${esc(z.label)}</text>`;
     })
     .join('');
+  const outZone = c.outsideRegion
+    ? `<rect class="df-outzone" x="${num(c.outsideRegion.x)}" y="${num(c.outsideRegion.y)}" width="${num(c.outsideRegion.w)}" height="${num(c.outsideRegion.h)}" rx="8"/>` +
+      `<text class="df-outzone-l" x="${num(c.outsideRegion.x + c.outsideRegion.w / 2)}" y="${num(c.outsideRegion.y + c.outsideRegion.h - 8)}" text-anchor="middle">OUTSIDE YOUR SYSTEM</text>`
+    : '';
   const edges = c.edges.map((e) => `<path class="df-edge" data-edge="${e.id}" d="${e.d}"${e.tag ? ` data-tag="${num(e.tag[0])},${num(e.tag[1])}"` : ''}/>`).join('');
   const nodes = Object.values(c.nodes)
     .map((n) => {
       const tcls = n.n === 3 ? 'df-t3' : 'df-t';
       return (
-        `<g class="df-node df-k-${n.kind}" data-node="${n.id}" tabindex="0" role="button" aria-label="${esc(n.label)}">` +
+        `<g class="df-node df-k-${n.kind}" style="--c:${n.color};--t:${n.tint}" data-node="${n.id}" tabindex="0" role="button" aria-label="${esc(n.label)}">` +
         `<rect x="${num(n.x)}" y="${num(n.y)}" width="${num(n.w)}" height="${n.h}" rx="4"/>` +
         `<g class="df-ico" transform="translate(${num(n.cx - 11)} ${num(n.y + 10)}) scale(.9167)">${iconShapes(n.icon)}</g>` +
         `<text class="${tcls}" x="${num(n.cx)}" y="${num(n.y + 53)}" text-anchor="middle">${esc(n.label)}</text>` +
+        (n.outside && !c.outsideRegion ? `<text class="df-out-l" x="${num(n.x + 8)}" y="${num(n.y + 16)}">OUTSIDE</text>` : '') +
         (n.sub ? `<text class="${n.n === 3 ? 'df-s3' : 'df-s'}" x="${num(n.cx)}" y="${num(n.y + 72)}" text-anchor="middle">${esc(n.sub)}</text>` : '') +
         '</g>'
       );
@@ -470,35 +645,39 @@ export function renderFragment(spec, prefix = 'df') {
   const seg = c.scenarios.length > 1
     ? `<div class="df-seg" role="group" aria-label="Scenario">${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
     : '';
-  const partKeys = usedKinds.map((k) => `<span class="df-key" style="color:${KINDS[k].color}">${iconSvg(KINDS[k].icon)}<span style="color:var(--df-ink)">${esc(KINDS[k].label)}</span></span>`).join('');
-  const stepKeys = usedActions.map((a) => `<span class="df-key act" style="background:${ACTIONS[a].color}">${iconSvg(ACTIONS[a].icon)}${esc(ACTIONS[a].label)}</span>`).join('');
+  const partKeys = usedKinds.map((k) => `<span class="df-key df-kind">${iconSvg(KINDS[k].icon)}<span>${esc(KINDS[k].label)}</span></span>`).join('');
+  const stepKeys = usedActions.map((a) => `<span class="df-key act" style="--a:${ACTIONS[a].color}">${iconSvg(ACTIONS[a].icon)}${esc(ACTIONS[a].label)}</span>`).join('');
   const runtime = fs.readFileSync(path.join(HERE, 'runtime.mjs'), 'utf8').replace(/^export /gm, '');
   const title = esc(c.title || 'Data flow');
 
   return `<style>${CSS}</style>
 <div class="df" id="${prefix}">
-  <div class="df-grid">
+  <div class="df-grid" style="--df-w:${num(c.width * 1.3)}px">
     <div>
-      <svg class="df-svg" viewBox="0 0 ${W} ${num(c.height)}" role="img" aria-label="${title}">
+      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 ${num(c.width)} ${num(c.height)}" role="img" aria-label="${title}">
         <defs>${markers}</defs>
         ${zones}
+        ${outZone}
         <g class="df-edges">${edges}</g>
         ${nodes}
         <g class="df-packets"></g>
-      </svg>
+      </svg></div>
       <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small>${partKeys}</div>
       <div class="df-legend"><small>Steps</small>${stepKeys}</div>
+      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span></div>
     </div>
     <div>
+      <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
       <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
-      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button></div>
+      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button><button type="button" class="df-motion" aria-pressed="false" title="Switch the moving tags and dashes on or off">Motion: off</button></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <ol class="df-steps"></ol>
+      <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
-  ${c.credit ? `<p class="df-credit">Made with <a href="${CREDIT.repo}" target="_blank" rel="noopener">Dataflowgram</a> by <a href="${CREDIT.site}" target="_blank" rel="noopener">Russell Miller</a> · Free for personal use · Companies: <a href="mailto:${CREDIT.email}?subject=Dataflowgram%20licence">${CREDIT.email}</a></p>` : ''}
+  ${c.credit ? `<p class="df-credit">Made with <a href="${CREDIT.repo}" target="_blank" rel="noopener">Dataflowgram</a> by <a href="${CREDIT.site}" target="_blank" rel="noopener">Russell Miller</a> · <a href="${CREDIT.site}" target="_blank" rel="noopener">russellmiller.io</a> · <a href="${CREDIT.linkedin}" target="_blank" rel="noopener">LinkedIn</a> · Free for personal use · Companies: <a href="mailto:${CREDIT.email}?subject=Dataflowgram%20licence">${CREDIT.email}</a></p>` : ''}
 </div>
 <script>
 (function(){
@@ -509,29 +688,56 @@ mount(document.getElementById(${JSON.stringify(prefix)}), ${pageData(c)}, ${JSON
 `;
 }
 
-// A whole page that holds one diagram.
+// A whole page that holds one diagram. Light or dark follows the computer's setting; the button
+// in the top right switches it, and "theme": "light" or "dark" in the description fixes the start.
 export function renderPage(spec) {
   const c = compile(spec);
+  const start = spec.theme === 'light' || spec.theme === 'dark' ? ` data-df-theme="${spec.theme}"` : '';
   return `<!doctype html>
-<html lang="en">
+<html lang="en"${start}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(c.title || 'Data flow')}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<script>
+(function(){try{var q=/[?&]theme=(light|dark)/.exec(location.search);var s=q?q[1]:localStorage.getItem('df-theme');if(s==='light'||s==='dark')document.documentElement.setAttribute('data-df-theme',s);}catch(e){}})();
+</script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#E9EFF6;color:#14233A;font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.5}
-main{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
-h1{font-size:1.7rem;line-height:1.2;margin:0}
-.lede{color:#51627A;max-width:680px;margin:8px 0 20px}
+:root{--pg-bg:#f4f5f9;--pg-ink:#141824;--pg-ink2:#596174;--pg-dot:rgba(20,24,36,.075);--pg-glow1:rgba(99,102,241,.13);--pg-glow2:rgba(20,184,166,.09);--pg-line:rgba(20,24,36,.14);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
+  background-color:var(--pg-bg);
+  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px);
+  background-size:100% 100%,100% 100%,24px 24px;background-repeat:no-repeat,no-repeat,repeat;background-attachment:fixed,fixed,fixed}
+main{max-width:1720px;margin:0 auto;padding:28px clamp(16px,3vw,48px) 56px}
+.pg-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.pg-kicker{display:flex;align-items:center;gap:12px;margin:0;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pg-ink2)}
+.pg-kicker::before{content:"";width:34px;height:1.5px;background:currentColor}
+h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-size:clamp(2rem,4.2vw,3rem);line-height:1.08;letter-spacing:-.03em;margin:14px 0 0}
+.lede{color:var(--pg-ink2);max-width:680px;margin:12px 0 28px;font-size:1.08rem}
+.pg-mode{white-space:nowrap;flex:none;font:inherit;font-size:.9rem;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;cursor:pointer;color:var(--pg-ink);
+  background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+.pg-mode svg{width:16px;height:16px}
 </style>
 </head>
 <body>
 <main>
+<div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
+<button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div>
 <h1>${esc(c.title || 'Data flow')}</h1>
 ${c.intro ? `<p class="lede">${esc(c.intro)}</p>` : ''}
 ${renderFragment(spec, 'df')}
 </main>
+<script>
+(function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
+var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
+var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
+</script>
 </body>
 </html>
 `;

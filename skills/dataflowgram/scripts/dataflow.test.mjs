@@ -4,8 +4,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compile, renderFragment, renderPage, KINDS, ACTIONS } from './dataflow.mjs';
-import { stepView, shortText, readLink, tagOpacity } from './runtime.mjs';
+import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor } from './dataflow.mjs';
+import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -130,13 +130,13 @@ test('2 lines that leave the same side of a box leave from different points', ()
 test('the page gives each kind of part and each kind of step its own colour and icon', () => {
   const html = renderFragment(example(), 'demo');
   // each part carries its kind's class, and the kind's colour is in the styles
-  assert.match(html, /class="df-node df-k-mail" data-node="inbox"/);
-  assert.match(html, /class="df-node df-k-ai" data-node="model"/);
+  assert.match(html, /class="df-node df-k-mail"[^>]* data-node="inbox"/);
+  assert.match(html, /class="df-node df-k-ai"[^>]* data-node="model"/);
   assert.ok(html.includes(`.df-k-mail{--c:${KINDS.mail.color}`));
-  // one arrowhead per action used, in that action's colour
+  // one arrowhead per action used; it takes the colour of the line it sits on
   for (const a of ['send', 'check', 'read', 'think', 'write', 'save', 'reply']) {
     assert.ok(html.includes(`id="demo-m-${a}"`), `arrowhead for ${a}`);
-    assert.ok(html.includes(`fill="${ACTIONS[a].color}"`), `colour for ${a}`);
+    assert.ok(html.includes(`fill="context-stroke"`), `the arrowhead for ${a} takes the colour of its line`);
   }
   assert.ok(!html.includes('id="demo-m-search"'), 'no arrowhead for an action the diagram does not use');
   // the icon a part asks for is the icon drawn: the phone's shape is in its box
@@ -295,6 +295,212 @@ test('a wrong item, time or if-not is refused with a message that names the faul
   bad({ ifNot: 'z'.repeat(161) }, /"ifNot" has 161 characters; 160 fit/);
 });
 
+test('the everything-at-once view lists what every line carries, each way, with the steps that send it', () => {
+  const data = compile({
+    title: 'T', rows: [['a', 'b'], ['c']],
+    parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' }, c: { label: 'C', kind: 'store' } },
+    lines: [['a', 'b'], ['a', 'c']],
+    scenarios: [{ id: 's', label: 'S', steps: [
+      { action: 'send', flow: ['a>b'], text: 'A asks B', carry: { icon: 'package', label: 'question' } },
+      { action: 'reply', flow: ['b>a'], text: 'B answers A', carry: { icon: 'package', label: 'answer' } },
+      { action: 'send', flow: ['a>b'], text: 'A asks B again', carry: { icon: 'package', label: 'question' } },
+      { action: 'write', flow: ['a>c'], text: 'A saves the answer to C.' },
+      { action: 'think', at: ['a'], text: 'A works alone' },
+    ] }],
+  });
+  const wires = overview(data, 's');
+  assert.equal(wires.length, 2, 'only the 2 lines that carry data; the step with no flow adds none');
+  const ab = wires[0].sends;
+  assert.deepEqual(ab.map((s) => [s.from, s.to, s.label, s.steps]), [['a', 'b', 'question', [1, 3]], ['b', 'a', 'answer', [2]]]);
+  assert.notEqual(ab[0].dir, ab[1].dir, 'the two ways along one line are told apart');
+  const ac = wires[1].sends;
+  assert.deepEqual([ac[0].from, ac[0].to, ac[0].label, ac[0].steps], ['a', 'c', '', [4]]);
+  assert.equal(ac[0].text, 'A saves the answer to C.', 'a send with no tag keeps its sentence, so the list can still say what it is');
+  assert.throws(() => overview(data, 'nope'), /unknown scenario/);
+  // the page carries the switch and the list the view fills
+  const html = renderFragment({ title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' } }, lines: [['a', 'b']], scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'x' }] }] }, 'df');
+  assert.match(html, /data-view="all"[^>]*>Everything at once</);
+  assert.match(html, /class="df-all" hidden/);
+});
+
+test('in the everything-at-once view, each tag carries an arrow that points the way its data goes', () => {
+  // a line drawn left to right (dx 100): data along it goes right, data against it goes left
+  assert.equal(arrowLabel('card charge', 'f', 100, 0), 'card charge \u2192');
+  assert.equal(arrowLabel('approved', 'b', 100, 0), '\u2190 approved');
+  // a line drawn top to bottom (dy 100): along it is down, against it is up
+  assert.equal(arrowLabel('email', 'f', 0, 100), 'email \u2193');
+  assert.equal(arrowLabel('reply', 'b', 0, 100), 'reply \u2191');
+  // a line drawn right to left or bottom to top flips them
+  assert.equal(arrowLabel('a', 'f', -100, 0), '\u2190 a');
+  assert.equal(arrowLabel('a', 'f', 0, -100), 'a \u2191');
+  // data that goes both ways in one step shows a two-headed arrow
+  assert.equal(arrowLabel('text and fields', 'x', 100, 0), 'text and fields \u2194');
+  assert.equal(arrowLabel('sync', 'x', 0, 100), 'sync \u2195');
+});
+
+test('a line that carries data both ways is split into one lane per direction, set apart from each other', () => {
+  const oneWay = lanesOf([{ dir: 'f', label: 'a' }, { dir: 'f', label: 'b' }]);
+  assert.equal(oneWay.length, 1);
+  assert.equal(oneWay[0].offset, 0, 'a one-way line stays where it is');
+  assert.equal(oneWay[0].sends.length, 2);
+  const twoWay = lanesOf([{ dir: 'f', label: 'question' }, { dir: 'b', label: 'answer' }, { dir: 'f', label: 'again' }]);
+  assert.equal(twoWay.length, 2, 'one lane out, one lane back');
+  assert.deepEqual(twoWay.map((l) => l.sends.map((s) => s.label)), [['question', 'again'], ['answer']]);
+  assert.ok(Math.abs(twoWay[0].offset - twoWay[1].offset) >= 30, 'the lanes sit far enough apart for a tag on each');
+  assert.equal(twoWay[0].offset, -twoWay[1].offset, 'they sit evenly either side of the middle');
+  // a send that goes both ways in one step gets its own middle lane
+  assert.deepEqual(lanesOf([{ dir: 'f' }, { dir: 'x' }, { dir: 'b' }]).map((l) => l.dir), ['f', 'x', 'b']);
+});
+
+test('in the everything-at-once view, a tag never lands on a tag placed before it', () => {
+  const placed = [];
+  const spots = [{ x: 100, y: 100 }, { x: 100, y: 130 }, { x: 100, y: 160 }];
+  const overlap = (a, b) => Math.abs(a.x - b.x) < (a.w + b.w) / 2 && Math.abs(a.y - b.y) < (a.h + b.h) / 2;
+  const first = freeSpot(spots, 120, 26, placed);
+  const second = freeSpot(spots, 120, 26, placed);
+  const third = freeSpot(spots, 120, 26, placed);
+  assert.deepEqual(first, { x: 100, y: 100 }, 'the first tag takes the preferred place');
+  assert.notDeepEqual(second, first, 'the second tag moves off the first');
+  assert.equal(overlap(placed[0], placed[1]) || overlap(placed[1], placed[2]) || overlap(placed[0], placed[2]), false);
+  assert.equal(third.y, 160);
+  // a tag far to the side is free to take the preferred place
+  assert.deepEqual(freeSpot([{ x: 400, y: 100 }, { x: 400, y: 130 }], 120, 26, placed), { x: 400, y: 100 });
+  // with no free place left, it still gets a place instead of vanishing
+  assert.deepEqual(freeSpot([{ x: 100, y: 100 }], 120, 26, placed), { x: 100, y: 100 });
+});
+
+test('boxes in a row sit just far enough apart to read the data between them, and no further', () => {
+  // 18 November 2026: "boxes should be closer together because it is easier to scan all at once,
+  // but just wide enough for the data flow to be easy to see"
+  const mk = (label) => compile({ title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' } }, lines: [['a', 'b']],
+    scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'x', carry: { icon: 'package', label } }] }] });
+  const gapOf = (c) => c.nodes.b.x - (c.nodes.a.x + c.nodes.a.w);
+  const short = mk('id');
+  const long = mk('x'.repeat(22));
+  assert.ok(gapOf(long) > gapOf(short), 'a longer tag gets a wider gap');
+  // the longest tag, with its arrow, fits with at least 30 units of line showing on each side
+  const tagWide = tagWidth('x'.repeat(22)) + 14;
+  assert.ok(gapOf(long) >= tagWide + 60, `gap ${gapOf(long)} holds a ${tagWide} tag with line each side`);
+  assert.ok(gapOf(long) <= tagWide + 80, 'and is no wider than that needs');
+  assert.ok(gapOf(short) <= 150, 'a short tag keeps the boxes close');
+  // the drawing is only as wide as its row: no empty band at either side
+  assert.ok(short.nodes.a.x <= 12 && short.width - (short.nodes.b.x + short.nodes.b.w) <= 12);
+  // a row of 3 is capped so the drawing stays compact
+  assert.equal(gapFor(22, 3), 160);
+  assert.equal(gapFor(22, 2), gapOf(long));
+});
+
+test('parts outside the owner system get one shaded region when they sit together, and a mark each when they do not', () => {
+  const box = (x, y, outside) => ({ x, y, w: 100, h: 80, outside });
+  // 2 outside parts stacked on the right, inside parts on the left: one region around the 2
+  const r = regionOf([box(0, 0, false), box(300, 0, true), box(0, 200, false), box(300, 200, true)]);
+  assert.ok(r, 'a region is drawn');
+  assert.ok(r.x < 300 && r.x + r.w > 400 && r.y < 0 && r.y + r.h > 280, 'it holds both outside parts');
+  assert.ok(r.x > 100, 'it stops short of the inside parts');
+  // an inside part between 2 outside parts: no single region is honest
+  assert.equal(regionOf([box(300, 0, true), box(300, 200, false), box(300, 400, true)]), null);
+  assert.equal(regionOf([box(0, 0, false)]), null, 'no outside parts, no region');
+  // on a page: the region carries its words; with no region each outside part is marked
+  const spec = (rows) => ({ title: 'T', rows, parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' }, c: { label: 'C', kind: 'outside' }, d: { label: 'D', kind: 'store' } },
+    lines: [['a', 'b']], scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'x' }] }] });
+  const together = renderFragment(spec([['a', 'b'], ['d', 'c']]), 'df');
+  assert.match(together, /class="df-outzone"/);
+  assert.match(together, />OUTSIDE YOUR SYSTEM</);
+  assert.doesNotMatch(together, /class="df-out-l"/);
+  const split = renderFragment(spec([['b', 'a'], ['d', 'c']]), 'df');
+  assert.doesNotMatch(split, /class="df-outzone"/);
+  assert.equal((split.match(/class="df-out-l"/g) || []).length, 2, 'each of the 2 outside parts is marked');
+});
+
+test('nothing moves unless the reader switches movement on, and never when the computer asks for less', () => {
+  assert.equal(moves(false, false), false, 'off by default');
+  assert.equal(moves(true, false), true, 'on when the reader asks');
+  assert.equal(moves(true, true), false, 'a computer set to reduce motion wins');
+  assert.equal(moves(undefined, false), false);
+  // the page carries the switch, and it starts off
+  const html = renderFragment(example(), 'demo');
+  assert.match(html, /class="df-motion" aria-pressed="false"[^>]*>Motion: off</);
+});
+
+test('the page explains what a dashed, a faint, a coloured and a grey line mean', () => {
+  const html = renderFragment(example(), 'demo');
+  assert.match(html, /Bold: data goes along this line in this step/);
+  assert.match(html, /Faint: used in an earlier step/);
+  assert.match(html, /Coloured: carries data, in the sender's colour/);
+  assert.match(html, /Grey: joined, no data in this view/);
+});
+
+test('no two parts joined by a line share a colour, so data from each sender can be told apart', () => {
+  // 3 programs in a chain, all one kind: the old rule made all 3 the same colour
+  const chain = colourParts(['a', 'b', 'c'], { a: 'program', b: 'program', c: 'program' }, [['a', 'b'], ['b', 'c']]);
+  assert.equal(chain.a.color, KINDS.program.color, 'the first part keeps its kind colour');
+  assert.notEqual(chain.a.color, chain.b.color);
+  assert.notEqual(chain.b.color, chain.c.color);
+  assert.notEqual(chain.a.color, chain.c.color, 'two parts that both send to b differ too');
+  // 2 outside systems that both talk to one shop: their replies must not look alike
+  const shop = colourParts(['mail', 'shop', 'pay'], { mail: 'outside', shop: 'program', pay: 'outside' }, [['shop', 'mail'], ['shop', 'pay']]);
+  assert.notEqual(shop.mail.color, shop.pay.color);
+  // parts with no line between them, and no shared neighbour, keep their kind colour
+  const apart = colourParts(['x', 'y'], { x: 'store', y: 'store' }, []);
+  assert.equal(apart.x.color, KINDS.store.color);
+  assert.equal(apart.y.color, KINDS.store.color);
+  // on a real diagram: every line joins 2 different colours, and each box carries its colour on the page
+  const c = compile(example());
+  c.edges.forEach((e) => assert.notEqual(c.nodes[e.from].color, c.nodes[e.to].color, `${e.from} and ${e.to} share a colour`));
+  const html = renderFragment(example(), 'demo');
+  Object.values(c.nodes).forEach((n) => assert.ok(html.includes(`style="--c:${n.color};--t:${n.tint}" data-node="${n.id}"`), `${n.id} carries its colour`));
+});
+
+test('each step takes the colour of the part that SENDS the data, and its trail remembers earlier senders', () => {
+  const spec = {
+    title: 'T', rows: [['a', 'b'], ['c']],
+    parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' }, c: { label: 'C', kind: 'store' } },
+    lines: [['a', 'b'], ['a', 'c']],
+    scenarios: [{ id: 's', label: 'S', steps: [
+      { action: 'send', flow: ['a>b'], text: 'A sends to B' },
+      { action: 'reply', flow: ['b>a'], text: 'B answers A' },
+      { action: 'write', flow: ['a>c'], text: 'A saves to C' },
+      { action: 'think', at: ['a'], text: 'A works alone' },
+    ] }],
+  };
+  const data = compile(spec);
+  assert.equal(stepView(data, 's', 0).focus, 'a', 'the sender, not the receiver (18 November 2026)');
+  assert.equal(stepView(data, 's', 1).focus, 'b', 'a reply takes the colour of the part that replies');
+  assert.equal(stepView(data, 's', 2).focus, 'a');
+  assert.equal(stepView(data, 's', 3).focus, 'a', 'a step with no flow focuses the part that works');
+  // at step 3 the a-b line is trail, and it keeps the sender of the latest step that used it
+  const v = stepView(data, 's', 2);
+  const abEdge = Object.keys(v.trailFocus)[0];
+  assert.equal(v.trailFocus[abEdge], 'b');
+});
+
+test('between 2 boxes in one row, even the longest tag travels the line; it never stands still beside it', () => {
+  // 18 November 2026: tags on side-by-side lines were parked above the line to stop them covering labels.
+  // That removed the movement the tag exists to show. The row must leave room for the tag to travel.
+  const c = compile({ title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' } }, lines: [['a', 'b']],
+    scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'A sends to B', carry: { icon: 'package', label: 'x'.repeat(22) } }] }] });
+  const lineLength = c.nodes.b.x - (c.nodes.a.x + c.nodes.a.w);
+  const longest = tagWidth(c.scenarios[0].steps[0].carry.label);
+  assert.ok(tagRides(lineLength, longest), `a ${longest}-wide tag must ride a ${lineLength}-long line`);
+  assert.equal(tagRides(8, longest), false, 'a line far shorter than the tag is the only case that parks it');
+});
+
+test('the travelling dot runs the way the data goes, and side-by-side boxes leave room to see it', () => {
+  assert.equal(dotPosition(0, 'f'), 0);
+  assert.equal(dotPosition(1, 'f'), 1);
+  assert.ok(dotPosition(0.25, 'f') < dotPosition(0.75, 'f'), 'a forward dot moves start to end');
+  assert.ok(dotPosition(0.25, 'b') > dotPosition(0.75, 'b'), 'a reply dot moves end to start');
+  assert.equal(dotPosition(0.5, 'x'), 1);
+  assert.equal(dotPosition(0.999, 'x') < 0.01, true, 'a two-way dot comes back');
+  assert.equal(dotOpacity(0, 'f'), 0);
+  assert.equal(dotOpacity(0.5, 'f'), 1);
+  assert.equal(dotOpacity(1, 'b'), 0);
+  // two boxes in one row: the gap between them is wide enough for a line, an arrowhead and the dot
+  const c = compile({ title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'program' } }, lines: [['a', 'b']], scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'A sends to B' }] }] });
+  const [left, right] = [c.nodes.a, c.nodes.b];
+  assert.ok(right.x - (left.x + left.w) >= 48, `gap is ${right.x - (left.x + left.w)}`);
+});
+
 test('a one-way tag fades in as it leaves and out as it arrives, so it never jumps back to the start', () => {
   assert.equal(tagOpacity(0, 'f', false), 0);
   assert.equal(tagOpacity(1, 'f', false), 0);
@@ -312,7 +518,8 @@ test('every diagram carries the credit link in the lower right unless the descri
   const on = renderFragment(tiny(), 'c1');
   const credit = /<p class="df-credit">(.*?)<\/p>/.exec(on);
   assert.ok(credit, 'the credit is on the page');
-  assert.equal(credit[1].replace(/<[^>]+>/g, ''), 'Made with Dataflowgram by Russell Miller · Free for personal use · Companies: rmiller@zavient.com');
+  assert.equal(credit[1].replace(/<[^>]+>/g, ''), 'Made with Dataflowgram by Russell Miller · russellmiller.io · LinkedIn · Free for personal use · Companies: rmiller@zavient.com');
+  assert.match(credit[1], /href="https:\/\/www\.linkedin\.com\/in\/russellmiller"/);
   assert.match(credit[1], /href="https:\/\/russellmiller\.io"/);
   assert.match(credit[1], /href="mailto:rmiller@zavient\.com\?subject=Dataflowgram%20licence"/);
   assert.match(renderPage(example()), /class="df-credit"/, 'a whole page carries it too');

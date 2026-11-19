@@ -7,11 +7,15 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 **What it makes.** One HTML page, or a block to paste into a page. The reader presses Next step or Play:
 
-- the line that moves data lights up in the step's colour, with an arrow for the direction;
-- a tag with an icon rides the line and names what moves ("Q3 letter PDF", "2 new rows");
+- the line that moves data lights up in the colour of the part that sends it, with an arrow for the direction;
+- a tag with an icon sits on the line and names what moves ("Q3 letter PDF →", "2 new rows ↓"), with an arrow for its direction;
+- nothing moves by default. The "Motion" switch makes the tag travel its line; a computer set to reduce motion keeps it off;
 - a side panel shows a sample of the real item: the email, the row, the request;
 - a red note appears when data leaves the owner's system, such as to a payment provider or an AI model;
-- earlier steps stay faintly coloured, so the last step shows the whole path.
+- earlier steps stay faintly coloured, so the last step shows the whole path;
+- the "Everything at once" switch shows a still picture: every line lit, every item named on it with an arrow for its direction, and a list of who sends what to whom. A line used both ways is drawn as 2 lanes.
+
+**Colour means "which part".** Each part gets its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, and neither do 2 parts that send to the same part. A part keeps the colour of its kind when that colour is free. The builder does this; do not set colours by hand.
 
 **Why a description file, not hand-written markup.** The builder places every box, spreads the lines so none overlap, checks that every label fits its box, and refuses a step that names a line that does not exist.
 
@@ -26,6 +30,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
    - a block for another page: `node <skill>/scripts/dataflow.mjs fragment spec.json block.html <block-id>`. Give each block on one page its own id.
 4. Find an icon: `node <skill>/scripts/dataflow.mjs icons <word>` lists Lucide icon names that contain the word.
 5. Link to one step: add `#<block-id>=<scenario id>.<step number>` to the page address. A whole page uses the block id `df`.
+6. Link to the still picture of everything: add `#<block-id>=all`.
 
 ## The description file
 
@@ -57,6 +62,19 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 ## Credit and licence
 
 Every diagram shows a small credit in its lower right corner, linked to the author's site. The licence (PolyForm Noncommercial 1.0.0 with one added term) requires the credit to stay. Only a commercial licence from the author allows `"credit": false`. Personal and noncommercial use is free; use at or for a company needs a commercial licence from rmiller@zavient.com.
+
+## Starting from a codebase
+
+When the user points at code ("draw the data flow of the checkout folder"), read before you write the description file:
+
+1. **Find where the flow starts:** the route, the form handler, the job, the webhook or the scheduled task the user named.
+2. **Follow one request through.** Each call that crosses a boundary is a line: a database read or write, a queue, a file store, another service, an outside company's API, an email or a message sent to a person.
+3. **Each boundary is a part.** Name it by what it is to the reader ("Orders table", "Payment provider"), not by its class or file name.
+4. **Each crossing is a step,** in the order the code runs. The `carry` tag names the thing sent, taken from the real fields ("$19.00 card charge", "order #1042").
+5. **Mark what leaves.** Any part run by another company is `outside`: payment, email, AI model, analytics. Say what data goes to it.
+6. **Build each `item` from the real shape:** the actual field names, with made-up values. Never copy real customer data or a secret into the page.
+7. **One scenario per path.** The main path first; a failed payment or a retry is a second scenario, or an `ifNot` line on the step.
+8. **Say what you could not see.** If a step depends on code or settings you did not read, tell the user; do not invent it.
 
 ## Rules for a good diagram
 

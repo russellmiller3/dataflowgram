@@ -64,15 +64,6 @@
       "info": "A monthly file from the accounting system. The hub only reads it."
     }
   },
-  "zones": [
-    {
-      "label": "INSIDE THE COMPANY'S OWN ACCOUNT",
-      "rows": [
-        2,
-        4
-      ]
-    }
-  ],
   "lines": [
     [
       "phone",
