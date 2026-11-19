@@ -163,3 +163,8 @@ Tests: 35 of 35 pass (run through Runner).
   put the keyboard in the old, replaced box, so typing went nowhere (owner report). The keyboard now goes to the new
   box after the redraw, cursor at the end. Checked by hand: typed, stretched the arrow, kept typing, clicked away, clicked
   back in and added text; 0 errors.
+- **Notes start by pointing, then typing, like Figma or Acrobat comments** (owner asked which is more natural). A click
+  on the thing drops a dot there and opens the note beside it; drag the note away and an arrow runs back to the dot. No
+  arrow that appears and disappears. A note being typed can still be dragged: a short click moves the cursor, a drag
+  moves the box. **Clear all** removes every mark after a confirm; Undo brings them back. The page now moves down by the
+  strip's real height (it wraps to 2 rows on a narrow window). Checked by hand in a browser: 0 errors.

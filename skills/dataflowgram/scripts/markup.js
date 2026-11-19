@@ -11,7 +11,7 @@
   var NS = 'http://www.w3.org/2000/svg';
   var TOOLS = [['note', 'Note'], ['move', 'Move this'], ['del', 'Delete this']];
   var HINTS = {
-    note: 'Click to add a note. Drag its arrow tip to point at something.',
+    note: 'Click the thing, then type. Drag the note away and an arrow follows.',
     move: 'Box it, then click where it goes.',
     del: 'Box the thing to delete.',
   };
@@ -42,12 +42,11 @@
   }
   function remember() { undoStack.push(JSON.stringify(data.items)); if (undoStack.length > 100) undoStack.shift(); }
   function drop(i) { data.items.splice(i, 1); sel = -1; aiming = -1; }
-  // A note is done when the reader moves on: an arrow never stretched goes away, and an empty note goes away.
+  // A note is done when the reader moves on: an empty note goes away.
   // Returns the place of a note that went away, or -1.
   function finish(i) {
     var it = data.items[i];
     if (!it || it.type !== 'note') return -1;
-    if (!it.tipSet) it.tip = null;
     if (!String(it.text || '').trim()) { data.items.splice(i, 1); return i; }
     tagDiagram(it);
     return -1;
@@ -130,11 +129,14 @@
           n.addEventListener('input', function () { it.text = n.textContent; save(); });
           l.appendChild(n);
           if (it.tip) {
+            // a dot marks the spot the note is about; once the note is dragged away, an arrow runs back to the dot
             var r = { x: n.offsetLeft, y: n.offsetTop, w: n.offsetWidth, h: n.offsetHeight };
             var tx = X(it.tip[0]), ty = Y(it.tip[1]);
             if (!inside(r, tx, ty)) {
               var e = edge(r, tx, ty);
-              g.appendChild(svgEl('line', { x1: e[0], y1: e[1], x2: tx, y2: ty, 'marker-end': 'url(#mk-ah-' + id + ')', 'data-i': i }, 'mk-note-line'));
+              if (Math.hypot(e[0] - tx, e[1] - ty) > 28) {
+                g.appendChild(svgEl('line', { x1: e[0], y1: e[1], x2: tx, y2: ty, 'marker-end': 'url(#mk-ah-' + id + ')', 'data-i': i }, 'mk-note-line'));
+              } else g.appendChild(svgEl('circle', { cx: tx, cy: ty, r: 4.5, 'data-i': i }, 'mk-note-dot'));
             }
             if (on && i === sel) g.appendChild(svgEl('circle', { cx: tx, cy: ty, r: 7, 'data-i': i, 'data-h': 'tip' }, 'mk-handle'));
           }
@@ -220,7 +222,11 @@
     if (hit) {
       var i = Number(hit.getAttribute('data-i'));
       var handle = hit.getAttribute('data-h');
-      if (data.items[i].type === 'note' && !handle && document.activeElement === hit) return; // typing: just move the cursor
+      // a press inside the note being typed: a short click moves the text cursor, a drag moves the note
+      if (data.items[i].type === 'note' && !handle && document.activeElement === hit) {
+        drag = { a: a, layer: layer, mode: 'shift', soft: true, start: p, orig: JSON.parse(JSON.stringify(data.items[i])), moved: false };
+        return;
+      }
       remember();
       i = select(i);
       if (i < 0) { render(); return; }
@@ -240,7 +246,7 @@
     remember();
     select(-1);
     var it = { anchor: idOf(a), type: tool, x1: p[0], y1: p[1], x2: p[0], y2: p[1] };
-    if (tool === 'note') { it.text = ''; it.tip = null; it.tipSet = false; }
+    if (tool === 'note') { it.text = ''; it.tip = null; }
     data.items.push(it);
     sel = data.items.length - 1;
     drag = { a: a, mode: 'draw', start: p, moved: false };
@@ -260,6 +266,13 @@
     var p = frac(drag.a, e);
     it = data.items[sel];
     if (!it) return;
+    if (drag.soft && !drag.moved) {
+      if (!far(drag.a, p, drag.start)) return; // still a click: leave the typing alone
+      remember();
+      var s0 = window.getSelection();
+      if (s0) s0.removeAllRanges();
+      try { drag.layer.setPointerCapture(e.pointerId); } catch (err) { /* the move still follows the pointer */ }
+    }
     if (far(drag.a, p, drag.start)) drag.moved = true;
     if (drag.mode === 'draw') {
       if (it.type === 'note') {
@@ -268,7 +281,6 @@
       } else { it.x2 = p[0]; it.y2 = p[1]; }
     } else if (drag.mode === 'handle') {
       it[drag.handle] = p;
-      if (drag.handle === 'tip' && drag.moved) it.tipSet = true; // stretched: the arrow stays
     } else {
       var dx = p[0] - drag.start[0], dy = p[1] - drag.start[1], o = drag.orig;
       it.x1 = o.x1 + dx; it.y1 = o.y1 + dy;
@@ -283,15 +295,16 @@
     var it = data.items[sel];
     var d = drag;
     drag = null;
+    if (d.soft && !d.moved) return; // a click inside the note being typed: the cursor moved, nothing else
     if (!it) { render(); return; }
     if (d.mode === 'draw') {
       if (it.type === 'note') {
-        if (d.moved) it.tipSet = true; // dragged out from the thing: the arrow is meant
-        else {
-          // a plain click: a short arrow waits beside the box; stretch it to point, or it goes away when the note is done
+        if (!d.moved) {
+          // a click on the thing: the dot sits on the spot clicked, and the note opens just beside it, ready to type
           var sz = size(d.a);
-          it.tip = [Math.max(0, it.x1 - 34 / sz.w), Math.min(1, it.y1 + 64 / sz.h)];
-          it.tipSet = false;
+          it.tip = [it.x1, it.y1];
+          it.x1 = Math.min(1, it.x1 + 14 / sz.w);
+          it.y1 = Math.min(1, it.y1 + 10 / sz.h);
         }
         tagDiagram(it); save(); render();
         typeInto(d.a, sel);
@@ -334,6 +347,7 @@
   bar.innerHTML = TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-t-' + k[0] + '">' + k[1] + '</button>'; }).join('') +
     '<span class="mk-hint"></span>' +
     '<button type="button" data-act="undo">Undo</button><button type="button" data-act="remove">Remove mark</button>' +
+    '<button type="button" data-act="clear">Clear all</button>' +
     '<button type="button" data-act="done" class="mk-done">Done</button>';
   document.body.appendChild(bar);
   function setTool(t) {
@@ -351,6 +365,12 @@
     var act = b.dataset.act;
     if (act === 'undo' && undoStack.length) { data.items = JSON.parse(undoStack.pop()); sel = -1; aiming = -1; save(); render(); }
     else if (act === 'remove' && data.items[sel]) { remember(); drop(sel); save(); render(); }
+    else if (act === 'clear' && data.items.length) {
+      // every mark on every tab; Undo brings them all back
+      var n = data.items.length;
+      if (!window.confirm('Remove all ' + n + ' mark' + (n === 1 ? '' : 's') + ' on every tab? Undo brings them back.')) return;
+      remember(); data.items = []; sel = -1; aiming = -1; save(); render();
+    }
     else if (act === 'done') setOn(false);
   });
   function setOn(v) {
@@ -358,6 +378,7 @@
     select(-1);
     aiming = -1;
     document.body.classList.toggle('mk-on', on);
+    makeRoom();
     save();
     render();
   }
@@ -402,7 +423,9 @@
   document.querySelectorAll('.pg-markup').forEach(function (b) { b.addEventListener('click', function () { setOn(!on); }); });
   document.querySelectorAll('.pg-sendnotes').forEach(function (b) { b.addEventListener('click', saveCopy); });
   // a tab change or a new window size moves things: draw again
-  window.addEventListener('resize', render);
+  // the page moves down by the strip's real height (one row on a wide window, two on a narrow one), so it covers nothing
+  function makeRoom() { document.body.style.paddingTop = on ? bar.offsetHeight + 'px' : ''; }
+  window.addEventListener('resize', function () { makeRoom(); render(); });
   document.addEventListener('click', function (e) { if (e.target.closest('.pg-tab, .df-view button, .df-scen button')) setTimeout(render, 0); });
   setTool('note');
   render();

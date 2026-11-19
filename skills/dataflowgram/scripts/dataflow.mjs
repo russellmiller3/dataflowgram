@@ -887,6 +887,7 @@ body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
 body.mk-on .mk-svg [data-i]{pointer-events:visiblePainted;cursor:move}
 body.mk-on .mk-svg rect[data-i]{pointer-events:all}
 .mk-note-line{stroke:#6B4423;stroke-width:3;stroke-linecap:round}
+.mk-note-dot{fill:#6B4423;stroke:#FDF6A3;stroke-width:1.5}
 .mk-ah{fill:#6B4423}
 .mk-move{fill:rgba(37,99,235,.06);stroke:#2563EB;stroke-width:3;stroke-dasharray:8 5}
 .mk-move-line{stroke:#2563EB;stroke-width:3.5;stroke-linecap:round}
@@ -907,7 +908,6 @@ body.mk-on .mk-note{cursor:move}
 /* marking up: a highlighter-yellow strip across the top; the page moves down so the strip covers nothing */
 .mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#FDE047;color:#422006;padding:7px 12px;border-bottom:1px solid #CA8A04;box-shadow:0 2px 10px rgba(66,32,6,.18);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
 body.mk-on .mk-bar{display:flex}
-body.mk-on{padding-top:50px}
 .mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#422006;background:rgba(255,255,255,.35);border:1px solid rgba(66,32,6,.3);border-radius:6px;padding:5px 10px;cursor:pointer}
 .mk-bar button:hover{background:rgba(255,255,255,.7)}
 .mk-bar button[aria-pressed="true"]{background:#422006;color:#FDE047;border-color:#422006}
