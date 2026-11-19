@@ -895,18 +895,21 @@ body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
 .mk-svg *{pointer-events:none}
 body.mk-on .mk-svg [data-i]{pointer-events:visiblePainted;cursor:move}
 body.mk-on .mk-svg rect[data-i]{pointer-events:all}
-.mk-note-line{stroke:#6B4423;stroke-width:3;stroke-linecap:round}
-.mk-note-dot{fill:#6B4423;stroke:#FDF6A3;stroke-width:1.5}
-.mk-ah{fill:#6B4423}
+/* arrows stand out: highlighter yellow-green for notes, blue for Move, each on a dark edge */
+.mk-note-edge{stroke:#365314;stroke-width:9;stroke-linecap:round}
+.mk-note-line{stroke:#CCF526;stroke-width:5;stroke-linecap:round}
+.mk-note-dot{fill:#CCF526;stroke:#365314;stroke-width:2.5}
+.mk-ah{fill:#CCF526;stroke:#365314;stroke-width:1.4}
 .mk-move{fill:rgba(37,99,235,.06);stroke:#2563EB;stroke-width:3;stroke-dasharray:8 5}
-.mk-move-line{stroke:#2563EB;stroke-width:3.5;stroke-linecap:round}
-.mk-mh{fill:#2563EB}
+.mk-move-edge{stroke:#172554;stroke-width:9;stroke-linecap:round}
+.mk-move-line{stroke:#3B82F6;stroke-width:5;stroke-linecap:round}
+.mk-mh{fill:#3B82F6;stroke:#172554;stroke-width:1.4}
 .mk-move-t{fill:#1D4ED8;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
 .mk-del{fill:rgba(225,29,72,.08);stroke:#E11D48;stroke-width:3}
 .mk-del-x{stroke:#E11D48;stroke-width:3;stroke-linecap:round}
 .mk-del-t{fill:#BE123C;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
 .mk-move.mk-sel,.mk-del.mk-sel{stroke-width:5;filter:drop-shadow(0 0 4px rgba(0,0,0,.25))}
-.mk-handle{fill:#fff;stroke:#6B4423;stroke-width:3;cursor:grab!important}
+.mk-handle{fill:#fff;stroke:#365314;stroke-width:3;cursor:grab!important}
 .mk-handle-move{stroke:#2563EB}
 .mk-x{position:absolute;width:22px;height:22px;border-radius:50%;border:0;background:#4A3510;color:#F8E3A3;font:700 15px/22px "Inter",ui-sans-serif,system-ui,sans-serif;text-align:center;padding:0;cursor:pointer;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2}
 .mk-x:hover{background:#BE123C;color:#fff}
@@ -1058,6 +1061,7 @@ export function readNotes(html, specs) {
       if (Array.isArray(it.at)) at = boxAt(it.at[0], it.at[1]);
       if (Array.isArray(it.from)) from = boxAt(it.from[0], it.from[1]);
     }
+    if (!at && it.target) at = String(it.target);
     out.push({ diagram, kind: KIND[it.type] || String(it.type || ''), text: String(it.text || '').trim(), at, from });
   }
   // older copies: marks drawn with marker.js on a picture of one diagram

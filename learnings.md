@@ -208,3 +208,10 @@ Tests: 35 of 35 pass (run through Runner).
   in headless Chrome with real mouse presses, drags and typing; 3 tests use it (mark everywhere, buttons still work,
   2 tabs print as 2 pages). Each failed before its fix. 56 of 56 pass; the client set still prints 10 pages.
 - **TOOLS.md lists the real-click driver** (19 November 2026): the tools index now names drive.mjs, the headless-Chrome driver the mark-up tests use, so a later session finds it instead of building another.
+- **Arrows reach the tabs and stand out** (owner, a note drawn on the page, 19 November 2026: "Make it so that arrows
+  can go over tabs. Also arrows should be thicker and brighter ... highlighter yellow green?"). Cause: every point was
+  held inside its own tab, so a tip stopped at the edge. Now a point may go anywhere on the page. Note arrows are
+  5 px highlighter yellow-green (#CCF526) on a 9 px dark-green edge; Move arrows are 5 px blue on a navy edge. A mark
+  off any diagram records the words under it (a tab button, a heading, a line), so the notes command can say
+  "points at 4 · Portfolio numbers". 2 real-click tests failed first (tip clamped at 0; no words recorded); 57 of 57
+  pass. Checked by hand on the client set in light and dark.

@@ -81,8 +81,8 @@
     l.className = 'mk-layer';
     var id = idOf(a);
     l.innerHTML = '<svg class="mk-svg" xmlns="' + NS + '"><defs>' +
-      '<marker id="mk-ah-' + id + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ah"/></marker>' +
-      '<marker id="mk-mh-' + id + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-mh"/></marker>' +
+      '<marker id="mk-ah-' + id + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.6" markerHeight="3.6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ah"/></marker>' +
+      '<marker id="mk-mh-' + id + '" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="3.6" markerHeight="3.6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-mh"/></marker>' +
       '</defs><g class="mk-g"></g></svg>';
     a.appendChild(l);
     l.addEventListener('pointerdown', down);
@@ -152,6 +152,7 @@
             if (!inside(r, tx, ty)) {
               var e = edge(r, tx, ty);
               if (Math.hypot(e[0] - tx, e[1] - ty) > 28) {
+                g.appendChild(svgEl('line', { x1: e[0], y1: e[1], x2: tx, y2: ty, 'data-i': i }, 'mk-note-edge'));
                 g.appendChild(svgEl('line', { x1: e[0], y1: e[1], x2: tx, y2: ty, 'marker-end': 'url(#mk-ah-' + id + ')', 'data-i': i }, 'mk-note-line'));
               } else g.appendChild(svgEl('circle', { cx: tx, cy: ty, r: 4.5, 'data-i': i }, 'mk-note-dot'));
             }
@@ -174,6 +175,7 @@
             var mx = X(it.to[0]), my = Y(it.to[1]);
             var from = edge({ x: x, y: y, w: w, h: h }, mx, my);
             if (!inside({ x: x, y: y, w: w, h: h }, mx, my)) {
+              g.appendChild(svgEl('line', { x1: from[0], y1: from[1], x2: mx, y2: my, 'data-i': i }, 'mk-move-edge'));
               g.appendChild(svgEl('line', { x1: from[0], y1: from[1], x2: mx, y2: my, 'marker-end': 'url(#mk-mh-' + id + ')', 'data-i': i }, 'mk-move-line'));
             }
             var mt = svgEl('text', { x: mx + 8, y: my + 5, 'data-i': i }, 'mk-move-t');
@@ -206,20 +208,39 @@
       }
       return null;
     };
+    // the shortest piece of page under a point, skipping the marks themselves: the words a reader pointed at
+    var words = function (fx, fy) {
+      var list = document.elementsFromPoint(r.left + fx * s.w, r.top + fy * s.h);
+      for (var k = 0; k < list.length; k += 1) {
+        if (list[k].closest('.mk-layer, .mk-bar')) continue;
+        var t = String((list[k].closest('button') || list[k]).textContent || '').replace(/\s+/g, ' ').trim();
+        if (t && t.length <= 90) return t;
+      }
+      return '';
+    };
     var at = null, from = null;
     if (it.type === 'note') at = it.tip ? key(it.tip[0], it.tip[1]) : key(it.x1, it.y1);
     else if (it.type === 'move') { from = key((it.x1 + it.x2) / 2, (it.y1 + it.y2) / 2); if (it.to) at = key(it.to[0], it.to[1]); }
     else at = key((it.x1 + it.x2) / 2, (it.y1 + it.y2) / 2);
-    delete it.on; delete it.at; delete it.from;
+    delete it.on; delete it.at; delete it.from; delete it.target;
+    if (!at) {
+      var p = it.type === 'note' ? (it.tip || [it.x1, it.y1]) : it.type === 'move' && it.to ? it.to : [(it.x1 + it.x2) / 2, (it.y1 + it.y2) / 2];
+      var w = words(p[0], p[1]);
+      if (w) it.target = w;
+    }
     if (from) { it.on = from.on; it.from = from.pt; }
     if (at) { it.on = it.on || at.on; it.at = at.pt; }
   }
 
   var drag = null;
+  // a point as fractions of its tab; a mark may reach past its own tab, onto the tab bar or the title, but not off the page
   function frac(a, e) {
     var r = a.getBoundingClientRect();
     var s = size(a);
-    return [Math.max(0, Math.min(1, (e.clientX - r.left) / s.w)), Math.max(0, Math.min(1, (e.clientY - r.top) / s.h))];
+    var page = (document.querySelector('main') || document.body).getBoundingClientRect();
+    var cx = Math.max(page.left, Math.min(page.right, e.clientX));
+    var cy = Math.max(page.top, Math.min(page.bottom, e.clientY));
+    return [(cx - r.left) / s.w, (cy - r.top) / s.h];
   }
   function far(a, p, q) { var s = size(a); return Math.abs(p[0] - q[0]) * s.w > 6 || Math.abs(p[1] - q[1]) * s.h > 6; }
 
