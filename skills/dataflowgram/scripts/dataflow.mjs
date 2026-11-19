@@ -10,6 +10,9 @@ import { fileURLToPath } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ICONS = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'assets', 'lucide-icons.json'), 'utf8')).icons;
+// Mark-up tools, stored in the skill so a page works offline and sends nothing anywhere.
+const MARKERJS = fs.readFileSync(path.join(HERE, '..', 'assets', 'markerjs3.umd.js'), 'utf8');
+const MARKUP = fs.readFileSync(path.join(HERE, 'markup.js'), 'utf8');
 
 // A kind is what a part is. Each kind has one colour and one default icon.
 export const KINDS = {
@@ -858,13 +861,27 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
   background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pg-mode svg{width:16px;height:16px}
 .pg-btns{display:flex;gap:8px}
-@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}}
+.pg-sendnotes{border-color:#E11D48!important;color:#BE123C!important}
+.pg-sendnotes[hidden]{display:none!important}
+.df-scroll{position:relative}
+.df-mk-open{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;font-weight:600;padding:6px 11px;border-radius:999px;cursor:pointer;color:var(--df-ink);background:var(--df-card);border:1px solid var(--df-line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.df-mk-open svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.df-mk-shade{position:fixed;inset:0;z-index:1000;background:rgba(10,12,22,.55);display:flex;align-items:center;justify-content:center;padding:20px}
+.df-mk-box{background:#fff;color:#111827;border-radius:10px;padding:14px;width:min(1400px,100%);max-height:100%;display:flex;flex-direction:column;gap:8px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.df-mk-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.df-mk-bar button{font:inherit;font-size:.9rem;font-weight:600;padding:7px 12px;border-radius:6px;border:1px solid #CBD5E1;background:#F8FAFC;color:#111827;cursor:pointer}
+.df-mk-bar .df-mk-main{background:#111827;color:#fff;border-color:#111827}
+.df-mk-gap{flex:1}
+.df-mk-help{margin:0;font-size:.85rem;color:#475569}
+.df-mk-area{flex:1;min-height:0;overflow:auto}
+.df-mk-area mjs-marker-area{display:block;width:100%;height:min(72vh,900px)}
+@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.df-mk-open{display:none}}
 ${extraCss}</style>
 </head>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
-<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button></div></div>
+<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
 ${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
 ${body}
@@ -878,6 +895,11 @@ var r=document.documentElement,was=null;
 window.addEventListener('beforeprint',function(){was=r.getAttribute('data-df-theme');r.setAttribute('data-df-theme','light');});
 window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-theme',was);else r.removeAttribute('data-df-theme');});})();
 ${extraScript}</script>
+<script type="application/json" id="df-marks">{}</script>
+<script>/* marker.js 3, (c) Alan Mendelevich, linkware licence: https://markerjs.com */
+${MARKERJS}</script>
+<script>
+${MARKUP}</script>
 </body>
 </html>
 `;
@@ -924,6 +946,43 @@ export function renderBook(book) {
   return pageShell({ title: book.title, intro: book.intro, theme: book.theme, body: `<nav class="pg-tabs" aria-label="Diagrams">${tabs}</nav>\n${panels}`, extraCss, extraScript });
 }
 
+// Reads the marks a reader drew on a page (arrows, circles, boxes, notes, pen) and says which box each one points at.
+// html: the page they sent back; specs: the diagrams it was built from, in tab order.
+export function readNotes(html, specs) {
+  const m = /<script type="application\/json" id="df-marks">([\s\S]*?)<\/script>/.exec(html);
+  const marks = m ? JSON.parse(m[1] || '{}') : {};
+  const out = [];
+  for (const [id, state] of Object.entries(marks)) {
+    const k = id === 'df' ? 0 : Number((/^d(\d+)$/.exec(id) || [])[1]) - 1;
+    const spec = specs[k];
+    if (!spec || !state || !Array.isArray(state.markers)) continue;
+    const c = compile(spec);
+    // the marks were drawn on a picture of the drawing; scale back to the drawing's own units
+    const sx = c.width / (state.width || c.width);
+    const sy = c.height / (state.height || c.height);
+    const boxAt = (x, y) => {
+      const nodes = Object.values(c.nodes);
+      const inside = nodes.find((n) => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
+      if (inside) return inside.label;
+      const near = nodes.map((n) => [Math.hypot(n.x + n.w / 2 - x, n.y + n.h / 2 - y), n]).sort((p, q) => p[0] - q[0])[0];
+      return near ? `near ${near[1].label}` : '';
+    };
+    for (const mk of state.markers) {
+      const kind = String(mk.typeName || '').replace(/Marker$/, '');
+      let at;
+      let from = '';
+      if ('x2' in mk) { at = boxAt(mk.x2 * sx, mk.y2 * sy); from = boxAt(mk.x1 * sx, mk.y1 * sy); }
+      else if (Array.isArray(mk.points) && mk.points.length) {
+        const px = mk.points.reduce((t, p) => t + p.x, 0) / mk.points.length;
+        const py = mk.points.reduce((t, p) => t + p.y, 0) / mk.points.length;
+        at = boxAt((mk.left || 0) * sx + px * sx, (mk.top || 0) * sy + py * sy);
+      } else at = boxAt(((mk.left || 0) + (mk.width || 0) / 2) * sx, ((mk.top || 0) + (mk.height || 0) / 2) * sy);
+      out.push({ diagram: c.title, kind, text: String(mk.text || '').trim(), at, from });
+    }
+  }
+  return out;
+}
+
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
 if (isMain) {
   const [cmd, a, b, c] = process.argv.slice(2);
@@ -945,12 +1004,22 @@ if (isMain) {
       book.diagrams = (book.diagrams || []).map((d) => (typeof d === 'string' ? JSON.parse(fs.readFileSync(path.resolve(dir, d), 'utf8')) : d));
       fs.writeFileSync(b, renderBook(book));
       console.log(`written: ${b} (${book.diagrams.length} diagrams)`);
+    } else if (cmd === 'notes' && a && b) {
+      // a: the page someone sent back with marks; b: the diagram or book it was built from
+      const src = JSON.parse(fs.readFileSync(b, 'utf8'));
+      const dir = path.dirname(path.resolve(b));
+      const specs = src.diagrams
+        ? src.diagrams.map((d) => (typeof d === 'string' ? JSON.parse(fs.readFileSync(path.resolve(dir, d), 'utf8')) : d))
+        : [src];
+      const notes = readNotes(fs.readFileSync(a, 'utf8'), specs);
+      if (!notes.length) console.log('no marks in this page');
+      notes.forEach((n, i) => console.log(`${i + 1}. [${n.diagram}] ${n.kind}${n.text ? `: "${n.text}"` : ''}${n.from ? ` from ${n.from}` : ''}${n.at ? ` at ${n.at}` : ''}`));
     } else if ((cmd === 'build' || cmd === 'fragment') && a && b) {
       const spec = JSON.parse(fs.readFileSync(a, 'utf8'));
       fs.writeFileSync(b, cmd === 'build' ? renderPage(spec) : renderFragment(spec, c || 'df'));
       console.log(`written: ${b}`);
     } else {
-      console.error('usage:\n  node dataflow.mjs build <spec.json> <out.html>\n  node dataflow.mjs book <book.json> <out.html>      several diagrams, one tab each\n  node dataflow.mjs fragment <spec.json> <out.html> [block id]\n  node dataflow.mjs check <spec.json>\n  node dataflow.mjs icons <word>');
+      console.error('usage:\n  node dataflow.mjs build <spec.json> <out.html>\n  node dataflow.mjs book <book.json> <out.html>      several diagrams, one tab each\n  node dataflow.mjs fragment <spec.json> <out.html> [block id]\n  node dataflow.mjs check <spec.json>\n  node dataflow.mjs notes <page sent back.html> <spec.json or book.json>   read a reader\'s marks\n  node dataflow.mjs icons <word>');
       process.exit(2);
     }
   } catch (err) {

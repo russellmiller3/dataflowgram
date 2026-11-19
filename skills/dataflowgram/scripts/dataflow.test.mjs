@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape } from './dataflow.mjs';
+import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape, readNotes } from './dataflow.mjs';
 import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves, stepBadge } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
@@ -386,6 +386,33 @@ test('on a phone the page fits the screen: the stacked column can shrink, and th
   const html = renderFragment(example(), 'demo');
   assert.match(html, /@media \(max-width:860px\)\{\.df-grid\{grid-template-columns:minmax\(0,1fr\)\}/, 'a plain 1fr column grows to its widest item');
   assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
+});
+
+test('a reader marks up a page, sends it back, and each mark is read with the box it points at', () => {
+  // 19 November 2026: "put marker JS into everything ... the advantage is the data never leaves and you can attach it in an email"
+  const spec = example();
+  const page = renderPage(spec);
+  assert.match(page, /<script type="application\/json" id="df-marks">\{\}<\/script>/, 'a place in the page for the marks');
+  assert.match(page, /globalThis:t\|\|self\)\.markerjs3=\{\}/, 'the mark-up tools are inside the page, so it works offline');
+  assert.match(page, /class="pg-mode pg-sendnotes" hidden/, 'a "Save a copy with my notes" button, hidden until there are marks');
+  // the page as it comes back: the marks drawn on a picture twice the drawing's size
+  const c = compile(spec);
+  const [a, b] = Object.values(c.nodes);
+  const centre = (n) => [(n.x + n.w / 2) * 2, (n.y + n.h / 2) * 2];
+  const marks = { df: { width: c.width * 2, height: c.height * 2, markers: [
+    { typeName: 'ArrowMarker', x1: centre(a)[0], y1: centre(a)[1], x2: centre(b)[0], y2: centre(b)[1] },
+    { typeName: 'CalloutMarker', left: centre(b)[0] - 40, top: centre(b)[1] - 10, width: 80, height: 20, text: ' wrong system ' },
+    { typeName: 'FreehandMarker', left: 0, top: 0, points: [{ x: centre(a)[0] - 4, y: centre(a)[1] }, { x: centre(a)[0] + 4, y: centre(a)[1] }] },
+  ] } };
+  const back = page.replace('<script type="application/json" id="df-marks">{}</script>', `<script type="application/json" id="df-marks">${JSON.stringify(marks)}</script>`);
+  const notes = readNotes(back, [spec]);
+  assert.equal(notes.length, 3);
+  assert.deepEqual(notes[0], { diagram: c.title, kind: 'Arrow', text: '', at: b.label, from: a.label });
+  assert.equal(notes[1].text, 'wrong system');
+  assert.equal(notes[1].at, b.label, 'the note sits on the box under it');
+  assert.equal(notes[2].at, a.label, 'a pen mark is placed by where it was drawn');
+  // a page with no marks reads as none
+  assert.deepEqual(readNotes(page, [spec]), []);
 });
 
 test('printing gives one page per diagram, turned to suit its shape, with every step listed', async () => {

@@ -33,6 +33,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 6. Link to the still picture of everything: add `#<block-id>=all`.
 7. Several diagrams in one page, one tab each: write a book file `{ "title": "...", "intro": "...", "diagrams": ["a.json", "b.json"] }` (file names next to the book, or the descriptions themselves), then run `node <skill>/scripts/dataflow.mjs book book.json out.html`. Link to a tab with `#tab=<number>`. Inside a book, diagram number k has the block id `d<k>`.
 8. Print or save as PDF: the page's Print button (or the browser's own Print) gives one page per diagram. A drawing wider than tall prints sideways; the rest print upright. Each page shows everything at once, the steps of every scenario, the source and the credit. To make the PDF yourself: `"<Chrome>" --headless=new --no-pdf-header-footer --print-to-pdf=out.pdf file:///path/out.html`.
+9. Get feedback on a diagram: send the page file. The reader presses Mark up on a diagram, draws arrows, circles, boxes or pen marks and types notes, presses Done, then "Save a copy with my notes" and emails that file back. Nothing to install; the marks travel inside the file. Read them with `node <skill>/scripts/dataflow.mjs notes <file they sent.html> <spec.json or book.json>`: each mark, its typed text, and the box it points at. Fix the description, rebuild, and send the new page.
 
 ## The description file
 
