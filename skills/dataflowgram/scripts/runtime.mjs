@@ -132,7 +132,7 @@ export function tagRides(lineLength, tagWidth) {
 
 // The width of a tag, from its words, when the page cannot measure the text.
 export function tagWidth(label) {
-  return label.length * 6.9 + 34;
+  return label.length * 7.7 + 34;
 }
 
 export function dotOpacity(t, dir) {

@@ -12,7 +12,7 @@
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-bg:#f4f5f9;--pg-ink:#141824;--pg-ink2:#596174;--pg-dot:rgba(20,24,36,.075);--pg-glow1:rgba(99,102,241,.13);--pg-glow2:rgba(20,184,166,.09);--pg-line:rgba(20,24,36,.14);color-scheme:light}
+:root{--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
 :root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
@@ -38,20 +38,20 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 <p class="lede">Forward an email to one address, and it is filed for you. Ask a question the same way, and you get the answer back.</p>
 <style>
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
-.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,560px);justify-content:start;gap:28px;align-items:start}
+.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,440px);justify-content:start;gap:28px;align-items:start}
 .df-grid>div:first-child{position:sticky;top:20px}
 .df-grid>div{min-width:0}
 .df-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
 @media (max-width:560px){.df-svg{min-width:500px}}
-.df-svg{width:100%;height:auto;max-height:calc(100vh - 250px);display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
 .df-svg text{font-family:inherit;fill:var(--df-ink)}
 .df-node{cursor:pointer;transition:opacity .15s}
 .df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
 .df-node .df-ico{fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.df-node .df-t{font-size:15px;font-weight:600}
-.df-node .df-t3{font-size:13.5px;font-weight:600}
-.df-node .df-s{font-size:12.5px;fill:var(--df-ink2)}
-.df-node .df-s3{font-size:11.5px;fill:var(--df-ink2)}
+.df-node .df-t{font-size:16.5px;font-weight:600}
+.df-node .df-t3{font-size:15.5px;font-weight:600}
+.df-node .df-s{font-size:14px;fill:var(--df-ink2)}
+.df-node .df-s3{font-size:13.5px;fill:var(--df-ink2)}
 .df-node.on rect{stroke-width:3}
 .df-node.dim{opacity:.38}
 .df-node:focus{outline:none}
@@ -66,13 +66,13 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-dot{pointer-events:none;filter:drop-shadow(0 0 6px currentColor)}
 .df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
-.df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
+.df-packet text{font-size:14px;font-weight:600;fill:var(--df-ink)}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
 .df-carry[hidden]{display:none}
 .df-carry svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .df-zone{fill:none;stroke:#8A99AD;stroke-dasharray:5 4}
-.df-zone-l{font-size:12px;fill:var(--df-ink2);letter-spacing:.05em}
+.df-zone-l{font-size:13.5px;fill:var(--df-ink2);letter-spacing:.05em}
 .df-k-person{--c:#1D4ED8;--t:#EEF3FF}
 .df-k-mail{--c:#B45309;--t:#FFF4DE}
 .df-k-program{--c:#334155;--t:#EEF2F6}
@@ -95,9 +95,10 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-ln-past{stroke:#3B82F6;opacity:.4}
 .df-ln-all{stroke:#3B82F6}
 .df-ln-idle{stroke:#8A99AD;stroke-width:2}
+.df-ln .df-ln-out{fill:rgba(190,18,60,.12);stroke:rgba(190,18,60,.55);stroke-width:1.2}
 .df-outzone{fill:rgba(190,18,60,.06);stroke:rgba(190,18,60,.45);stroke-width:1.2}
-.df .df-svg text.df-outzone-l{font-size:13px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
-.df .df-svg text.df-out-l{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#E0607E}
+.df .df-svg text.df-outzone-l{paint-order:stroke;font-size:14px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
+.df .df-svg text.df-out-l{font-size:13px;font-weight:700;letter-spacing:.01em;fill:#E0607E}
 /* a send picked in the everything view: the rest steps back */
 .df-pick .df-edge.on:not(.df-hot),.df-pick .df-packet:not(.df-hot){opacity:.14}
 .df-pick .df-node:not(.df-hot){opacity:.35}
@@ -168,10 +169,12 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{
-  --df-ink:#141824;--df-ink2:#596174;--df-line:rgba(20,24,36,.11);--df-head:rgba(20,24,36,.035);
-  --df-card:rgba(255,255,255,.66);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(20,24,36,.20);
-  --df-glow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -28px rgba(30,40,80,.35);
-  --df-leaves-bg:#fdecec;--df-leaves-ink:#9b1c1c;--df-ifnot-bg:#fff4dc;--df-ifnot-ink:#7a4b00;
+  --df-ink:#121726;--df-ink2:#545d72;--df-line:rgba(18,24,48,.10);--df-head:rgba(18,24,48,.04);
+  --df-card:rgba(255,255,255,.74);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
+  --df-glow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 2px rgba(18,24,48,.06),0 20px 44px -26px rgba(40,48,110,.38);
+  --df-leaves-bg:#fdecee;--df-leaves-ink:#9f1239;--df-ifnot-bg:#fff6e0;--df-ifnot-ink:#7a4b00;
+  --df-dots:rgba(18,24,48,.07);--df-node-tint:13%;--df-node-on:20%;
+  --df-node-shadow:drop-shadow(0 1px 1px rgba(18,24,48,.06)) drop-shadow(0 8px 14px color-mix(in srgb,var(--c) 16%,transparent));
   font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 .df [class^="df-k-"],.df [class*=" df-k-"]{--cs:var(--c)}
@@ -180,6 +183,7 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html:not([data-df-theme="light"]) .df [class^="df-k-"],html:not([data-df-theme="light"]) .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}}
 html[data-df-theme="dark"] .df{
@@ -187,17 +191,18 @@ html[data-df-theme="dark"] .df{
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}
 .df :is(.df-svg,.df-cap,.df-item-card,.df-seg,.df-key,.df-nav button){
   background:var(--df-card);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
   border-color:var(--df-line);box-shadow:var(--df-glow)}
-.df .df-svg{border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
+.df .df-svg{border-radius:10px;background:radial-gradient(var(--df-dots) 1px,transparent 1.4px) 0 0/18px 18px,linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
 .df :is(.df-cap,.df-item-card){border-radius:10px}
 .df :is(.df-seg,.df-key,.df-nav button,.df-carry){border-radius:8px}
-.df .df-node rect{fill:color-mix(in srgb,var(--c) 10%,var(--df-node));stroke:var(--cs)}
+.df .df-node rect{fill:color-mix(in srgb,var(--c) var(--df-node-tint),var(--df-node));stroke:var(--cs);filter:var(--df-node-shadow)}
 .df .df-node .df-ico{stroke:var(--cs)}
-.df .df-node.on rect{fill:color-mix(in srgb,var(--c) 18%,var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
+.df .df-node.on rect{fill:color-mix(in srgb,var(--c) var(--df-node-on),var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
 .df .df-edge{stroke:var(--df-edge)}
 .df .df-zone{stroke:var(--df-ink2);opacity:.55}
 .df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
@@ -224,20 +229,20 @@ html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
 .df .df-item-h,.df .df-legend small,.df .df-count{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;letter-spacing:.08em}
 </style>
 <div class="df" id="df">
-  <div class="df-grid" style="--df-w:995.8px">
+  <div class="df-grid" style="--df-w:1092px">
     <div>
-      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 766 699" role="img" aria-label="A notes inbox with AI">
+      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 840 677" role="img" aria-label="A notes inbox with AI">
         <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-think" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-save" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-reply" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
         
-        <rect class="df-outzone" x="494" y="383" width="269" height="312" rx="8"/><text class="df-outzone-l" x="628.5" y="687" text-anchor="middle">OUTSIDE YOUR SYSTEM</text>
-        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M383 96 L383 200"/><path class="df-edge" data-edge="e1" d="M383 286 L383 332 Q383 338 377 338 L176 338 Q170 338 170 344 L170 390"/><path class="df-edge" data-edge="e2" d="M265 433 L501 433" data-tag="383,368"/><path class="df-edge" data-edge="e3" d="M122.5 476 L122.5 496.7 Q122.5 502.7 116.5 502.7 L87 502.7 Q81 502.7 81 508.7 L81 580"/><path class="df-edge" data-edge="e4" d="M170 476 L170 522 Q170 528 176 528 L377 528 Q383 528 383 534 L383 580"/><path class="df-edge" data-edge="e5" d="M217.5 476 L217.5 547.3 Q217.5 553.3 223.5 553.3 L679 553.3 Q685 553.3 685 559.3 L685 580"/></g>
-        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="phone" tabindex="0" role="button" aria-label="Sam's phone"><rect x="263" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(372 20) scale(.9167)"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></g><text class="df-t" x="383" y="63" text-anchor="middle">Sam's phone</text><text class="df-s" x="383" y="82" text-anchor="middle">any email app</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="inbox" tabindex="0" role="button" aria-label="Notes inbox"><rect x="263" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(372 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="383" y="253" text-anchor="middle">Notes inbox</text><text class="df-s" x="383" y="272" text-anchor="middle">a shared mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="hub" tabindex="0" role="button" aria-label="The hub"><rect x="75" y="390" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(159 400) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="170" y="443" text-anchor="middle">The hub</text><text class="df-s" x="170" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="501" y="390" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(585 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="596" y="443" text-anchor="middle">AI model</text><text class="df-s" x="596" y="462" text-anchor="middle">returns fields</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="lists" tabindex="0" role="button" aria-label="Lists"><rect x="10" y="580" width="142" height="86" rx="4"/><g class="df-ico" transform="translate(70 590) scale(.9167)"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></g><text class="df-t3" x="81" y="633" text-anchor="middle">Lists</text><text class="df-s3" x="81" y="652" text-anchor="middle">rows of records</text></g><g class="df-node df-k-files" style="--c:#0F766E;--t:#E3F5F2" data-node="files" tabindex="0" role="button" aria-label="File library"><rect x="312" y="580" width="142" height="86" rx="4"/><g class="df-ico" transform="translate(372 590) scale(.9167)"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></g><text class="df-t3" x="383" y="633" text-anchor="middle">File library</text><text class="df-s3" x="383" y="652" text-anchor="middle">saved attachments</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="ledger" tabindex="0" role="button" aria-label="Ledger export"><rect x="614" y="580" width="142" height="86" rx="4"/><g class="df-ico" transform="translate(674 590) scale(.9167)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></g><text class="df-t3" x="685" y="633" text-anchor="middle">Ledger export</text><text class="df-s3" x="685" y="652" text-anchor="middle">the money figures</text></g>
+        <rect class="df-outzone" x="538.5" y="383" width="298.5" height="290" rx="8"/>
+        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M420 96 L420 200"/><path class="df-edge" data-edge="e1" d="M420 286 L420 332 Q420 338 414 338 L200.5 338 Q194.5 338 194.5 344 L194.5 390"/><path class="df-edge" data-edge="e2" d="M294.5 433 L545.5 433" data-tag="420,368"/><path class="df-edge" data-edge="e3" d="M144.5 476 L144.5 496.7 Q144.5 502.7 138.5 502.7 L96 502.7 Q90 502.7 90 508.7 L90 580"/><path class="df-edge" data-edge="e4" d="M194.5 476 L194.5 522 Q194.5 528 200.5 528 L414 528 Q420 528 420 534 L420 580"/><path class="df-edge" data-edge="e5" d="M244.5 476 L244.5 547.3 Q244.5 553.3 250.5 553.3 L744 553.3 Q750 553.3 750 559.3 L750 580"/></g>
+        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="phone" tabindex="0" role="button" aria-label="Sam's phone"><rect x="300" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 20) scale(.9167)"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></g><text class="df-t" x="420" y="63" text-anchor="middle">Sam's phone</text><text class="df-s" x="420" y="82" text-anchor="middle">any email app</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="inbox" tabindex="0" role="button" aria-label="Notes inbox"><rect x="300" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="420" y="253" text-anchor="middle">Notes inbox</text><text class="df-s" x="420" y="272" text-anchor="middle">a shared mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="hub" tabindex="0" role="button" aria-label="The hub"><rect x="94.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(183.5 400) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="194.5" y="443" text-anchor="middle">The hub</text><text class="df-s" x="194.5" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="545.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(634.5 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="645.5" y="443" text-anchor="middle">AI model</text><text class="df-out-l" x="551.5" y="407">OUTSIDE</text><text class="df-s" x="645.5" y="462" text-anchor="middle">returns fields</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="lists" tabindex="0" role="button" aria-label="Lists"><rect x="10" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(79 590) scale(.9167)"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></g><text class="df-t3" x="90" y="633" text-anchor="middle">Lists</text><text class="df-s3" x="90" y="652" text-anchor="middle">rows of records</text></g><g class="df-node df-k-files" style="--c:#0F766E;--t:#E3F5F2" data-node="files" tabindex="0" role="button" aria-label="File library"><rect x="340" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(409 590) scale(.9167)"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></g><text class="df-t3" x="420" y="633" text-anchor="middle">File library</text><text class="df-s3" x="420" y="652" text-anchor="middle">saved attachments</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="ledger" tabindex="0" role="button" aria-label="Ledger export"><rect x="670" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(739 590) scale(.9167)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></g><text class="df-t3" x="750" y="633" text-anchor="middle">Ledger export</text><text class="df-out-l" x="676" y="597">OUTSIDE</text><text class="df-s3" x="750" y="652" text-anchor="middle">the money figures</text></g>
         <g class="df-packets"></g>
       </svg></div>
       <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>A person</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>A mailbox</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span>Our program</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg><span>An AI model</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>Stored rows</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg><span>Stored files</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg><span>Another company's system</span></span></div>
       <div class="df-legend"><small>Steps</small><span class="df-key act" style="--a:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="--a:#475569"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Check</span><span class="df-key act" style="--a:#0E7490"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>Read</span><span class="df-key act" style="--a:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>Think</span><span class="df-key act" style="--a:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span><span class="df-key act" style="--a:#0F766E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>Save</span><span class="df-key act" style="--a:#C2410C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 18v-2a4 4 0 0 0-4-4H4"/><path d="m9 17-5-5 5-5"/></svg>Reply</span></div>
-      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span></div>
+      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span><span class="df-key"><svg viewBox="0 0 34 14" class="df-ln"><rect x="1" y="1" width="32" height="12" rx="3" class="df-ln-out"/></svg>Red: outside your system; data sent there leaves you</span></div>
     </div>
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
@@ -387,7 +392,7 @@ function tagRides(lineLength, tagWidth) {
 
 // The width of a tag, from its words, when the page cannot measure the text.
 function tagWidth(label) {
-  return label.length * 6.9 + 34;
+  return label.length * 7.7 + 34;
 }
 
 function dotOpacity(t, dir) {

@@ -40,13 +40,28 @@ export const ACTIONS = {
 
 const PAD = 10;
 const GAPX = 56;
-const BOX_W = { 1: 240, 2: 190, 3: 142 }; // box width by how many share a row
+const BOX_W = { 1: 240, 2: 200, 3: 160 }; // box width by how many share a row
 const NODE_H = 86;
 const ROW_GAP = 104;
 const ZONE_TOP = 12;
 const ZONE_BOTTOM = 24;
 // The longest label and second line that fit a box, by how many boxes share the row.
-const LIMITS = { 1: { label: 22, sub: 30 }, 2: { label: 19, sub: 24 }, 3: { label: 14, sub: 17 } };
+// Average width of one character, in drawing units: [label, second line], by row size (row of 3 uses smaller type).
+const CHAR_W = { 1: [9.2, 7.2], 2: [9.2, 7.2], 3: [8.7, 6.9] };
+const BOX_MAX = { 1: 320, 2: 280, 3: 220 }; // the widest a box may grow
+const BOX_PAD = 28; // room inside a box, left and right together
+// The longest words that fit the widest box: a row of 1 fits a 31-character label, 2 fits 27, 3 fits 22.
+const LIMITS = Object.fromEntries([1, 2, 3].map((n) => [n, {
+  label: Math.floor((BOX_MAX[n] - BOX_PAD) / CHAR_W[n][0]),
+  sub: Math.floor((BOX_MAX[n] - BOX_PAD) / CHAR_W[n][1]),
+}]));
+
+// The width of every box in a row of n: wide enough for the longest label and second line in any such row.
+export function boxWidth(n, labels, subs) {
+  const needL = Math.max(0, ...labels.map((s) => String(s).length)) * CHAR_W[n][0] + BOX_PAD;
+  const needS = Math.max(0, ...subs.map((s) => String(s || '').length)) * CHAR_W[n][1] + BOX_PAD;
+  return Math.min(BOX_MAX[n], Math.max(BOX_W[n], Math.ceil(needL), Math.ceil(needS)));
+}
 const ID = /^[a-z][a-z0-9-]*$/;
 // The credit in the lower right of every diagram. The licence requires it; only holders of a
 // commercial licence from Russell Miller may turn it off with "credit": false.
@@ -117,14 +132,14 @@ function roundPath(points, radius = 6) {
 // tag in characters; 'n' is how many boxes share the row. A row of 3 is capped so the drawing stays compact.
 export function gapFor(longest, n) {
   const LINE_EACH_SIDE = 32;
-  const tag = longest * 6.9 + 34 + 14;
-  const want = Math.max(150, Math.min(300, Math.round(tag + 2 * LINE_EACH_SIDE)));
-  return n >= 3 ? Math.min(want, 160) : want;
+  const tag = longest * 7.7 + 34 + 14;
+  const want = Math.max(160, Math.min(320, Math.round(tag + 2 * LINE_EACH_SIDE)));
+  return n >= 3 ? Math.min(want, 170) : want;
 }
 
 // The box that holds every part outside the owner's system, when no inside part falls within it.
-// Takes parts with x, y, w, h and outside (true or false). Returns { x, y, w, h } with room for a label
-// along its bottom edge, or null when there are no outside parts or an inside part sits among them.
+// Takes parts with x, y, w, h and outside (true or false). Returns { x, y, w, h } that hugs the boxes,
+// or null when there are no outside parts or an inside part sits among them.
 export function regionOf(parts) {
   const out = parts.filter((n) => n.outside);
   if (out.length === 0) return null;
@@ -132,7 +147,7 @@ export function regionOf(parts) {
   const x0 = Math.min(...out.map((n) => n.x)) - M;
   const y0 = Math.min(...out.map((n) => n.y)) - M;
   const x1 = Math.max(...out.map((n) => n.x + n.w)) + M;
-  const y1 = Math.max(...out.map((n) => n.y + n.h)) + M + 22; // 22 for the label
+  const y1 = Math.max(...out.map((n) => n.y + n.h)) + M;
   const inside = parts.some((n) => !n.outside && n.x < x1 && n.x + n.w > x0 && n.y < y1 && n.y + n.h > y0);
   return inside ? null : { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
 }
@@ -175,17 +190,24 @@ export function compile(spec) {
   scenarios.forEach((s) => ((s && s.steps) || []).forEach((st) => {
     if (st && st.carry && st.carry.label) longest = Math.max(longest, String(st.carry.label).length);
   }));
+  // one box width per row size, from the words in every row of that size
+  const boxW = {};
+  [1, 2, 3].forEach((n) => {
+    const ids = rows.filter((row) => Array.isArray(row) && row.length === n).flat();
+    const ps = ids.map((id) => (parts && parts[id]) || {});
+    boxW[n] = boxWidth(n, ps.map((x) => x.label || ''), ps.map((x) => x.sub || ''));
+  });
   // the drawing is as wide as its widest row needs, and no wider
   const width = Math.max(420, ...rows.map((row) => {
     const n = Math.max(1, Math.min(3, Array.isArray(row) ? row.length : 1));
-    return 2 * PAD + n * BOX_W[n] + (n - 1) * gapFor(longest, n);
+    return 2 * PAD + n * boxW[n] + (n - 1) * gapFor(longest, n);
   }));
   const nodes = {};
   rows.forEach((row, r) => {
     if (!Array.isArray(row) || row.length < 1 || row.length > 3) fail(`row ${r + 1} must hold 1 to 3 parts; it holds ${Array.isArray(row) ? row.length : 0}`);
     const n = row.length;
     // Boxes stay only as wide as their text needs; the rest of the row goes to the gap, where the lines run.
-    const w = BOX_W[n];
+    const w = boxW[n];
     const gap = n === 1 ? 0 : gapFor(longest, n);
     const rowLeft = (width - (n * w + (n - 1) * gap)) / 2; // each row sits in the middle of the drawing
     row.forEach((id, c) => {
@@ -427,20 +449,20 @@ function pageData(c) {
 
 const CSS = `
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
-.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,560px);justify-content:start;gap:28px;align-items:start}
+.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,440px);justify-content:start;gap:28px;align-items:start}
 .df-grid>div:first-child{position:sticky;top:20px}
 .df-grid>div{min-width:0}
 .df-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
 @media (max-width:560px){.df-svg{min-width:500px}}
-.df-svg{width:100%;height:auto;max-height:calc(100vh - 250px);display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
 .df-svg text{font-family:inherit;fill:var(--df-ink)}
 .df-node{cursor:pointer;transition:opacity .15s}
 .df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
 .df-node .df-ico{fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.df-node .df-t{font-size:15px;font-weight:600}
-.df-node .df-t3{font-size:13.5px;font-weight:600}
-.df-node .df-s{font-size:12.5px;fill:var(--df-ink2)}
-.df-node .df-s3{font-size:11.5px;fill:var(--df-ink2)}
+.df-node .df-t{font-size:16.5px;font-weight:600}
+.df-node .df-t3{font-size:15.5px;font-weight:600}
+.df-node .df-s{font-size:14px;fill:var(--df-ink2)}
+.df-node .df-s3{font-size:13.5px;fill:var(--df-ink2)}
 .df-node.on rect{stroke-width:3}
 .df-node.dim{opacity:.38}
 .df-node:focus{outline:none}
@@ -455,13 +477,13 @@ const CSS = `
 .df-dot{pointer-events:none;filter:drop-shadow(0 0 6px currentColor)}
 .df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
-.df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
+.df-packet text{font-size:14px;font-weight:600;fill:var(--df-ink)}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
 .df-carry[hidden]{display:none}
 .df-carry svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .df-zone{fill:none;stroke:#8A99AD;stroke-dasharray:5 4}
-.df-zone-l{font-size:12px;fill:var(--df-ink2);letter-spacing:.05em}
+.df-zone-l{font-size:13.5px;fill:var(--df-ink2);letter-spacing:.05em}
 ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}}`).join('\n')}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
@@ -475,9 +497,10 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-ln-past{stroke:#3B82F6;opacity:.4}
 .df-ln-all{stroke:#3B82F6}
 .df-ln-idle{stroke:#8A99AD;stroke-width:2}
+.df-ln .df-ln-out{fill:rgba(190,18,60,.12);stroke:rgba(190,18,60,.55);stroke-width:1.2}
 .df-outzone{fill:rgba(190,18,60,.06);stroke:rgba(190,18,60,.45);stroke-width:1.2}
-.df .df-svg text.df-outzone-l{font-size:13px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
-.df .df-svg text.df-out-l{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#E0607E}
+.df .df-svg text.df-outzone-l{paint-order:stroke;font-size:14px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
+.df .df-svg text.df-out-l{font-size:13px;font-weight:700;letter-spacing:.01em;fill:#E0607E}
 /* a send picked in the everything view: the rest steps back */
 .df-pick .df-edge.on:not(.df-hot),.df-pick .df-packet:not(.df-hot){opacity:.14}
 .df-pick .df-node:not(.df-hot){opacity:.35}
@@ -548,10 +571,12 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{
-  --df-ink:#141824;--df-ink2:#596174;--df-line:rgba(20,24,36,.11);--df-head:rgba(20,24,36,.035);
-  --df-card:rgba(255,255,255,.66);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(20,24,36,.20);
-  --df-glow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -28px rgba(30,40,80,.35);
-  --df-leaves-bg:#fdecec;--df-leaves-ink:#9b1c1c;--df-ifnot-bg:#fff4dc;--df-ifnot-ink:#7a4b00;
+  --df-ink:#121726;--df-ink2:#545d72;--df-line:rgba(18,24,48,.10);--df-head:rgba(18,24,48,.04);
+  --df-card:rgba(255,255,255,.74);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
+  --df-glow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 2px rgba(18,24,48,.06),0 20px 44px -26px rgba(40,48,110,.38);
+  --df-leaves-bg:#fdecee;--df-leaves-ink:#9f1239;--df-ifnot-bg:#fff6e0;--df-ifnot-ink:#7a4b00;
+  --df-dots:rgba(18,24,48,.07);--df-node-tint:13%;--df-node-on:20%;
+  --df-node-shadow:drop-shadow(0 1px 1px rgba(18,24,48,.06)) drop-shadow(0 8px 14px color-mix(in srgb,var(--c) 16%,transparent));
   font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 .df [class^="df-k-"],.df [class*=" df-k-"]{--cs:var(--c)}
@@ -560,6 +585,7 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html:not([data-df-theme="light"]) .df [class^="df-k-"],html:not([data-df-theme="light"]) .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}}
 html[data-df-theme="dark"] .df{
@@ -567,17 +593,18 @@ html[data-df-theme="dark"] .df{
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}
 .df :is(.df-svg,.df-cap,.df-item-card,.df-seg,.df-key,.df-nav button){
   background:var(--df-card);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
   border-color:var(--df-line);box-shadow:var(--df-glow)}
-.df .df-svg{border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
+.df .df-svg{border-radius:10px;background:radial-gradient(var(--df-dots) 1px,transparent 1.4px) 0 0/18px 18px,linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
 .df :is(.df-cap,.df-item-card){border-radius:10px}
 .df :is(.df-seg,.df-key,.df-nav button,.df-carry){border-radius:8px}
-.df .df-node rect{fill:color-mix(in srgb,var(--c) 10%,var(--df-node));stroke:var(--cs)}
+.df .df-node rect{fill:color-mix(in srgb,var(--c) var(--df-node-tint),var(--df-node));stroke:var(--cs);filter:var(--df-node-shadow)}
 .df .df-node .df-ico{stroke:var(--cs)}
-.df .df-node.on rect{fill:color-mix(in srgb,var(--c) 18%,var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
+.df .df-node.on rect{fill:color-mix(in srgb,var(--c) var(--df-node-on),var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
 .df .df-edge{stroke:var(--df-edge)}
 .df .df-zone{stroke:var(--df-ink2);opacity:.55}
 .df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
@@ -624,8 +651,7 @@ export function renderFragment(spec, prefix = 'df') {
     })
     .join('');
   const outZone = c.outsideRegion
-    ? `<rect class="df-outzone" x="${num(c.outsideRegion.x)}" y="${num(c.outsideRegion.y)}" width="${num(c.outsideRegion.w)}" height="${num(c.outsideRegion.h)}" rx="8"/>` +
-      `<text class="df-outzone-l" x="${num(c.outsideRegion.x + c.outsideRegion.w / 2)}" y="${num(c.outsideRegion.y + c.outsideRegion.h - 8)}" text-anchor="middle">OUTSIDE YOUR SYSTEM</text>`
+    ? `<rect class="df-outzone" x="${num(c.outsideRegion.x)}" y="${num(c.outsideRegion.y)}" width="${num(c.outsideRegion.w)}" height="${num(c.outsideRegion.h)}" rx="8"/>`
     : '';
   const edges = c.edges.map((e) => `<path class="df-edge" data-edge="${e.id}" d="${e.d}"${e.tag ? ` data-tag="${num(e.tag[0])},${num(e.tag[1])}"` : ''}/>`).join('');
   const nodes = Object.values(c.nodes)
@@ -636,7 +662,7 @@ export function renderFragment(spec, prefix = 'df') {
         `<rect x="${num(n.x)}" y="${num(n.y)}" width="${num(n.w)}" height="${n.h}" rx="4"/>` +
         `<g class="df-ico" transform="translate(${num(n.cx - 11)} ${num(n.y + 10)}) scale(.9167)">${iconShapes(n.icon)}</g>` +
         `<text class="${tcls}" x="${num(n.cx)}" y="${num(n.y + 53)}" text-anchor="middle">${esc(n.label)}</text>` +
-        (n.outside && !c.outsideRegion ? `<text class="df-out-l" x="${num(n.x + 8)}" y="${num(n.y + 16)}">OUTSIDE</text>` : '') +
+        (n.outside ? `<text class="df-out-l" x="${num(n.x + 6)}" y="${num(n.y + 17)}">OUTSIDE</text>` : '') +
         (n.sub ? `<text class="${n.n === 3 ? 'df-s3' : 'df-s'}" x="${num(n.cx)}" y="${num(n.y + 72)}" text-anchor="middle">${esc(n.sub)}</text>` : '') +
         '</g>'
       );
@@ -665,7 +691,7 @@ export function renderFragment(spec, prefix = 'df') {
       <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small>${partKeys}</div>
       <div class="df-legend"><small>Steps</small>${stepKeys}</div>
-      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span></div>
+      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span>${c.outsideRegion || Object.values(c.nodes).some((n) => n.outside) ? '<span class="df-key"><svg viewBox="0 0 34 14" class="df-ln"><rect x="1" y="1" width="32" height="12" rx="3" class="df-ln-out"/></svg>Red: outside your system; data sent there leaves you</span>' : ''}</div>
     </div>
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
@@ -690,15 +716,15 @@ mount(document.getElementById(${JSON.stringify(prefix)}), ${pageData(c)}, ${JSON
 
 // A whole page that holds one diagram. Light or dark follows the computer's setting; the button
 // in the top right switches it, and "theme": "light" or "dark" in the description fixes the start.
-export function renderPage(spec) {
-  const c = compile(spec);
-  const start = spec.theme === 'light' || spec.theme === 'dark' ? ` data-df-theme="${spec.theme}"` : '';
+// The page around one or more diagrams: fonts, theme switch, background, heading.
+function pageShell({ title, intro, theme, body, extraCss = '', extraScript = '' }) {
+  const start = theme === 'light' || theme === 'dark' ? ` data-df-theme="${theme}"` : '';
   return `<!doctype html>
 <html lang="en"${start}>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(c.title || 'Data flow')}</title>
+<title>${esc(title || 'Data flow')}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
@@ -707,7 +733,7 @@ export function renderPage(spec) {
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-bg:#f4f5f9;--pg-ink:#141824;--pg-ink2:#596174;--pg-dot:rgba(20,24,36,.075);--pg-glow1:rgba(99,102,241,.13);--pg-glow2:rgba(20,184,166,.09);--pg-line:rgba(20,24,36,.14);color-scheme:light}
+:root{--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
 :root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
@@ -723,24 +749,55 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .pg-mode{white-space:nowrap;flex:none;font:inherit;font-size:.9rem;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;cursor:pointer;color:var(--pg-ink);
   background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pg-mode svg{width:16px;height:16px}
-</style>
+${extraCss}</style>
 </head>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
 <button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div>
-<h1>${esc(c.title || 'Data flow')}</h1>
-${c.intro ? `<p class="lede">${esc(c.intro)}</p>` : ''}
-${renderFragment(spec, 'df')}
+<h1>${esc(title || 'Data flow')}</h1>
+${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
+${body}
 </main>
 <script>
 (function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
 var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
-</script>
+${extraScript}</script>
 </body>
 </html>
 `;
+}
+
+export function renderPage(spec) {
+  const c = compile(spec);
+  return pageShell({ title: c.title, intro: c.intro, theme: spec.theme, body: renderFragment(spec, 'df') });
+}
+
+// Several diagrams in one page, one tab each: a set of flows for one client or one system.
+// book = { title, intro, theme, diagrams: [spec, ...] }. Each tab can be linked as #tab=<number>.
+// A hidden tab is moved off screen rather than removed, so its drawing keeps its size and shape.
+export function renderBook(book) {
+  const specs = (book && book.diagrams) || [];
+  if (specs.length === 0) fail('a book needs at least 1 diagram in "diagrams"');
+  const compiled = specs.map((s) => compile(s)); // checks every diagram before any is drawn
+  const tabs = compiled.map((c, k) => `<button type="button" class="pg-tab" data-tab="${k + 1}" aria-pressed="${k === 0}">${esc(c.title || `Diagram ${k + 1}`)}</button>`).join('');
+  const panels = specs.map((s, k) => {
+    const c = compiled[k];
+    const lede = c.intro ? `<p class="pg-panel-lede">${esc(c.intro)}</p>` : '';
+    return `<section class="pg-panel${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(c.title || '')}">${lede}${renderFragment({ ...s, credit: k === specs.length - 1 && s.credit !== false }, 'd' + (k + 1))}</section>`;
+  }).join('\n');
+  const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
+    + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}\n'
+    + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink)}\n'
+    + '.pg-off{position:absolute;left:-20000px;top:0;width:calc(100vw - 96px);max-width:1624px;visibility:hidden}\n'
+    + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n';
+  const extraScript = '(function(){var bs=document.querySelectorAll(".pg-tab");function show(n){bs.forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-tab")===String(n)?"true":"false");});'
+    + 'document.querySelectorAll(".pg-panel").forEach(function(p){p.classList.toggle("pg-off",p.getAttribute("data-panel")!==String(n));});'
+    + 'try{history.replaceState(null,"","#tab="+n);}catch(e){}}'
+    + 'bs.forEach(function(b){b.addEventListener("click",function(){show(b.getAttribute("data-tab"));});});'
+    + 'var m=/[#&]tab=(\\d+)/.exec(location.hash||"");if(m&&document.querySelector("[data-panel=\\""+m[1]+"\\"]"))show(m[1]);})();\n';
+  return pageShell({ title: book.title, intro: book.intro, theme: book.theme, body: `<nav class="pg-tabs" aria-label="Diagrams">${tabs}</nav>\n${panels}`, extraCss, extraScript });
 }
 
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
@@ -754,12 +811,19 @@ if (isMain) {
       const out = compile(JSON.parse(fs.readFileSync(a, 'utf8')));
       const steps = out.scenarios.reduce((t, s) => t + s.steps.length, 0);
       console.log(`ok: ${Object.keys(out.nodes).length} parts, ${out.edges.length} lines, ${out.scenarios.length} scenarios, ${steps} steps`);
+    } else if (cmd === 'book' && a && b) {
+      const book = JSON.parse(fs.readFileSync(a, 'utf8'));
+      const dir = path.dirname(path.resolve(a));
+      // a diagram may be written in the book, or named by its file next to the book
+      book.diagrams = (book.diagrams || []).map((d) => (typeof d === 'string' ? JSON.parse(fs.readFileSync(path.resolve(dir, d), 'utf8')) : d));
+      fs.writeFileSync(b, renderBook(book));
+      console.log(`written: ${b} (${book.diagrams.length} diagrams)`);
     } else if ((cmd === 'build' || cmd === 'fragment') && a && b) {
       const spec = JSON.parse(fs.readFileSync(a, 'utf8'));
       fs.writeFileSync(b, cmd === 'build' ? renderPage(spec) : renderFragment(spec, c || 'df'));
       console.log(`written: ${b}`);
     } else {
-      console.error('usage:\n  node dataflow.mjs build <spec.json> <out.html>\n  node dataflow.mjs fragment <spec.json> <out.html> [block id]\n  node dataflow.mjs check <spec.json>\n  node dataflow.mjs icons <word>');
+      console.error('usage:\n  node dataflow.mjs build <spec.json> <out.html>\n  node dataflow.mjs book <book.json> <out.html>      several diagrams, one tab each\n  node dataflow.mjs fragment <spec.json> <out.html> [block id]\n  node dataflow.mjs check <spec.json>\n  node dataflow.mjs icons <word>');
       process.exit(2);
     }
   } catch (err) {
