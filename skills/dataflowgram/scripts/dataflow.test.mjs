@@ -388,13 +388,28 @@ test('on a phone the page fits the screen: the stacked column can shrink, and th
   assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
 });
 
+test('the check warns when the system a person talks to is not directly below them', () => {
+  // 19 November 2026: "the main system the person is interacting with should always go below and center"
+  const spec = (middle) => ({ title: 'T', rows: [['p'], middle],
+    parts: { p: { label: 'P', kind: 'person' }, c: { label: 'C', kind: 'ai' }, v: { label: 'V', kind: 'output' }, b: { label: 'B', kind: 'output' } },
+    lines: [['p', 'c'], ['p', 'v'], ['p', 'b']],
+    scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['p>c'], text: 'P asks C', carry: { icon: 'mail', label: 'a question' } }] }] });
+  const off = compile(spec(['c', 'v', 'b'])).warnings;
+  assert.equal(off.length, 1, 'C at the left of the row, under a centred person');
+  assert.match(off[0], /"c", the first thing "p" talks to, is not directly below them/);
+  assert.deepEqual(compile(spec(['v', 'c', 'b'])).warnings, [], 'C in the middle, straight below the person');
+  // the client examples follow it too
+  assert.deepEqual(compile(example()).warnings, []);
+});
+
 test('the check warns when no person is in the top row', () => {
   // 19 November 2026: "always have person at top of diagram"
   const base = (rows) => ({ title: 'T', rows, parts: { p: { label: 'P', kind: 'person' }, a: { label: 'A', kind: 'program' } }, lines: [['p', 'a']],
     scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['p>a'], text: 'P asks', carry: { icon: 'mail', label: 'a question' } }] }] });
   const low = compile(base([['a'], ['p']]));
-  assert.equal(low.warnings.length, 1);
-  assert.match(low.warnings[0], /no person is in the top row: move "p" to row 1/);
+  const top = low.warnings.filter((w) => /no person is in the top row/.test(w));
+  assert.equal(top.length, 1);
+  assert.match(top[0], /no person is in the top row: move "p" to row 1/);
   assert.deepEqual(compile(base([['p'], ['a']])).warnings, [], 'a person on top is fine');
   // a diagram with no person at all is fine too
   const nobody = compile({ title: 'T', rows: [['a']], parts: { a: { label: 'A', kind: 'program' } }, lines: [],

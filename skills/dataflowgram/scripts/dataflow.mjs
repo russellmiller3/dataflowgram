@@ -428,6 +428,17 @@ export function compile(spec) {
   order.forEach((id) => { kindOf[id] = nodes[id].kind; });
   const tones = colourParts(order, kindOf, edges.map((e) => [e.from, e.to]));
   order.forEach((id) => { nodes[id].color = tones[id].color; nodes[id].tint = tones[id].tint; });
+  // The system a person talks to goes directly below them, so the eye drops straight down (19 November 2026).
+  for (const [pid, p] of Object.entries(nodes)) {
+    if (p.kind !== 'person') continue;
+    const first = scenarios.flatMap((s) => s.steps).flatMap((st) => st.flow || [])
+      .map((f) => f.split(/<>|>|</)).find(([a, b]) => a === pid && b && nodes[b]);
+    if (!first) continue;
+    const t = nodes[first[1]];
+    if (t.row !== p.row + 1 || Math.abs(t.cx - p.cx) > 1) {
+      warnings.push(`"${first[1]}", the first thing "${pid}" talks to, is not directly below them: put it in the next row, in the same column (the middle of the row when "${pid}" is alone at the top)`);
+    }
+  }
   return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns, warnings };
 }
 

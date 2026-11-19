@@ -92,3 +92,8 @@ Tests: 35 of 35 pass (run through Runner).
   the reader started in the middle of the story. New rule in the skill: the person goes in row 1, what they talk to
   directly goes below, then the program and its storage. The check now warns when no person is in the top row; its
   test failed when the warning was switched off. Tests: 44 of 44.
+- **The system a person talks to sat off to the side,** so the eye had to hunt for where the person's question went
+  (Copilot at the left of its row, under a centred person). Rule: it goes straight below the person, in the same
+  column. The check now warns when the first thing a person talks to is not directly below them; it caught 2 more
+  diagrams (a client briefing tab and the sign-up example), both fixed. Its test failed with the check switched off.
+  Tests: 45 of 45.
