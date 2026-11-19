@@ -119,3 +119,7 @@ Tests: 35 of 35 pass (run through Runner).
   printing a 10-tab client page to PDF: first 13 pages (3 page tabs spilled, and their narrow-screen layout stacked the
   cards on paper); with print layouts and scales set, 10 pages. Tests: 49 of 49; the new test fails when the print scale
   is removed.
+- **Book tabs stand apart from the page and shimmer on hover.** The old tabs were a see-through fill the same colour
+  as the page, so they read as text, not buttons. Now: a solid tinted fill and a firmer edge; under the mouse an opal
+  colour sweep (still when the computer asks for less motion). Checked in a browser, light and dark. Not yet published:
+  a change to how public pages look waits for the owner to see it.

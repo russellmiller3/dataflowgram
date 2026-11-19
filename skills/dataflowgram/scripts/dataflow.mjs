@@ -934,8 +934,12 @@ export function renderBook(book) {
     return `<section class="pg-panel pg-${shape}${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(titleOf(s, k))}">${printTitle}${lede}${content}</section>`;
   }).join('\n');
   const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
-    + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}\n'
-    + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink)}\n'
+    // tabs stand apart from the page: a solid tinted fill and a firm edge; under the mouse they shimmer like opal
+    + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-ink) 9%,var(--pg-bg));border:1px solid color-mix(in srgb,var(--pg-ink) 28%,transparent);box-shadow:0 1px 0 color-mix(in srgb,var(--pg-ink) 12%,transparent);transition:border-color .2s}\n'
+    + '.pg-tab:hover,.pg-tab:focus-visible{background-image:linear-gradient(115deg,#fbd3e9,#d6f0ff,#d9fbe8,#fff3c4,#e7d9ff,#fbd3e9);background-size:300% 100%;color:#1f2430;border-color:color-mix(in srgb,var(--pg-ink) 45%,transparent);animation:pg-opal 3s linear infinite}\n'
+    + '@keyframes pg-opal{to{background-position:300% 0}}\n'
+    + '@media (prefers-reduced-motion:reduce){.pg-tab:hover,.pg-tab:focus-visible{animation:none}}\n'
+    + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink);animation:none}\n'
     + '.pg-off{position:absolute;left:-20000px;top:0;width:calc(100vw - 96px);max-width:1624px;visibility:hidden}\n'
     + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n'
     + '.pg-print-title{display:none}\n'
