@@ -1,0 +1,19 @@
+{
+  "name": "dataflow-steps",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive, step-by-step data-flow diagrams for Claude.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Russell Miller (https://russellmiller.io)",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "test": "node --test skills/dataflow-steps/scripts/dataflow.test.mjs",
+    "docs": "node tools/build-docs.mjs",
+    "pictures": "node tools/shoot.mjs"
+  },
+  "devDependencies": {
+    "gifenc": "1.0.3",
+    "pngjs": "7.0.0"
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "dataflow-steps",
+  "version": "1.0.0",
+  "description": "Interactive, step-by-step data-flow diagrams: lit lines, travelling tags that name what moves, a side panel with the real item, warnings when data leaves your system, and a Play button.",
+  "author": {
+    "name": "Russell Miller",
+    "url": "https://russellmiller.io"
+  },
+  "homepage": "https://github.com/__OWNER__/dataflow-steps",
+  "repository": "https://github.com/__OWNER__/dataflow-steps",
+  "license": "MIT",
+  "keywords": ["diagram", "data flow", "explainer", "architecture", "interactive", "html"]
+}

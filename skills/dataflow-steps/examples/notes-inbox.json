@@ -1,0 +1,423 @@
+{
+  "title": "A notes inbox with AI",
+  "intro": "Forward an email to one address, and it is filed for you. Ask a question the same way, and you get the answer back.",
+  "rows": [
+    [
+      "phone"
+    ],
+    [
+      "inbox"
+    ],
+    [
+      "hub",
+      "model"
+    ],
+    [
+      "lists",
+      "files",
+      "ledger"
+    ]
+  ],
+  "parts": {
+    "phone": {
+      "label": "Sam's phone",
+      "sub": "any email app",
+      "kind": "person",
+      "icon": "smartphone",
+      "info": "Any phone or computer with email. Nothing is installed."
+    },
+    "inbox": {
+      "label": "Notes inbox",
+      "sub": "a shared mailbox",
+      "kind": "mail",
+      "info": "It keeps every original email untouched. This is the record."
+    },
+    "hub": {
+      "label": "The hub",
+      "sub": "our program",
+      "kind": "program",
+      "info": "The only part that reads the inbox and writes to the lists."
+    },
+    "model": {
+      "label": "AI model",
+      "sub": "returns fields",
+      "kind": "ai",
+      "info": "It reads text and returns fields or a draft. It never writes to the lists itself.",
+      "outside": true
+    },
+    "lists": {
+      "label": "Lists",
+      "sub": "rows of records",
+      "kind": "store",
+      "info": "One row for each company, person, note and follow-up."
+    },
+    "files": {
+      "label": "File library",
+      "sub": "saved attachments",
+      "kind": "files",
+      "info": "Each attachment, in a folder, with tags."
+    },
+    "ledger": {
+      "label": "Ledger export",
+      "sub": "the money figures",
+      "kind": "outside",
+      "info": "A monthly file from the accounting system. The hub only reads it."
+    }
+  },
+  "zones": [
+    {
+      "label": "INSIDE THE COMPANY'S OWN ACCOUNT",
+      "rows": [
+        2,
+        4
+      ]
+    }
+  ],
+  "lines": [
+    [
+      "phone",
+      "inbox"
+    ],
+    [
+      "inbox",
+      "hub"
+    ],
+    [
+      "hub",
+      "model"
+    ],
+    [
+      "hub",
+      "lists"
+    ],
+    [
+      "hub",
+      "files"
+    ],
+    [
+      "hub",
+      "ledger"
+    ]
+  ],
+  "scenarios": [
+    {
+      "id": "file",
+      "label": "Files a note",
+      "steps": [
+        {
+          "action": "send",
+          "flow": [
+            "phone>inbox"
+          ],
+          "text": "Sam forwards an email. The whole email travels: the sender, the text and the attachment.",
+          "carry": {
+            "icon": "mail",
+            "label": "email + attachment"
+          },
+          "time": "under 1 second",
+          "item": {
+            "title": "Fwd: Q3 update",
+            "fields": [
+              [
+                "From",
+                "sam@company.example"
+              ],
+              [
+                "To",
+                "notes@company.example"
+              ],
+              [
+                "Attachment",
+                "Q3-letter.pdf"
+              ]
+            ],
+            "body": "FYI, their Q3 letter. Can we call them next week?"
+          }
+        },
+        {
+          "action": "check",
+          "flow": [
+            "inbox>hub"
+          ],
+          "text": "The hub fetches the email and checks that the sender is on the team.",
+          "carry": {
+            "icon": "mail",
+            "label": "the email"
+          },
+          "ifNot": "an email from outside the team gets no reply and nothing is filed.",
+          "item": {
+            "title": "Sender check",
+            "fields": [
+              [
+                "Sender",
+                "sam@company.example"
+              ],
+              [
+                "On the team",
+                "Yes"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "read",
+          "flow": [
+            "lists>hub"
+          ],
+          "text": "The hub looks up the sender's company in the lists.",
+          "carry": {
+            "icon": "table",
+            "label": "company row"
+          },
+          "item": {
+            "title": "Row found in Companies",
+            "fields": [
+              [
+                "Company",
+                "Northfield Partners"
+              ],
+              [
+                "Domain",
+                "northfield.example"
+              ],
+              [
+                "Contact",
+                "Sarah Lin"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "think",
+          "flow": [
+            "hub<>model"
+          ],
+          "text": "The model reads the text and returns fields: a summary and 1 follow-up.",
+          "carry": {
+            "icon": "message-square",
+            "label": "text → fields"
+          },
+          "time": "about 4 seconds",
+          "item": {
+            "title": "What the model returned",
+            "fields": [
+              [
+                "Summary",
+                "Q3 letter; asks for a call next week"
+              ],
+              [
+                "Follow-up",
+                "Call Northfield, next week"
+              ],
+              [
+                "Document",
+                "Quarterly letter"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "write",
+          "flow": [
+            "hub>lists"
+          ],
+          "text": "The hub writes 1 note row and 1 follow-up row.",
+          "carry": {
+            "icon": "rows-3",
+            "label": "2 new rows"
+          },
+          "item": {
+            "title": "2 new rows",
+            "fields": [
+              [
+                "Note",
+                "Q3 letter received; asks for a call"
+              ],
+              [
+                "Follow-up",
+                "Call Northfield, due 24 Nov"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "save",
+          "flow": [
+            "hub>files"
+          ],
+          "text": "The hub saves the attachment and sets its tags.",
+          "carry": {
+            "icon": "paperclip",
+            "label": "the attachment"
+          },
+          "item": {
+            "title": "Saved file",
+            "fields": [
+              [
+                "File",
+                "Q3-letter.pdf"
+              ],
+              [
+                "Folder",
+                "Northfield / 2026"
+              ],
+              [
+                "Tags",
+                "Northfield, Quarterly letter"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "reply",
+          "flow": [
+            "hub>inbox",
+            "inbox>phone"
+          ],
+          "text": "The hub replies with what it filed, in 5 lines.",
+          "carry": {
+            "icon": "reply",
+            "label": "what was filed"
+          },
+          "time": "about 1 minute after sending",
+          "item": {
+            "title": "Re: Fwd: Q3 update",
+            "fields": [
+              [
+                "From",
+                "notes@company.example"
+              ],
+              [
+                "To",
+                "sam@company.example"
+              ]
+            ],
+            "body": "Filed under Northfield Partners.\nNote: Q3 letter received.\nFollow-up: call Northfield, due 24 Nov.\nSaved: Q3-letter.pdf\nWrong? Just reply and say what is wrong."
+          }
+        }
+      ]
+    },
+    {
+      "id": "ask",
+      "label": "Asks a question",
+      "steps": [
+        {
+          "action": "send",
+          "flow": [
+            "phone>inbox"
+          ],
+          "text": "Sam emails a question: how much did we pay this supplier?",
+          "carry": {
+            "icon": "mail",
+            "label": "the question"
+          },
+          "item": {
+            "title": "how much did we pay Acme?",
+            "fields": [
+              [
+                "From",
+                "sam@company.example"
+              ],
+              [
+                "To",
+                "notes@company.example"
+              ]
+            ],
+            "body": "this year please"
+          }
+        },
+        {
+          "action": "check",
+          "flow": [
+            "inbox>hub"
+          ],
+          "text": "The hub checks that the sender is on the team. An outsider gets no answer.",
+          "carry": {
+            "icon": "mail",
+            "label": "the question"
+          },
+          "ifNot": "an email from outside the team gets no reply."
+        },
+        {
+          "action": "think",
+          "flow": [
+            "hub<>model"
+          ],
+          "text": "The model works out that this is a question, and what it asks for.",
+          "carry": {
+            "icon": "message-square",
+            "label": "what Sam wants"
+          },
+          "item": {
+            "title": "What the model returned",
+            "fields": [
+              [
+                "Kind",
+                "Question"
+              ],
+              [
+                "About",
+                "Acme Supplies"
+              ],
+              [
+                "Wants",
+                "Total paid this year"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "read",
+          "flow": [
+            "ledger>hub"
+          ],
+          "text": "The hub reads the figures from the ledger export. It changes nothing.",
+          "carry": {
+            "icon": "banknote",
+            "label": "supplier payments"
+          },
+          "item": {
+            "title": "Rows read from the ledger",
+            "fields": [
+              [
+                "Acme, Mar",
+                "$4,200"
+              ],
+              [
+                "Acme, Jul",
+                "$3,900"
+              ],
+              [
+                "Acme, Oct",
+                "$4,100"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "reply",
+          "flow": [
+            "hub>inbox",
+            "inbox>phone"
+          ],
+          "text": "The reply is the answer in 1 line, then the breakdown.",
+          "carry": {
+            "icon": "reply",
+            "label": "1-line answer"
+          },
+          "time": "about 1 minute after asking",
+          "item": {
+            "title": "Re: how much did we pay Acme?",
+            "fields": [
+              [
+                "To",
+                "sam@company.example"
+              ]
+            ],
+            "body": "We paid Acme Supplies $12,200 this year, in 3 payments.\nMar $4,200 · Jul $3,900 · Oct $4,100\nSource: ledger export, 31 Oct."
+          }
+        }
+      ]
+    }
+  ]
+}

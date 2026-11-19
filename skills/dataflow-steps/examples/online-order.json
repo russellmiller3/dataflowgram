@@ -1,0 +1,55 @@
+{
+  "title": "An online order",
+  "intro": "What happens between a shopper pressing Pay and the warehouse packing the box. Press Play, or step through it.",
+  "rows": [
+    ["shopper", "mailer"],
+    ["shop", "payments"],
+    ["orders", "warehouse"]
+  ],
+  "parts": {
+    "shopper": { "label": "Shopper", "sub": "on the shop's website", "kind": "person", "icon": "shopping-cart", "info": "A customer with a full basket, about to press Pay." },
+    "mailer": { "label": "Email service", "sub": "sends the receipts", "kind": "outside", "icon": "send", "info": "An outside company that sends emails for the shop." },
+    "shop": { "label": "Shop server", "sub": "the shop's own program", "kind": "program", "icon": "store", "info": "The program behind the website. It is the only part that talks to the others." },
+    "payments": { "label": "Payment provider", "sub": "takes the card payment", "kind": "outside", "icon": "credit-card", "info": "An outside company that charges the card. The shop never stores the card number." },
+    "orders": { "label": "Orders table", "sub": "1 row per order", "kind": "store", "icon": "rows-3", "info": "The shop's own record of every order." },
+    "warehouse": { "label": "Warehouse screen", "sub": "the pick list", "kind": "output", "icon": "package", "info": "The list the packers work from." }
+  },
+  "lines": [
+    ["shopper", "shop"],
+    ["mailer", "shop"],
+    ["mailer", "shopper"],
+    ["shop", "payments"],
+    ["shop", "orders"],
+    ["orders", "warehouse"]
+  ],
+  "scenarios": [
+    {
+      "id": "paid",
+      "label": "Card accepted",
+      "steps": [
+        { "action": "send", "flow": ["shopper>shop"], "text": "The shopper presses Pay. The basket and the delivery address go to the shop.", "time": "under 1 second",
+          "carry": { "icon": "shopping-cart", "label": "basket + address" },
+          "item": { "title": "Basket", "fields": [["Blue mug", "1 × $14.00"], ["Delivery", "$5.00"], ["Total", "$19.00"], ["Ship to", "12 Elm Street"]] } },
+        { "action": "send", "flow": ["shop>payments"], "text": "The shop sends the card payment to the payment provider.", "time": "about 2 seconds",
+          "ifNot": "the provider declines the card. The shopper sees \"payment failed\" and nothing is saved.",
+          "carry": { "icon": "credit-card", "label": "$19.00 card charge" },
+          "item": { "title": "Charge request", "fields": [["Amount", "$19.00"], ["Card", "•••• 4242"], ["For", "Order #1042"]] } },
+        { "action": "read", "flow": ["payments>shop"], "text": "The provider answers that the payment went through.",
+          "carry": { "icon": "badge-check", "label": "payment approved" },
+          "item": { "title": "Charge result", "fields": [["Result", "Approved"], ["Reference", "PAY-88123"]] } },
+        { "action": "write", "flow": ["shop>orders"], "text": "The shop saves the order as paid.",
+          "carry": { "icon": "rows-3", "label": "order #1042" },
+          "item": { "title": "New row in Orders", "fields": [["Order", "#1042"], ["Status", "Paid"], ["Total", "$19.00"], ["Payment", "PAY-88123"]] } },
+        { "action": "send", "flow": ["orders>warehouse"], "text": "The order appears on the warehouse pick list.",
+          "carry": { "icon": "package", "label": "1 item to pick" },
+          "item": { "title": "Pick list", "fields": [["Order", "#1042"], ["Pick", "1 × Blue mug"], ["Box", "Small"]] } },
+        { "action": "send", "flow": ["shop>mailer"], "text": "The shop asks the email service to send a receipt.",
+          "carry": { "icon": "mail", "label": "receipt request" },
+          "item": { "title": "Receipt to send", "fields": [["To", "sam@example.com"], ["Order", "#1042"], ["Total", "$19.00"]] } },
+        { "action": "reply", "flow": ["mailer>shopper"], "text": "The shopper gets the receipt by email.", "time": "within 1 minute",
+          "carry": { "icon": "mail-check", "label": "receipt email" },
+          "item": { "title": "Your order #1042", "fields": [["From", "orders@shop.example"], ["To", "sam@example.com"]], "body": "Thanks, Sam. We have your order.\nBlue mug × 1 ... $14.00\nDelivery ...... $5.00\nTotal ......... $19.00" } }
+      ]
+    }
+  ]
+}

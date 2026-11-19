@@ -1,0 +1,50 @@
+{
+  "title": "Sign-up with an email check",
+  "intro": "A new user signs up, and the account only goes live once they click the link in their email.",
+  "rows": [
+    ["visitor"],
+    ["app", "mailer"],
+    ["users"]
+  ],
+  "parts": {
+    "visitor": { "label": "New user", "sub": "on the sign-up page", "kind": "person", "info": "Someone creating an account." },
+    "app": { "label": "App server", "sub": "our program", "kind": "program", "info": "It checks the form, saves the account and asks for the email to be sent." },
+    "mailer": { "label": "Email service", "sub": "sends the link", "kind": "outside", "icon": "send", "info": "An outside company that delivers the app's emails." },
+    "users": { "label": "Users table", "sub": "1 row per account", "kind": "store", "icon": "users", "info": "Every account, with a column that says whether its email is confirmed." }
+  },
+  "lines": [
+    ["visitor", "app"],
+    ["app", "mailer"],
+    ["mailer", "visitor"],
+    ["app", "users"]
+  ],
+  "scenarios": [
+    {
+      "id": "signup",
+      "label": "Sign up and confirm",
+      "steps": [
+        { "action": "send", "flow": ["visitor>app"], "text": "The new user fills in the form and presses Sign up.",
+          "carry": { "icon": "id-card", "label": "name + email" },
+          "item": { "title": "Sign-up form", "fields": [["Name", "Ana Ruiz"], ["Email", "ana@example.com"], ["Password", "(never stored as typed)"]] } },
+        { "action": "check", "flow": ["app<>users"], "text": "The app checks that the email has no account yet.",
+          "ifNot": "the form says \"this email already has an account\" and offers a sign-in link.",
+          "carry": { "icon": "search", "label": "is it taken?" } },
+        { "action": "write", "flow": ["app>users"], "text": "The app saves the account as not yet confirmed.",
+          "carry": { "icon": "user-plus", "label": "new account" },
+          "item": { "title": "New row in Users", "fields": [["Name", "Ana Ruiz"], ["Email", "ana@example.com"], ["Confirmed", "No"]] } },
+        { "action": "send", "flow": ["app>mailer"], "text": "The app asks the email service to send a confirm link.",
+          "carry": { "icon": "link", "label": "confirm link" },
+          "item": { "title": "Email to send", "fields": [["To", "ana@example.com"], ["Link", "app.example/confirm?k=7f3a"], ["Expires", "in 24 hours"]] } },
+        { "action": "send", "flow": ["mailer>visitor"], "text": "The new user gets the email.", "time": "within 1 minute",
+          "carry": { "icon": "mail-check", "label": "confirm email" },
+          "item": { "title": "Confirm your email", "fields": [["From", "hello@app.example"]], "body": "Hi Ana, press the button to confirm your email.\n[ Confirm my email ]" } },
+        { "action": "send", "flow": ["visitor>app"], "text": "The user clicks the link, and the click comes back to the app.",
+          "ifNot": "after 24 hours the link stops working and the account stays unconfirmed.",
+          "carry": { "icon": "mouse-pointer-click", "label": "link click" } },
+        { "action": "write", "flow": ["app>users"], "text": "The app marks the account confirmed. The user can now sign in.",
+          "carry": { "icon": "user-check", "label": "confirmed" },
+          "item": { "title": "Changed row in Users", "fields": [["Email", "ana@example.com"], ["Confirmed", "Yes"]] } }
+      ]
+    }
+  ]
+}

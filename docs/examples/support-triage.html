@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Support email, sorted by AI</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#E9EFF6;color:#14233A;font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.5}
+main{max-width:1040px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:1.7rem;line-height:1.2;margin:0}
+.lede{color:#51627A;max-width:680px;margin:8px 0 20px}
+</style>
+</head>
+<body>
+<main>
+<h1>Support email, sorted by AI</h1>
+<p class="lede">A customer email arrives. An AI model sorts it, and the urgent ones reach a person at once.</p>
+<style>
+.df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
+.df-grid{display:grid;grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:28px;align-items:start}
+.df-grid>div{min-width:0}
+.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-svg text{font-family:inherit;fill:var(--df-ink)}
+.df-node{cursor:pointer;transition:opacity .15s}
+.df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
+.df-node .df-ico{fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.df-node .df-t{font-size:15px;font-weight:600}
+.df-node .df-t3{font-size:13.5px;font-weight:600}
+.df-node .df-s{font-size:12.5px;fill:var(--df-ink2)}
+.df-node .df-s3{font-size:11.5px;fill:var(--df-ink2)}
+.df-node.on rect{stroke-width:3}
+.df-node.dim{opacity:.38}
+.df-node:focus{outline:none}
+.df-node:focus-visible rect,.df-node.picked rect{stroke:var(--df-ink);stroke-width:2.5}
+.df-edge{fill:none;stroke:#B4C0D0;stroke-width:2}
+.df-edge.on{stroke-width:3.5}
+.df-edge.fwd,.df-edge.rev{stroke-dasharray:7 5;animation:df-march .7s linear infinite}
+.df-edge.rev{animation-direction:reverse}
+@keyframes df-march{to{stroke-dashoffset:-12}}
+@media (prefers-reduced-motion:reduce){.df-edge.fwd,.df-edge.rev{animation:none;stroke-dasharray:none}}
+.df-packet{pointer-events:none}
+.df-packet rect{fill:#fff;stroke-width:1.6}
+.df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
+.df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
+.df-carry[hidden]{display:none}
+.df-carry svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.df-zone{fill:none;stroke:#8A99AD;stroke-dasharray:5 4}
+.df-zone-l{font-size:12px;fill:var(--df-ink2);letter-spacing:.05em}
+.df-k-person{--c:#1D4ED8;--t:#EEF3FF}
+.df-k-mail{--c:#B45309;--t:#FFF4DE}
+.df-k-program{--c:#334155;--t:#EEF2F6}
+.df-k-ai{--c:#7C3AED;--t:#F3ECFF}
+.df-k-store{--c:#15803D;--t:#E8F6EC}
+.df-k-files{--c:#0F766E;--t:#E3F5F2}
+.df-k-outside{--c:#BE123C;--t:#FDEBEF}
+.df-k-web{--c:#0E7490;--t:#E4F4F9}
+.df-k-output{--c:#4338CA;--t:#ECEEFF}
+.df-k-time{--c:#A16207;--t:#FBF3D5}
+.df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
+.df-info b{color:var(--df-ink)}
+.df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.df-legend small{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--df-ink2);margin-right:2px}
+.df-key{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;border:1px solid var(--df-line);border-radius:3px;padding:3px 8px 3px 6px;background:var(--df-card);color:var(--df-ink)}
+.df-key svg{width:16px;height:16px;flex:none}
+.df-key.act{border-color:transparent;color:#fff}
+.df-seg{display:flex;flex-wrap:wrap;border:1px solid var(--df-line);border-radius:3px;overflow:hidden;background:var(--df-card);width:max-content;max-width:100%;margin-bottom:12px}
+.df-seg button{font:inherit;font-size:.95rem;border:0;border-right:1px solid var(--df-line);background:transparent;padding:8px 12px;cursor:pointer;color:var(--df-ink)}
+.df-seg button:last-child{border-right:0}
+.df-seg button[aria-pressed="true"]{background:var(--df-ink);color:#fff}
+.df-cap{background:var(--df-card);border:1px solid var(--df-line);border-left:5px solid var(--df-ink);border-radius:4px;padding:12px 14px;min-height:112px}
+.df-caphead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.df-count{color:var(--df-ink2);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em}
+.df-act{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:3px 8px 3px 6px}
+.df-act svg{width:15px;height:15px}
+.df-text{margin:6px 0 0;font-size:1.05rem}
+.df-nav{display:flex;gap:8px;margin-top:10px}
+.df-nav button{font:inherit;font-size:.95rem;border:1px solid var(--df-line);background:var(--df-card);border-radius:3px;padding:7px 14px;cursor:pointer;color:var(--df-ink)}
+.df-nav button:disabled{opacity:.4;cursor:default}
+.df-nav .df-next{background:var(--df-ink);border-color:var(--df-ink);color:#fff}
+.df-play{display:inline-flex;align-items:center;gap:6px}
+.df-play svg{width:16px;height:16px}
+.df-time{display:inline-flex;align-items:center;gap:5px;color:var(--df-ink2);font-size:.85rem}
+.df-time[hidden]{display:none}
+.df-time svg{width:15px;height:15px}
+.df-leaves,.df-ifnot{display:flex;align-items:flex-start;gap:7px;margin:8px 0 0;font-size:.95rem;border-radius:3px;padding:6px 9px}
+.df-leaves[hidden],.df-ifnot[hidden]{display:none}
+.df-leaves{background:#FDECEC;color:#9B1C1C;font-weight:600}
+.df-ifnot{background:#FFF6E0;color:#7A4B00}
+.df-leaves svg,.df-ifnot svg{width:17px;height:17px;flex:none;margin-top:2px}
+.df-item{margin-top:14px}
+.df-item-h{font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:var(--df-ink2);margin:0 0 6px;font-weight:600}
+.df-item-card{background:var(--df-card);border:1px solid var(--df-line);border-top:4px solid var(--df-line);border-radius:4px;font-size:.95rem}
+.df-item-card.empty{padding:12px 14px;color:var(--df-ink2)}
+.df-item-title{display:flex;align-items:center;gap:8px;padding:10px 14px;font-weight:600;border-bottom:1px solid var(--df-line);background:var(--df-head)}
+.df-item-title svg{width:18px;height:18px;flex:none}
+.df-item-fields{display:grid;grid-template-columns:minmax(80px,auto) minmax(0,1fr);gap:4px 14px;padding:10px 14px;margin:0}
+.df-item-fields dt{color:var(--df-ink2);font-size:.88rem}
+.df-item-fields dd{margin:0;overflow-wrap:anywhere}
+.df-item-body{margin:0;padding:10px 14px;white-space:pre-wrap;overflow-wrap:anywhere;font-family:inherit;border-top:1px solid var(--df-line)}
+.df-item-fields + .df-item-body{border-top:1px dashed var(--df-line)}
+.df-item-title + .df-item-body{border-top:0}
+.df-edge.trail{stroke-width:2.6;opacity:.4}
+.df-node.seen{opacity:.72}
+.df-steps{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:3px}
+.df-steps button{font:inherit;font-size:.95rem;text-align:left;width:100%;border:1px solid transparent;background:transparent;border-radius:3px;padding:5px 8px;cursor:pointer;color:var(--df-ink2);display:grid;grid-template-columns:26px 18px minmax(0,1fr);gap:8px;align-items:start}
+.df-steps button[aria-current="step"]{background:var(--df-head);border-color:var(--df-line);color:var(--df-ink);font-weight:600}
+.df-chip{width:26px;height:26px;border-radius:3px;display:grid;place-items:center;color:#fff}
+.df-chip svg{width:15px;height:15px}
+.df-num{color:var(--df-ink2);font-variant-numeric:tabular-nums}
+@media (max-width:820px){.df-grid{grid-template-columns:1fr}}
+</style>
+<div class="df" id="df">
+  <div class="df-grid">
+    <div>
+      <svg class="df-svg" viewBox="0 0 400 556" role="img" aria-label="Support email, sorted by AI">
+        <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#2563EB"/></marker><marker id="df-m-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0E7490"/></marker><marker id="df-m-think" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#7C3AED"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#15803D"/></marker></defs>
+        
+        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M200 96 L200 160"/><path class="df-edge" data-edge="e1" d="M200 246 L200 272 Q200 278 194 278 L109 278 Q103 278 103 284 L103 310"/><path class="df-edge" data-edge="e2" d="M196 353 L204 353" data-tag="200,288"/><path class="df-edge" data-edge="e3" d="M72 396 L72 413 Q72 419 78 419 L97 419 Q103 419 103 425 L103 460"/><path class="df-edge" data-edge="e4" d="M134 396 L134 431 Q134 437 140 437 L291 437 Q297 437 297 443 L297 460"/></g>
+        <g class="df-node df-k-person" data-node="customer" tabindex="0" role="button" aria-label="Customer"><rect x="80" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(189 20) scale(.9167)"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g><text class="df-t" x="200" y="63" text-anchor="middle">Customer</text><text class="df-s" x="200" y="82" text-anchor="middle">writes in by email</text></g><g class="df-node df-k-mail" data-node="helpdesk" tabindex="0" role="button" aria-label="Support inbox"><rect x="80" y="160" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(189 170) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="200" y="213" text-anchor="middle">Support inbox</text><text class="df-s" x="200" y="232" text-anchor="middle">help@ mailbox</text></g><g class="df-node df-k-program" data-node="triage" tabindex="0" role="button" aria-label="Sorting program"><rect x="10" y="310" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(92 320) scale(.9167)"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></g><text class="df-t" x="103" y="363" text-anchor="middle">Sorting program</text><text class="df-s" x="103" y="382" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="204" y="310" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(286 320) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="297" y="363" text-anchor="middle">AI model</text><text class="df-s" x="297" y="382" text-anchor="middle">at an outside provider</text></g><g class="df-node df-k-store" data-node="tickets" tabindex="0" role="button" aria-label="Ticket queue"><rect x="10" y="460" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(92 470) scale(.9167)"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></g><text class="df-t" x="103" y="513" text-anchor="middle">Ticket queue</text><text class="df-s" x="103" y="532" text-anchor="middle">1 row per email</text></g><g class="df-node df-k-person" data-node="lead" tabindex="0" role="button" aria-label="Billing lead"><rect x="204" y="460" width="186" height="86" rx="4"/><g class="df-ico" transform="translate(286 470) scale(.9167)"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></g><text class="df-t" x="297" y="513" text-anchor="middle">Billing lead</text><text class="df-s" x="297" y="532" text-anchor="middle">gets urgent alerts</text></g>
+        <g class="df-packets"></g>
+      </svg>
+      <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
+      <div class="df-legend"><small>Parts</small><span class="df-key" style="color:#1D4ED8"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span style="color:var(--df-ink)">A person</span></span><span class="df-key" style="color:#B45309"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span style="color:var(--df-ink)">A mailbox</span></span><span class="df-key" style="color:#334155"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span style="color:var(--df-ink)">Our program</span></span><span class="df-key" style="color:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg><span style="color:var(--df-ink)">An AI model</span></span><span class="df-key" style="color:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span style="color:var(--df-ink)">Stored rows</span></span></div>
+      <div class="df-legend"><small>Steps</small><span class="df-key act" style="background:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="background:#0E7490"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>Read</span><span class="df-key act" style="background:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>Think</span><span class="df-key act" style="background:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span></div>
+    </div>
+    <div>
+      
+      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
+      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button></div>
+      <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
+      <ol class="df-steps"></ol>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+// The part of a data-flow diagram that runs in the reader's browser.
+// The builder copies this file into each page it makes. The tests import it directly.
+
+// What the diagram shows at one step. No page needed: this is plain data in, plain data out.
+function stepView(data, scenarioId, index) {
+  const scn = data.scenarios.find((s) => s.id === scenarioId);
+  if (!scn) throw new Error('unknown scenario: ' + scenarioId);
+  const i = Math.max(0, Math.min(index, scn.steps.length - 1));
+  const st = scn.steps[i];
+  const edges = {};
+  st.edges.forEach((pair) => { edges[pair[0]] = pair[1]; });
+  // the trail: lines and parts used by earlier steps, each line in the colour of its latest action
+  const trail = {};
+  const seen = [];
+  scn.steps.slice(0, i).forEach((prev) => {
+    prev.edges.forEach((pair) => { if (!(pair[0] in edges)) trail[pair[0]] = prev.action; });
+    prev.nodes.forEach((n) => { if (st.nodes.indexOf(n) < 0 && seen.indexOf(n) < 0) seen.push(n); });
+  });
+  return {
+    scenario: scn.id,
+    index: i,
+    count: scn.steps.length,
+    action: st.action,
+    text: st.text,
+    edges, // edge id -> 'f' (along the line), 'b' (against it) or 'x' (both ways)
+    nodes: st.nodes.slice(),
+    trail, // edge id -> the action of the latest earlier step that used it
+    seen, // parts used by earlier steps and not by this one
+    carry: st.carry || null, // what travels on the line: { label, icon }
+    item: st.item || null, // a sample of the real item: { title, icon, fields, body }
+    leaves: (st.leaves || []).slice(), // parts outside the owner's system that receive data
+    time: st.time || '',
+    ifNot: st.ifNot || '',
+    first: i === 0,
+    last: i === scn.steps.length - 1,
+  };
+}
+
+// The first sentence of a step, for the step list.
+function shortText(text) {
+  const m = /^(.*?[.?!])(\s|$)/.exec(text);
+  return (m ? m[1] : text).replace(/\.$/, '');
+}
+
+// How visible a travelling tag is at time t (0 to 1) in its loop. A one-way tag fades in as it
+// leaves and fades out as it arrives, so it never jumps back to the start. A tag that goes there
+// and back, or one that does not move, stays fully visible.
+function tagOpacity(t, dir, stationary) {
+  if (stationary || dir === 'x') return 1;
+  const EDGE = 0.18;
+  return Math.max(0, Math.min(1, t / EDGE, (1 - t) / EDGE));
+}
+
+// Reads a link to one step: "#<diagram id>=<scenario id>.<step number>".
+function readLink(hash, prefix, data) {
+  const m = new RegExp('[#&]' + prefix + '=([a-z][a-z0-9-]*)\\.(\\d+)').exec(hash || '');
+  if (!m) return null;
+  const scn = data.scenarios.find((s) => s.id === m[1]);
+  if (!scn) return null;
+  return { scenario: scn.id, index: Math.max(0, Math.min(Number(m[2]) - 1, scn.steps.length - 1)) };
+}
+
+// Wires one diagram on the page. root is the element the builder wrote.
+function mount(root, data, prefix) {
+  const q = (s) => root.querySelector(s);
+  const qa = (s) => [].slice.call(root.querySelectorAll(s));
+  let cur = data.scenarios[0].id;
+  let i = 0;
+  const link = readLink(window.location.hash, prefix, data);
+  if (link) { cur = link.scenario; i = link.index; }
+  const list = q('.df-steps');
+  const back = q('.df-back');
+  const next = q('.df-next');
+  const play = q('.df-play');
+  const info = q('.df-info');
+  const card = q('.df-item-card');
+  const edgeLayer = q('.df-edges');
+  const packetLayer = q('.df-packets');
+  const svg = q('.df-svg');
+  const NS = 'http://www.w3.org/2000/svg';
+  const still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let packets = [];
+  let timer = null;
+
+  // A tag that rides along a line: an icon and a few words, in the step's colour.
+  function makePacket(path, dir, carry, color) {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'df-packet');
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('height', '26');
+    rect.setAttribute('y', '-13');
+    rect.style.stroke = color;
+    const icon = document.createElementNS(NS, 'g');
+    icon.setAttribute('class', 'df-pico');
+    icon.innerHTML = carry.icon;
+    icon.style.stroke = color;
+    const text = document.createElementNS(NS, 'text');
+    text.setAttribute('y', '4.4');
+    text.textContent = carry.label;
+    g.appendChild(rect);
+    g.appendChild(icon);
+    g.appendChild(text);
+    packetLayer.appendChild(g);
+    let tw = 0;
+    try { tw = text.getComputedTextLength(); } catch (e) { tw = 0; }
+    if (!tw) tw = carry.label.length * 6.9; // the panel is hidden, so measure by count
+    const w = tw + 34;
+    rect.setAttribute('x', String(-w / 2));
+    rect.setAttribute('width', String(w));
+    icon.setAttribute('transform', 'translate(' + (-w / 2 + 7) + ' -7) scale(.5833)');
+    text.setAttribute('x', String(-w / 2 + 26));
+    const tag = path.getAttribute('data-tag');
+    const fixed = tag ? tag.split(',').map(Number) : null;
+    return { g, path, dir, w, len: path.getTotalLength(), fixed };
+  }
+
+  function place(pk, t) {
+    let f = t;
+    if (pk.dir === 'b') f = 1 - t;
+    if (pk.dir === 'x') f = t < 0.5 ? t * 2 : 2 - t * 2;
+    if (still) f = 0.5;
+    const pt = pk.fixed ? { x: pk.fixed[0], y: pk.fixed[1] } : pk.path.getPointAtLength(pk.len * (0.12 + 0.76 * f));
+    const vb = svg.viewBox.baseVal;
+    const x = Math.max(pk.w / 2 + 2, Math.min(vb.width - pk.w / 2 - 2, pt.x));
+    pk.g.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + pt.y.toFixed(1) + ')');
+    pk.g.style.opacity = String(tagOpacity(t, pk.dir, !!pk.fixed || still));
+  }
+
+  function tick(now) {
+    const t = (now % 2200) / 2200;
+    packets.forEach((pk) => place(pk, t));
+    window.requestAnimationFrame(tick);
+  }
+
+  function el(tag, cls, text) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text !== undefined) e.textContent = text;
+    return e;
+  }
+
+  // The side panel: a sample of the real item that moves in this step.
+  function showItem(v, color) {
+    card.innerHTML = '';
+    card.style.borderTopColor = v.item ? color : '';
+    card.classList.toggle('empty', !v.item);
+    if (!v.item) {
+      card.textContent = v.carry ? v.carry.label : 'No item moves in this step.';
+      return;
+    }
+    const head = el('div', 'df-item-title');
+    const ico = document.createElementNS(NS, 'svg');
+    ico.setAttribute('viewBox', '0 0 24 24');
+    ico.setAttribute('fill', 'none');
+    ico.setAttribute('stroke-width', '2');
+    ico.setAttribute('stroke-linecap', 'round');
+    ico.setAttribute('stroke-linejoin', 'round');
+    ico.setAttribute('aria-hidden', 'true');
+    ico.style.stroke = color;
+    ico.innerHTML = v.item.icon;
+    head.appendChild(ico);
+    head.appendChild(el('span', '', v.item.title));
+    card.appendChild(head);
+    if (v.item.fields.length) {
+      const dl = el('dl', 'df-item-fields');
+      v.item.fields.forEach((pair) => {
+        dl.appendChild(el('dt', '', pair[0]));
+        dl.appendChild(el('dd', '', pair[1]));
+      });
+      card.appendChild(dl);
+    }
+    if (v.item.body) card.appendChild(el('pre', 'df-item-body', v.item.body));
+  }
+
+  function setNote(sel, show, icon, text) {
+    const p = q(sel);
+    p.hidden = !show;
+    if (!show) return;
+    p.innerHTML = icon + '<span></span>';
+    p.lastChild.textContent = text;
+  }
+
+  function draw() {
+    const v = stepView(data, cur, i);
+    i = v.index; // a press past the last step stays on the last step
+    const act = data.actions[v.action];
+    packetLayer.innerHTML = '';
+    packets = [];
+    qa('.df-edge').forEach((p) => {
+      p.classList.remove('on', 'fwd', 'rev', 'trail');
+      p.style.stroke = '';
+      p.removeAttribute('marker-end');
+      p.removeAttribute('marker-start');
+    });
+    Object.keys(v.trail).forEach((id) => {
+      const p = q('[data-edge="' + id + '"]');
+      p.classList.add('trail');
+      p.style.stroke = data.actions[v.trail[id]].color;
+    });
+    Object.keys(v.edges).forEach((id) => {
+      const p = q('[data-edge="' + id + '"]');
+      const dir = v.edges[id];
+      const marker = 'url(#' + prefix + '-m-' + v.action + ')';
+      p.classList.add('on');
+      p.style.stroke = act.color;
+      if (dir !== 'b') p.setAttribute('marker-end', marker);
+      if (dir !== 'f') p.setAttribute('marker-start', marker);
+      if (dir === 'f') p.classList.add('fwd');
+      if (dir === 'b') p.classList.add('rev');
+      edgeLayer.appendChild(p); // the moving line is drawn above the idle lines
+      if (v.carry) packets.push(makePacket(p, dir, v.carry, act.color));
+    });
+    packets.forEach((pk) => place(pk, 0.5));
+    qa('.df-node').forEach((g) => {
+      const id = g.getAttribute('data-node');
+      const on = v.nodes.indexOf(id) >= 0;
+      const seen = v.seen.indexOf(id) >= 0;
+      g.classList.toggle('on', on);
+      g.classList.toggle('seen', !on && seen);
+      g.classList.toggle('dim', !on && !seen);
+    });
+    q('.df-count').textContent = 'Step ' + (v.index + 1) + ' of ' + v.count;
+    const badge = q('.df-act');
+    badge.innerHTML = act.icon + '<span></span>';
+    badge.lastChild.textContent = act.label;
+    badge.style.background = act.color;
+    setNote('.df-time', !!v.time, data.ui.clock, v.time);
+    q('.df-cap').style.borderLeftColor = act.color;
+    const chip = q('.df-carry');
+    if (v.carry) {
+      chip.hidden = false;
+      chip.style.borderColor = act.color;
+      chip.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"></svg><span></span>';
+      chip.firstChild.innerHTML = v.carry.icon;
+      chip.firstChild.style.stroke = act.color;
+      chip.lastChild.textContent = 'Carries: ' + v.carry.label;
+    } else {
+      chip.hidden = true;
+    }
+    setNote('.df-leaves', v.leaves.length > 0, data.ui.out, 'Leaves your system: sent to ' + v.leaves.join(' and ') + '.');
+    setNote('.df-ifnot', !!v.ifNot, data.ui.branch, 'If not: ' + v.ifNot);
+    q('.df-text').textContent = v.text;
+    showItem(v, act.color);
+    back.disabled = v.first;
+    next.disabled = v.last;
+    qa('.df-steps button').forEach((b, k) => {
+      if (k === v.index) b.setAttribute('aria-current', 'step');
+      else b.removeAttribute('aria-current');
+    });
+    root.setAttribute('data-scenario', v.scenario);
+    root.setAttribute('data-step', String(v.index + 1));
+    root.setAttribute('data-action', v.action);
+    if (timer && v.last) stop();
+  }
+
+  function setPlayLabel(on) {
+    play.innerHTML = (on ? data.ui.pause : data.ui.play) + '<span></span>';
+    play.lastChild.textContent = on ? 'Pause' : 'Play';
+    play.setAttribute('aria-pressed', on ? 'true' : 'false');
+  }
+  function stop() {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+    setPlayLabel(false);
+  }
+  function start() {
+    const scn = data.scenarios.find((s) => s.id === cur);
+    if (i >= scn.steps.length - 1) i = 0; // at the end, Play starts again from step 1
+    draw();
+    setPlayLabel(true);
+    timer = window.setInterval(() => { i += 1; draw(); }, 2600);
+  }
+
+  function build() {
+    list.innerHTML = '';
+    const scn = data.scenarios.find((s) => s.id === cur);
+    scn.steps.forEach((st, k) => {
+      const act = data.actions[st.action];
+      const li = document.createElement('li');
+      const b = document.createElement('button');
+      const chip = document.createElement('span');
+      const num = document.createElement('span');
+      const txt = document.createElement('span');
+      chip.className = 'df-chip';
+      chip.style.background = act.color;
+      chip.innerHTML = act.icon;
+      chip.setAttribute('title', act.label);
+      num.className = 'df-num';
+      num.textContent = String(k + 1);
+      txt.textContent = shortText(st.text);
+      b.type = 'button';
+      b.appendChild(chip);
+      b.appendChild(num);
+      b.appendChild(txt);
+      b.addEventListener('click', () => { stop(); i = k; draw(); });
+      li.appendChild(b);
+      list.appendChild(li);
+    });
+  }
+
+  qa('.df-seg button').forEach((b) => {
+    b.setAttribute('aria-pressed', b.getAttribute('data-s') === cur ? 'true' : 'false');
+    b.addEventListener('click', () => {
+      stop();
+      cur = b.getAttribute('data-s');
+      i = 0;
+      qa('.df-seg button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+      build();
+      draw();
+    });
+  });
+  back.addEventListener('click', () => { stop(); if (i > 0) { i -= 1; draw(); } });
+  next.addEventListener('click', () => { stop(); i += 1; draw(); });
+  play.addEventListener('click', () => { if (timer) stop(); else start(); });
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') { stop(); i += 1; draw(); }
+    if (e.key === 'ArrowLeft' && i > 0) { stop(); i -= 1; draw(); }
+  });
+  qa('.df-node').forEach((g) => {
+    function pick() {
+      const n = data.nodes[g.getAttribute('data-node')];
+      info.innerHTML = '';
+      const b = document.createElement('b');
+      b.textContent = n.label + '. ';
+      info.appendChild(b);
+      info.appendChild(document.createTextNode(n.info || 'No note for this part.'));
+      qa('.df-node').forEach((o) => o.classList.toggle('picked', o === g));
+    }
+    g.addEventListener('click', pick);
+    g.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+    });
+  });
+  setPlayLabel(false);
+  build();
+  draw();
+  window.requestAnimationFrame(tick);
+}
+
+mount(document.getElementById("df"), {"nodes":{"customer":{"label":"Customer","info":"Anyone who emails the support address."},"helpdesk":{"label":"Support inbox","info":"The shared mailbox that receives every support email."},"triage":{"label":"Sorting program","info":"It reads each new email, asks the AI model to sort it, and files the result."},"model":{"label":"AI model","info":"It reads the email and returns a topic and an urgency. It runs at an outside company, so the email leaves your system."},"tickets":{"label":"Ticket queue","info":"Every email becomes a ticket with tags and a place in a queue."},"lead":{"label":"Billing lead","info":"The person who handles urgent billing problems."}},"actions":{"send":{"label":"Send","color":"#2563EB","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z\"/>\u003cpath d=\"m21.854 2.147-10.94 10.939\"/>\u003c/svg>"},"read":{"label":"Read","color":"#0E7490","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M12 5v16\"/>\u003cpath d=\"M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z\"/>\u003c/svg>"},"think":{"label":"Think","color":"#7C3AED","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z\"/>\u003cpath d=\"M20 2v4\"/>\u003cpath d=\"M22 4h-4\"/>\u003ccircle cx=\"4\" cy=\"20\" r=\"2\"/>\u003c/svg>"},"write":{"label":"Write","color":"#15803D","icon":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M13 21h8\"/>\u003cpath d=\"M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z\"/>\u003c/svg>"}},"scenarios":[{"id":"urgent","label":"An urgent email","steps":[{"action":"send","text":"A customer writes in: the app charged them twice.","edges":[["e0","f"]],"nodes":["customer","helpdesk"],"carry":{"label":"support email","icon":"\u003cpath d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/>\u003crect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>"},"leaves":[],"item":{"title":"Charged twice!!","icon":"\u003cpath d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/>\u003crect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>","fields":[["From","jo@example.com"],["To","help@app.example"]],"body":"Hi, my card was charged $29 twice this morning. Please fix this today."},"time":"","ifNot":""},{"action":"read","text":"The sorting program picks up the new email.","edges":[["e1","f"]],"nodes":["helpdesk","triage"],"carry":{"label":"the email","icon":"\u003cpath d=\"m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7\"/>\u003crect x=\"2\" y=\"4\" width=\"20\" height=\"16\" rx=\"2\"/>"},"leaves":[],"item":null,"time":"within 1 minute","ifNot":""},{"action":"think","text":"The AI model reads the email and returns a topic, an urgency and the mood.","edges":[["e2","x"]],"nodes":["triage","model"],"carry":{"label":"topic + urgency","icon":"\u003cpath d=\"M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z\"/>\u003cpath d=\"M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193\"/>\u003ccircle cx=\"10.5\" cy=\"6.5\" r=\".5\"/>"},"leaves":["AI model"],"item":{"title":"What the model returned","icon":"\u003cpath d=\"M13.172 2a2 2 0 0 1 1.414.586l6.71 6.71a2.4 2.4 0 0 1 0 3.408l-4.592 4.592a2.4 2.4 0 0 1-3.408 0l-6.71-6.71A2 2 0 0 1 6 9.172V3a1 1 0 0 1 1-1z\"/>\u003cpath d=\"M2 7v6.172a2 2 0 0 0 .586 1.414l6.71 6.71a2.4 2.4 0 0 0 3.191.193\"/>\u003ccircle cx=\"10.5\" cy=\"6.5\" r=\".5\"/>","fields":[["Topic","Billing"],["Urgency","High"],["Mood","Upset"],["Summary","Charged $29 twice today"]],"body":""},"time":"about 3 seconds","ifNot":""},{"action":"write","text":"The program files the ticket at the top of the billing queue.","edges":[["e3","f"]],"nodes":["triage","tickets"],"carry":{"label":"ticket #881","icon":"\u003cpath d=\"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z\"/>\u003cpath d=\"M13 5v2\"/>\u003cpath d=\"M13 17v2\"/>\u003cpath d=\"M13 11v2\"/>"},"leaves":[],"item":{"title":"New ticket #881","icon":"\u003cpath d=\"M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z\"/>\u003cpath d=\"M13 5v2\"/>\u003cpath d=\"M13 17v2\"/>\u003cpath d=\"M13 11v2\"/>","fields":[["Queue","Billing"],["Place","1 of 14"],["Tags","billing, urgent"]],"body":""},"time":"","ifNot":""},{"action":"send","text":"Because it is urgent, the billing lead gets a phone alert.","edges":[["e4","f"]],"nodes":["triage","lead"],"carry":{"label":"urgent alert","icon":"\u003cpath d=\"M10.268 21a2 2 0 0 0 3.464 0\"/>\u003cpath d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>"},"leaves":[],"item":{"title":"Phone alert","icon":"\u003cpath d=\"M10.268 21a2 2 0 0 0 3.464 0\"/>\u003cpath d=\"M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326\"/>","fields":[],"body":"Urgent billing ticket #881: charged $29 twice today. Customer is upset."},"time":"","ifNot":"a normal ticket waits in its queue, and nobody is alerted."}]}],"ui":{"play":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z\"/>\u003c/svg>","pause":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003crect x=\"14\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003crect x=\"5\" y=\"3\" width=\"5\" height=\"18\" rx=\"1\"/>\u003c/svg>","clock":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003ccircle cx=\"12\" cy=\"12\" r=\"10\"/>\u003cpath d=\"M12 6v6l4 2\"/>\u003c/svg>","branch":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 6a9 9 0 0 0-9 9V3\"/>\u003ccircle cx=\"18\" cy=\"6\" r=\"3\"/>\u003ccircle cx=\"6\" cy=\"18\" r=\"3\"/>\u003c/svg>","out":"\u003csvg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">\u003cpath d=\"M15 3h6v6\"/>\u003cpath d=\"M10 14 21 3\"/>\u003cpath d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\"/>\u003c/svg>"}}, "df");
+})();
+</script>
+
+</main>
+</body>
+</html>

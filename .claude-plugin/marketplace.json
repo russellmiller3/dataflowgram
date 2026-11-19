@@ -1,0 +1,16 @@
+{
+  "name": "dataflow-steps",
+  "description": "Interactive, step-by-step data-flow diagrams for Claude, by Russell Miller.",
+  "owner": {
+    "name": "Russell Miller",
+    "url": "https://russellmiller.io"
+  },
+  "plugins": [
+    {
+      "name": "dataflow-steps",
+      "source": "./",
+      "description": "Interactive, step-by-step data-flow diagrams built from a short description.",
+      "version": "1.0.0"
+    }
+  ]
+}
