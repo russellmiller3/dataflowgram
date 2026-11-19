@@ -2,14 +2,15 @@
 
 # Tools
 
-Every tool in this repository (5), with the first line of its own description.
+Every tool in this repository (6), with the first line of its own description.
 To change a line, change the tool's opening docstring or comment, then run `node ~/.claude/scripts/tools-index.mjs .`.
 
-## `skills/dataflowgram/scripts/` (3)
+## `skills/dataflowgram/scripts/` (4)
 
 - [`dataflow.mjs`](skills/dataflowgram/scripts/dataflow.mjs) — Builds an interactive data-flow diagram from a short description of parts, lines and steps.
 - [`make-icons.mjs`](skills/dataflowgram/scripts/make-icons.mjs) — Turns the Lucide icon package's "icon-nodes.json" into the icon file this skill ships.
 - [`runtime.mjs`](skills/dataflowgram/scripts/runtime.mjs) — The part of a data-flow diagram that runs in the reader's browser.
+- [`sketch-check.mjs`](skills/dataflowgram/scripts/sketch-check.mjs) — Checks a text sketch before it is shown in a chat.
 
 ## `tools/` (2)
 
