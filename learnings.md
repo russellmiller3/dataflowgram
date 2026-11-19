@@ -29,7 +29,7 @@ no trigger: design requests from Russell, not a repeated mistake; no single tool
 
 Tests: 40 of 40 pass.
 
-## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
+## 18 November 2026: building it for a real client set (7 diagrams)
 
 - **Fixed-width boxes refused real words.** All 7 of the client's diagrams failed the label check, by 1 to
   4 characters. Fix: a box grows to fit its longest label or second line, up to a cap (320, 280 and 220
@@ -185,3 +185,8 @@ Tests: 35 of 35 pass (run through Runner).
   pop-up was jarring; the joined tools looked like a slider toggle). First click turns Clear all red with "Sure?" for 3
   seconds; a second click fades every mark out over 0.35 seconds; Undo restores them. Each tool now has its own coloured
   border and a raised edge; the chosen one fills and sits down. Checked in a browser: no pop-up used, marks 1 then 0.
+- **Header buttons follow the order a reader uses them; Save a copy is caramel, not red** (owner, 19 November 2026: save
+  should sit next to Mark up in a friendly colour from the same family). The order is now Mark up, Save a copy, Print,
+  Light / dark. Light / dark had been found as "the first header button", so moving it would have wired Mark up to the
+  theme; it now has its own name. A test checks the order, the name and that Save is not red. Checked in a browser: a
+  real note made Save appear beside Mark up, light / dark switched both ways, 0 page errors.

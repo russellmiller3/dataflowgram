@@ -397,6 +397,11 @@ test('a reader marks up a page, sends it back, and each mark is read with the bo
   assert.doesNotMatch(page, /markerjs3/, 'no outside drawing library: marks are drawn on the page itself');
   assert.match(page, /\.mk-layer\{position:absolute;inset:0/, 'a clear layer over each tab holds the marks');
   assert.match(page, /class="pg-mode pg-sendnotes" hidden/, 'a "Save a copy with my notes" button, hidden until there are marks');
+  // 19 November 2026: "save a copy with my notes should be next to markup ... reorder buttons so that markup, save copy, then print, then light dark on far right"
+  const order = [...page.matchAll(/<button type="button" class="pg-mode ([a-z-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['pg-markup', 'pg-sendnotes', 'pg-print', 'pg-theme'], 'Mark up, then Save a copy beside it, then Print, then Light / dark at the far right');
+  assert.match(page, /querySelector\('\.pg-theme'\)/, 'light / dark is found by its own name, so moving it never wires another button to it');
+  assert.doesNotMatch(page, /\.pg-sendnotes\{[^}]*#(E11D48|BE123C)/i, 'Save a copy is not red: it is a warm colour from the mark-up family');
   // the page as it comes back: the marks drawn on a picture twice the drawing's size
   const c = compile(spec);
   const [a, b] = Object.values(c.nodes);
@@ -581,7 +586,7 @@ test('a book can hold plain page tabs (a plan, sketches) beside its diagrams', (
 });
 
 test('boxes grow to fit their words, share one width per row size, and stop at a cap', () => {
-  // 18 November 2026: Jason's diagrams had second lines 1 to 4 characters too long for fixed boxes
+  // 18 November 2026: a client's diagrams had second lines 1 to 4 characters too long for fixed boxes
   assert.equal(boxWidth(2, ['A'], ['short']), 200, 'short words keep the narrow box');
   const w = boxWidth(2, ['Claude'], ['reads PDFs and writes reports']);
   assert.ok(w > 200 && w >= 29 * 7.2 + 28, `a 29-character second line widens the box to ${w}`);

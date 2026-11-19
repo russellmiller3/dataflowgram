@@ -875,7 +875,9 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
   background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pg-mode svg{width:16px;height:16px}
 .pg-btns{display:flex;gap:8px}
-.pg-sendnotes{border-color:#E11D48!important;color:#BE123C!important}
+/* Save a copy sits beside Mark up in the same warm family: caramel, not the yellow of Mark up and never red */
+.pg-sendnotes{background:#F4DDB8!important;border-color:#C8945A!important;color:#6B4214!important;font-weight:600}
+.pg-sendnotes:hover{background:#EDCF9E!important}
 .pg-sendnotes[hidden]{display:none!important}
 .df-scroll{position:relative}
 /* mark up: a clear layer over each tab; marks are drawn on the page itself */
@@ -941,13 +943,13 @@ ${extraCss}</style>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
-<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page">${iconSvg('pencil')}<span>Mark up</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button></div></div>
+<div class="pg-btns"><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page">${iconSvg('pencil')}<span>Mark up</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-theme" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
 ${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
 ${body}
 </main>
 <script>
-(function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
+(function(){var b=document.querySelector('.pg-theme');if(!b)return;b.addEventListener('click',function(){
 var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
 (function(){var p=document.querySelector('.pg-print');if(p)p.addEventListener('click',function(){window.print();});
