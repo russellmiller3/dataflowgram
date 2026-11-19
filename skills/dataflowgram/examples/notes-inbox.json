@@ -1,6 +1,7 @@
 {
   "title": "A notes inbox with AI",
   "intro": "Forward an email to one address, and it is filed for you. Ask a question the same way, and you get the answer back.",
+  "source": "A made-up example for this project. The names, amounts and emails are invented.",
   "rows": [
     [
       "phone"
