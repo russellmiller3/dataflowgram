@@ -12,7 +12,7 @@
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-bg:#f4f5f9;--pg-ink:#141824;--pg-ink2:#596174;--pg-dot:rgba(20,24,36,.075);--pg-glow1:rgba(99,102,241,.13);--pg-glow2:rgba(20,184,166,.09);--pg-line:rgba(20,24,36,.14);color-scheme:light}
+:root{--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
 @media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
 :root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
@@ -38,20 +38,20 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 <p class="lede">A customer email arrives. An AI model sorts it, and the urgent ones reach a person at once.</p>
 <style>
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
-.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,560px);justify-content:start;gap:28px;align-items:start}
+.df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,440px);justify-content:start;gap:28px;align-items:start}
 .df-grid>div:first-child{position:sticky;top:20px}
 .df-grid>div{min-width:0}
 .df-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:10px}
 @media (max-width:560px){.df-svg{min-width:500px}}
-.df-svg{width:100%;height:auto;max-height:calc(100vh - 250px);display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
+.df-svg{width:100%;height:auto;display:block;background:var(--df-card);border:1px solid var(--df-line);border-radius:4px}
 .df-svg text{font-family:inherit;fill:var(--df-ink)}
 .df-node{cursor:pointer;transition:opacity .15s}
 .df-node rect{fill:var(--t);stroke:var(--c);stroke-width:1.5}
 .df-node .df-ico{fill:none;stroke:var(--c);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.df-node .df-t{font-size:15px;font-weight:600}
-.df-node .df-t3{font-size:13.5px;font-weight:600}
-.df-node .df-s{font-size:12.5px;fill:var(--df-ink2)}
-.df-node .df-s3{font-size:11.5px;fill:var(--df-ink2)}
+.df-node .df-t{font-size:16.5px;font-weight:600}
+.df-node .df-t3{font-size:15.5px;font-weight:600}
+.df-node .df-s{font-size:14px;fill:var(--df-ink2)}
+.df-node .df-s3{font-size:13.5px;fill:var(--df-ink2)}
 .df-node.on rect{stroke-width:3}
 .df-node.dim{opacity:.38}
 .df-node:focus{outline:none}
@@ -66,13 +66,13 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-dot{pointer-events:none;filter:drop-shadow(0 0 6px currentColor)}
 .df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
-.df-packet text{font-size:12.5px;font-weight:600;fill:var(--df-ink)}
+.df-packet text{font-size:14px;font-weight:600;fill:var(--df-ink)}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
 .df-carry[hidden]{display:none}
 .df-carry svg{width:17px;height:17px;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .df-zone{fill:none;stroke:#8A99AD;stroke-dasharray:5 4}
-.df-zone-l{font-size:12px;fill:var(--df-ink2);letter-spacing:.05em}
+.df-zone-l{font-size:13.5px;fill:var(--df-ink2);letter-spacing:.05em}
 .df-k-person{--c:#1D4ED8;--t:#EEF3FF}
 .df-k-mail{--c:#B45309;--t:#FFF4DE}
 .df-k-program{--c:#334155;--t:#EEF2F6}
@@ -95,9 +95,10 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-ln-past{stroke:#3B82F6;opacity:.4}
 .df-ln-all{stroke:#3B82F6}
 .df-ln-idle{stroke:#8A99AD;stroke-width:2}
+.df-ln .df-ln-out{fill:rgba(190,18,60,.12);stroke:rgba(190,18,60,.55);stroke-width:1.2}
 .df-outzone{fill:rgba(190,18,60,.06);stroke:rgba(190,18,60,.45);stroke-width:1.2}
-.df .df-svg text.df-outzone-l{font-size:13px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
-.df .df-svg text.df-out-l{font-size:12px;font-weight:700;letter-spacing:.08em;fill:#E0607E}
+.df .df-svg text.df-outzone-l{paint-order:stroke;font-size:14px;font-weight:600;letter-spacing:.1em;fill:#E0607E}
+.df .df-svg text.df-out-l{font-size:13px;font-weight:700;letter-spacing:.01em;fill:#E0607E}
 /* a send picked in the everything view: the rest steps back */
 .df-pick .df-edge.on:not(.df-hot),.df-pick .df-packet:not(.df-hot){opacity:.14}
 .df-pick .df-node:not(.df-hot){opacity:.35}
@@ -168,10 +169,12 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{
-  --df-ink:#141824;--df-ink2:#596174;--df-line:rgba(20,24,36,.11);--df-head:rgba(20,24,36,.035);
-  --df-card:rgba(255,255,255,.66);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(20,24,36,.20);
-  --df-glow:0 1px 0 rgba(255,255,255,.9) inset,0 18px 40px -28px rgba(30,40,80,.35);
-  --df-leaves-bg:#fdecec;--df-leaves-ink:#9b1c1c;--df-ifnot-bg:#fff4dc;--df-ifnot-ink:#7a4b00;
+  --df-ink:#121726;--df-ink2:#545d72;--df-line:rgba(18,24,48,.10);--df-head:rgba(18,24,48,.04);
+  --df-card:rgba(255,255,255,.74);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
+  --df-glow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 2px rgba(18,24,48,.06),0 20px 44px -26px rgba(40,48,110,.38);
+  --df-leaves-bg:#fdecee;--df-leaves-ink:#9f1239;--df-ifnot-bg:#fff6e0;--df-ifnot-ink:#7a4b00;
+  --df-dots:rgba(18,24,48,.07);--df-node-tint:13%;--df-node-on:20%;
+  --df-node-shadow:drop-shadow(0 1px 1px rgba(18,24,48,.06)) drop-shadow(0 8px 14px color-mix(in srgb,var(--c) 16%,transparent));
   font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
 }
 .df [class^="df-k-"],.df [class*=" df-k-"]{--cs:var(--c)}
@@ -180,6 +183,7 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html:not([data-df-theme="light"]) .df [class^="df-k-"],html:not([data-df-theme="light"]) .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}}
 html[data-df-theme="dark"] .df{
@@ -187,17 +191,18 @@ html[data-df-theme="dark"] .df{
   --df-card:rgba(23,25,41,.58);--df-solid:#161828;--df-node:#14162a;--df-edge:rgba(255,255,255,.18);
   --df-glow:0 1px 0 rgba(255,255,255,.06) inset,0 24px 60px -30px rgba(0,0,0,.75);
   --df-leaves-bg:rgba(239,68,68,.13);--df-leaves-ink:#fca5a5;--df-ifnot-bg:rgba(245,158,11,.12);--df-ifnot-ink:#fcd34d;
+  --df-dots:rgba(255,255,255,.035);--df-node-tint:10%;--df-node-on:18%;--df-node-shadow:none;
 }
 html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [class*=" df-k-"]{--cs:color-mix(in srgb,var(--c) 58%,white)}
 .df :is(.df-svg,.df-cap,.df-item-card,.df-seg,.df-key,.df-nav button){
   background:var(--df-card);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);
   border-color:var(--df-line);box-shadow:var(--df-glow)}
-.df .df-svg{border-radius:10px;background:linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
+.df .df-svg{border-radius:10px;background:radial-gradient(var(--df-dots) 1px,transparent 1.4px) 0 0/18px 18px,linear-gradient(180deg,color-mix(in srgb,var(--df-solid) 18%,transparent),transparent 40%),var(--df-card)}
 .df :is(.df-cap,.df-item-card){border-radius:10px}
 .df :is(.df-seg,.df-key,.df-nav button,.df-carry){border-radius:8px}
-.df .df-node rect{fill:color-mix(in srgb,var(--c) 10%,var(--df-node));stroke:var(--cs)}
+.df .df-node rect{fill:color-mix(in srgb,var(--c) var(--df-node-tint),var(--df-node));stroke:var(--cs);filter:var(--df-node-shadow)}
 .df .df-node .df-ico{stroke:var(--cs)}
-.df .df-node.on rect{fill:color-mix(in srgb,var(--c) 18%,var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
+.df .df-node.on rect{fill:color-mix(in srgb,var(--c) var(--df-node-on),var(--df-node));filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--c) 35%,transparent))}
 .df .df-edge{stroke:var(--df-edge)}
 .df .df-zone{stroke:var(--df-ink2);opacity:.55}
 .df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
@@ -224,20 +229,20 @@ html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
 .df .df-item-h,.df .df-legend small,.df .df-count{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,monospace;letter-spacing:.08em}
 </style>
 <div class="df" id="df">
-  <div class="df-grid" style="--df-w:800.8px">
+  <div class="df-grid" style="--df-w:842.4px">
     <div>
-      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 616 676" role="img" aria-label="Support email, sorted by AI">
+      <div class="df-scroll"><svg class="df-svg" viewBox="0 0 648 676" role="img" aria-label="Support email, sorted by AI">
         <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-think" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
         
-        <rect class="df-outzone" x="409" y="383" width="204" height="122" rx="8"/><text class="df-outzone-l" x="511" y="497" text-anchor="middle">OUTSIDE YOUR SYSTEM</text>
-        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M308 96 L308 200"/><path class="df-edge" data-edge="e1" d="M308 286 L308 332 Q308 338 302 338 L111 338 Q105 338 105 344 L105 390"/><path class="df-edge" data-edge="e2" d="M200 433 L416 433" data-tag="308,368"/><path class="df-edge" data-edge="e3" d="M73.3 476 L73.3 503 Q73.3 509 79.3 509 L99 509 Q105 509 105 515 L105 580"/><path class="df-edge" data-edge="e4" d="M136.7 476 L136.7 541 Q136.7 547 142.7 547 L505 547 Q511 547 511 553 L511 580"/></g>
-        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="customer" tabindex="0" role="button" aria-label="Customer"><rect x="188" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(297 20) scale(.9167)"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g><text class="df-t" x="308" y="63" text-anchor="middle">Customer</text><text class="df-s" x="308" y="82" text-anchor="middle">writes in by email</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="helpdesk" tabindex="0" role="button" aria-label="Support inbox"><rect x="188" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(297 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="308" y="253" text-anchor="middle">Support inbox</text><text class="df-s" x="308" y="272" text-anchor="middle">help@ mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="triage" tabindex="0" role="button" aria-label="Sorting program"><rect x="10" y="390" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(94 400) scale(.9167)"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></g><text class="df-t" x="105" y="443" text-anchor="middle">Sorting program</text><text class="df-s" x="105" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="416" y="390" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(500 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="511" y="443" text-anchor="middle">AI model</text><text class="df-s" x="511" y="462" text-anchor="middle">at an outside provider</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="tickets" tabindex="0" role="button" aria-label="Ticket queue"><rect x="10" y="580" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(94 590) scale(.9167)"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></g><text class="df-t" x="105" y="633" text-anchor="middle">Ticket queue</text><text class="df-s" x="105" y="652" text-anchor="middle">1 row per email</text></g><g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="lead" tabindex="0" role="button" aria-label="Billing lead"><rect x="416" y="580" width="190" height="86" rx="4"/><g class="df-ico" transform="translate(500 590) scale(.9167)"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></g><text class="df-t" x="511" y="633" text-anchor="middle">Billing lead</text><text class="df-s" x="511" y="652" text-anchor="middle">gets urgent alerts</text></g>
+        <rect class="df-outzone" x="431" y="383" width="214" height="100" rx="8"/>
+        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M324 96 L324 200"/><path class="df-edge" data-edge="e1" d="M324 286 L324 332 Q324 338 318 338 L116 338 Q110 338 110 344 L110 390"/><path class="df-edge" data-edge="e2" d="M210 433 L438 433" data-tag="324,368"/><path class="df-edge" data-edge="e3" d="M76.7 476 L76.7 503 Q76.7 509 82.7 509 L104 509 Q110 509 110 515 L110 580"/><path class="df-edge" data-edge="e4" d="M143.3 476 L143.3 541 Q143.3 547 149.3 547 L532 547 Q538 547 538 553 L538 580"/></g>
+        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="customer" tabindex="0" role="button" aria-label="Customer"><rect x="204" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(313 20) scale(.9167)"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></g><text class="df-t" x="324" y="63" text-anchor="middle">Customer</text><text class="df-s" x="324" y="82" text-anchor="middle">writes in by email</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="helpdesk" tabindex="0" role="button" aria-label="Support inbox"><rect x="204" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(313 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="324" y="253" text-anchor="middle">Support inbox</text><text class="df-s" x="324" y="272" text-anchor="middle">help@ mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="triage" tabindex="0" role="button" aria-label="Sorting program"><rect x="10" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(99 400) scale(.9167)"><path d="M13 5h8"/><path d="M13 12h8"/><path d="M13 19h8"/><path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/></g><text class="df-t" x="110" y="443" text-anchor="middle">Sorting program</text><text class="df-s" x="110" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="438" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(527 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="538" y="443" text-anchor="middle">AI model</text><text class="df-out-l" x="444" y="407">OUTSIDE</text><text class="df-s" x="538" y="462" text-anchor="middle">at an outside provider</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="tickets" tabindex="0" role="button" aria-label="Ticket queue"><rect x="10" y="580" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(99 590) scale(.9167)"><path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/><path d="M13 5v2"/><path d="M13 17v2"/><path d="M13 11v2"/></g><text class="df-t" x="110" y="633" text-anchor="middle">Ticket queue</text><text class="df-s" x="110" y="652" text-anchor="middle">1 row per email</text></g><g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="lead" tabindex="0" role="button" aria-label="Billing lead"><rect x="438" y="580" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(527 590) scale(.9167)"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></g><text class="df-t" x="538" y="633" text-anchor="middle">Billing lead</text><text class="df-s" x="538" y="652" text-anchor="middle">gets urgent alerts</text></g>
         <g class="df-packets"></g>
       </svg></div>
       <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>A person</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>A mailbox</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span>Our program</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg><span>An AI model</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>Stored rows</span></span></div>
       <div class="df-legend"><small>Steps</small><span class="df-key act" style="--a:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="--a:#0E7490"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>Read</span><span class="df-key act" style="--a:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>Think</span><span class="df-key act" style="--a:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span></div>
-      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span></div>
+      <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span><span class="df-key"><svg viewBox="0 0 34 14" class="df-ln"><rect x="1" y="1" width="32" height="12" rx="3" class="df-ln-out"/></svg>Red: outside your system; data sent there leaves you</span></div>
     </div>
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
@@ -387,7 +392,7 @@ function tagRides(lineLength, tagWidth) {
 
 // The width of a tag, from its words, when the page cannot measure the text.
 function tagWidth(label) {
-  return label.length * 6.9 + 34;
+  return label.length * 7.7 + 34;
 }
 
 function dotOpacity(t, dir) {

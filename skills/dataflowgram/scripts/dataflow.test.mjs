@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor } from './dataflow.mjs';
+import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook } from './dataflow.mjs';
 import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
@@ -181,7 +181,7 @@ test('a wrong description is refused with a message that names the fault', () =>
   bad((s) => { s.rows[1] = ['stock', 'printer', 'a', 'b']; }, /must hold 1 to 3 parts; it holds 4/);
   bad((s) => { s.parts.till.kind = 'wizard'; }, /kind "wizard"/);
   bad((s) => { s.parts.till.icon = 'not-an-icon'; }, /icon "not-an-icon" is not in the Lucide set/);
-  bad((s) => { s.parts.stock.label = 'A label that is far too long to fit'; }, /has 35 characters; a row of 2 fits 19/);
+  bad((s) => { s.parts.stock.label = 'A label that is far, far too long to fit any box'; }, /has 48 characters; a row of 2 fits 27/);
   bad((s) => { s.scenarios[0].steps[0].action = 'teleport'; }, /action "teleport" is not known/);
   bad((s) => { s.scenarios[0].steps[0].flow = ['till>printer']; }, /no line joins "till" and "printer"/);
   bad((s) => { s.scenarios[0].steps[0].flow = ['till-stock']; }, /must read "part>part"/);
@@ -369,6 +369,41 @@ test('in the everything-at-once view, a tag never lands on a tag placed before i
   assert.deepEqual(freeSpot([{ x: 100, y: 100 }], 120, 26, placed), { x: 100, y: 100 });
 });
 
+test('a book puts several diagrams in one page, one tab each, each working on its own', () => {
+  const a = example();
+  const b = { ...example(), title: 'Second flow' };
+  const html = renderBook({ title: 'Client set', intro: 'All flows', diagrams: [a, b] });
+  assert.match(html, /<h1>Client set<\/h1>/);
+  assert.equal((html.match(/class="pg-tab"/g) || []).length, 2, 'one tab per diagram');
+  assert.match(html, /data-tab="2" aria-pressed="false">Second flow</);
+  // each diagram has its own block id, so their steps, links and buttons do not collide
+  assert.match(html, /id="d1"/);
+  assert.match(html, /id="d2"/);
+  assert.equal((html.match(/mount\(document\.getElementById\("d[12]"\)/g) || []).length, 2, 'each diagram is started');
+  // the second tab starts hidden off screen, not removed
+  assert.match(html, /class="pg-panel pg-off" data-panel="2"/);
+  // the credit appears once, at the end
+  assert.equal((html.match(/class="df-credit"/g) || []).length, 1);
+  // a bad diagram anywhere in the book stops the build before anything is written
+  const broken = { ...example(), rows: [['nope']] };
+  assert.throws(() => renderBook({ title: 'x', diagrams: [a, broken] }));
+  assert.throws(() => renderBook({ title: 'x', diagrams: [] }), /at least 1 diagram/);
+});
+
+test('boxes grow to fit their words, share one width per row size, and stop at a cap', () => {
+  // 18 November 2026: Jason's diagrams had second lines 1 to 4 characters too long for fixed boxes
+  assert.equal(boxWidth(2, ['A'], ['short']), 200, 'short words keep the narrow box');
+  const w = boxWidth(2, ['Claude'], ['reads PDFs and writes reports']);
+  assert.ok(w > 200 && w >= 29 * 7.2 + 28, `a 29-character second line widens the box to ${w}`);
+  assert.equal(boxWidth(3, ['x'.repeat(60)], ['']), 220, 'never wider than the cap');
+  const c = compile({ title: 'T', rows: [['a', 'b'], ['c', 'd']], parts: {
+    a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' },
+    c: { label: 'C', kind: 'store', sub: 'reads PDFs and writes reports' }, d: { label: 'D', kind: 'store' } },
+    lines: [['a', 'b'], ['a', 'c']], scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'x' }] }] });
+  assert.equal(c.nodes.a.w, c.nodes.c.w, 'every box in a row of 2 has the same width');
+  assert.ok(c.nodes.a.w >= 29 * 7.2 + 28);
+});
+
 test('boxes in a row sit just far enough apart to read the data between them, and no further', () => {
   // 18 November 2026: "boxes should be closer together because it is easier to scan all at once,
   // but just wide enough for the data flow to be easy to see"
@@ -382,11 +417,11 @@ test('boxes in a row sit just far enough apart to read the data between them, an
   const tagWide = tagWidth('x'.repeat(22)) + 14;
   assert.ok(gapOf(long) >= tagWide + 60, `gap ${gapOf(long)} holds a ${tagWide} tag with line each side`);
   assert.ok(gapOf(long) <= tagWide + 80, 'and is no wider than that needs');
-  assert.ok(gapOf(short) <= 150, 'a short tag keeps the boxes close');
+  assert.ok(gapOf(short) <= 160, 'a short tag keeps the boxes close');
   // the drawing is only as wide as its row: no empty band at either side
   assert.ok(short.nodes.a.x <= 12 && short.width - (short.nodes.b.x + short.nodes.b.w) <= 12);
   // a row of 3 is capped so the drawing stays compact
-  assert.equal(gapFor(22, 3), 160);
+  assert.equal(gapFor(22, 3), 170);
   assert.equal(gapFor(22, 2), gapOf(long));
 });
 
@@ -396,17 +431,20 @@ test('parts outside the owner system get one shaded region when they sit togethe
   const r = regionOf([box(0, 0, false), box(300, 0, true), box(0, 200, false), box(300, 200, true)]);
   assert.ok(r, 'a region is drawn');
   assert.ok(r.x < 300 && r.x + r.w > 400 && r.y < 0 && r.y + r.h > 280, 'it holds both outside parts');
+  assert.ok(r.y + r.h <= 280 + 10, 'and hugs them: no band below for words');
   assert.ok(r.x > 100, 'it stops short of the inside parts');
   // an inside part between 2 outside parts: no single region is honest
   assert.equal(regionOf([box(300, 0, true), box(300, 200, false), box(300, 400, true)]), null);
   assert.equal(regionOf([box(0, 0, false)]), null, 'no outside parts, no region');
-  // on a page: the region carries its words; with no region each outside part is marked
+  // on a page: every outside part carries its own OUTSIDE mark inside its box, with or without a region;
+  // the region is shading only, with no words in the gaps where lines and tags run
   const spec = (rows) => ({ title: 'T', rows, parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'outside' }, c: { label: 'C', kind: 'outside' }, d: { label: 'D', kind: 'store' } },
     lines: [['a', 'b']], scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['a>b'], text: 'x' }] }] });
   const together = renderFragment(spec([['a', 'b'], ['d', 'c']]), 'df');
   assert.match(together, /class="df-outzone"/);
-  assert.match(together, />OUTSIDE YOUR SYSTEM</);
-  assert.doesNotMatch(together, /class="df-out-l"/);
+  assert.doesNotMatch(together, /class="df-outzone-l"/);
+  assert.equal((together.match(/class="df-out-l"/g) || []).length, 2);
+  assert.match(together, /Red: outside your system/, 'the legend names the shading');
   const split = renderFragment(spec([['b', 'a'], ['d', 'c']]), 'df');
   assert.doesNotMatch(split, /class="df-outzone"/);
   assert.equal((split.match(/class="df-out-l"/g) || []).length, 2, 'each of the 2 outside parts is marked');

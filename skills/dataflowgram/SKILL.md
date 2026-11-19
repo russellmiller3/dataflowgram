@@ -31,6 +31,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 4. Find an icon: `node <skill>/scripts/dataflow.mjs icons <word>` lists Lucide icon names that contain the word.
 5. Link to one step: add `#<block-id>=<scenario id>.<step number>` to the page address. A whole page uses the block id `df`.
 6. Link to the still picture of everything: add `#<block-id>=all`.
+7. Several diagrams in one page, one tab each: write a book file `{ "title": "...", "intro": "...", "diagrams": ["a.json", "b.json"] }` (file names next to the book, or the descriptions themselves), then run `node <skill>/scripts/dataflow.mjs book book.json out.html`. Link to a tab with `#tab=<number>`. Inside a book, diagram number k has the block id `d<k>`.
 
 ## The description file
 
@@ -57,7 +58,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 **Kinds of part, each with a colour and a default icon:** person, mail, program, ai, store, files, outside, web, output, time. Parts of kind `outside` and `web` count as outside the owner's system; set `"outside": true` on any other part (an AI model at an outside company, say) to flag data sent to it.
 
-**Label sizes that fit:** a row of 1 part fits a label of 22 characters, a row of 2 fits 19, a row of 3 fits 14. The second line fits 30, 24 and 17. The check names any label that is too long.
+**Label sizes that fit:** boxes grow to fit their words, up to a cap. A row of 1 part fits a label of 31 characters, a row of 2 fits 27, a row of 3 fits 22. The second line fits 40, 35 and 27. Shorter words keep the boxes narrow, which keeps the whole diagram easy to take in. The check names any label that is too long.
 
 ## Credit and licence
 

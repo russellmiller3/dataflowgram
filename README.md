@@ -58,7 +58,7 @@ It needs Node.js 18 or later, and nothing else: the icons are stored in the skil
 | Charities, schools, government | Free |
 | Use at or for a company, including freelance client work | Commercial licence: [rmiller@zavient.com](mailto:rmiller@zavient.com) |
 
-Every diagram carries a small credit in its lower right corner, "Made with Dataflowgram by Russell Miller · Free for personal use · Companies: rmiller@zavient.com". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
+Every diagram carries a small credit in its lower right corner, "Made with Dataflowgram by Russell Miller · russellmiller.io · LinkedIn · Free for personal use · Companies: rmiller@zavient.com". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
 
 ## Use it
 
@@ -77,6 +77,12 @@ The agent writes a short description of the parts and steps, checks it, and buil
 ```bash
 node skills/dataflowgram/scripts/dataflow.mjs check my-flow.json
 node skills/dataflowgram/scripts/dataflow.mjs build my-flow.json my-flow.html
+```
+
+Several diagrams for one client or one system go in one page, one tab each. A book file names the title and the diagram files:
+
+```bash
+node skills/dataflowgram/scripts/dataflow.mjs book my-book.json my-book.html
 ```
 
 A description is plain JSON. This one is the start of the sign-up example:
