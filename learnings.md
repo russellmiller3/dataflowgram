@@ -83,3 +83,5 @@ Tests: 35 of 35 pass (run through Runner).
 - **The step buttons moved down whenever a step had more text,** so the reader had to click a different spot each
   time. Fix: the buttons sit above the step card, in the same place on every step. Checked on a 1-line and a
   4-line step. Tests: 42 of 42.
+- **The copy-install step left out the khan skill.** It copied only the diagram skill. Fix: the README copies both, and
+  tells other agents where the khan instructions are.
