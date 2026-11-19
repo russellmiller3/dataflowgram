@@ -74,32 +74,32 @@ The agent writes a short description of the parts and steps, checks it, and buil
 
 ### Not sure how your process works?
 
-Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. Each ❓ is a guess. Here is one for a team that files notes by forwarding emails:
+Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. It is laid out like the finished page: the same boxes in the same rows, with a numbered arrow for each step. Each ❓ is a guess. Here is one for a team that files notes by forwarding emails:
 
 ```
-  📱  Sam's phone  (any email app)
-        │
-        │   1️⃣  forwards email + attachment
-        ▼
-  📥  Notes inbox  (shared mailbox)
-        │
-        │   2️⃣  hub fetches it, checks the sender  ❓
-        ▼
-  ⚙️  The hub  (our program)
-        │
-        │   3️⃣  sender's company  ──▶  📋 Lists
-        │       company row       ◀──  📋 Lists
-        │
-        │   4️⃣  email text        ──▶  🤖 AI model (outside)
-        │   5️⃣  summary + 1 task  ◀──  🤖 AI model
-        │
-        │   6️⃣  2 new rows        ──▶  📋 Lists  ❓
-        │
-        │   7️⃣  attachment        ──▶  📁 File library  ❓
-        │
-        │   8️⃣  "what I filed", 5 lines
-        ▼
-  📥  Notes inbox  ──▶  📱 Sam's phone
+┌───────────────┐
+│  Sam's phone  │
+└───────────────┘
+     │      ▲
+   1 │      │ 8  what I filed
+     ▼      │
+┌───────────────┐
+│  Notes inbox  │
+└───────────────┘
+     │      ▲
+   2 │      │ 8   (2 checks the sender ❓)
+     ▼      │
+┌───────────────┐  4 email text   ┌───────────────┐
+│    The hub    │───────────────▶ │   AI model    │
+│               │◀─────────────── │   (outside)   │
+└───────────────┘  5 summary+task └───────────────┘
+   ▲   │    │
+ 3 │   │ 6  └──────────────┐ 7 attachment ❓
+   │   ▼                   ▼
+┌───────────────┐  ┌───────────────┐
+│     Lists     │  │ File library  │
+└───────────────┘  └───────────────┘
+ 3 company row ▲   6 2 new rows ▼ ❓
 ```
 
 Then it asks at most 3 questions, one per ❓, each with lettered choices:
