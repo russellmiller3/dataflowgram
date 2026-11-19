@@ -71,37 +71,44 @@ Every diagram shows a small credit in its lower right corner, linked to the auth
 Most people cannot list the parts and steps of a process from memory, but they can spot what is wrong in a picture of it. So guess first, show the guess, and let the user correct it:
 
 1. **Read before you ask.** Collect what already exists: code, documents, an email thread, a screenshot, notes from a call. Ask only for what none of these says.
-2. **Show a rough sketch in the chat** before you write any description file, in a code block, in the shape below. Use 8 steps at most. Put ❓ on each part or step you guessed.
+2. **Show a rough sketch in the chat** before you write any description file, in a code block, in the shape below. Use 8 steps at most. Put ❓ on each step you guessed.
 3. **Ask 3 questions at most, about the ❓ marks only.** Number them, and give each lettered choices, so the user answers "1a 2b 3a". Never ask "describe the process".
 
-The sketch shape keeps it easy to scan:
+The sketch is laid out like the finished page, so the user sees the real paths:
 
-- One part per line, with its emoji, and one main path from top to bottom.
-- A blank line, a `│` and a `▼` between parts, so each part stands alone.
-- Each step on its own line, numbered 1️⃣ 2️⃣ 3️⃣, naming what moves.
-- A side trip (to an AI model, a payment provider) is 2 lines: one going out `──▶`, one coming back `◀──`. Mark a part run by another company "(outside)".
-- At most 60 characters wide. No side-by-side boxes.
+- **The same boxes in the same rows** as the description file will have: who starts it at the top, the main program in the middle, the stores along the bottom, outside companies to the side.
+- **A numbered arrow for each step**, with a few words on what moves. A line used both ways gets 2 arrows side by side (`│ ▲`), each with its own number.
+- **Room to breathe:** a blank column between boxes in a row, and 3 lines of arrow between rows.
+- **Plain digits for step numbers,** and ❓ only at the end of a line. Emoji and circled digits are wider in some fonts and push the lines out of place.
+- **At most 60 characters wide.** Before you show it, check that each `│` sits in the same column as the box edge or arrow it joins.
 
 ```
-  📧  Customer
-        │
-        │   1️⃣  sends an email
-        ▼
-  📥  support@ inbox
-        │
-        │   2️⃣  passes the email on
-        ▼
-  ⚙️  Sorting program   ❓
-        │
-        │   3️⃣  email text   ──▶  🤖 AI model  (outside)
-        │   4️⃣  "urgent" tag ◀──  🤖 AI model
-        │
-        │   5️⃣  urgent emails only   ❓
-        ▼
-  👤  On-call person
+┌───────────────┐
+│  Sam's phone  │
+└───────────────┘
+     │      ▲
+   1 │      │ 8  what I filed
+     ▼      │
+┌───────────────┐
+│  Notes inbox  │
+└───────────────┘
+     │      ▲
+   2 │      │ 8   (2 checks the sender ❓)
+     ▼      │
+┌───────────────┐  4 email text   ┌───────────────┐
+│    The hub    │───────────────▶ │   AI model    │
+│               │◀─────────────── │   (outside)   │
+└───────────────┘  5 summary+task └───────────────┘
+   ▲   │    │
+ 3 │   │ 6  └──────────────┐ 7 attachment ❓
+   │   ▼                   ▼
+┌───────────────┐  ┌───────────────┐
+│     Lists     │  │ File library  │
+└───────────────┘  └───────────────┘
+ 3 company row ▲   6 2 new rows ▼ ❓
 ```
 
-Questions for that sketch: "1. Who handles step 2? a) a program b) a person reads the inbox first", and so on.
+Questions for that sketch: "1. Step 2: who may file a note? a) anyone on the team list b) anyone at the company's email domain", and so on.
 4. **Redraw once** if the answers change more than 2 parts or steps. Then build the page.
 5. **Keep a guess visible.** If a step is still a guess, say so in its text ("assumed: ...") and list it for the user when you hand over the page.
 

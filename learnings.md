@@ -70,3 +70,6 @@ Tests: 35 of 35 pass (run through Runner).
   trips as one line out and one back, ❓ on guesses, and lettered choices for the questions.
 - **The README sketch was too simple to show the method.** It now uses the notes-inbox example: 8 steps, side trips to
   the lists and the AI model, and 3 guesses with lettered questions. Client names stay out of the public README.
+- **The sketch was a single column, unlike the finished page.** It now uses the same boxes in the same rows as the page,
+  with a numbered arrow for each step, and a separate arrow each way on a two-way line. Plain digits only: emoji and
+  circled digits are wider in some fonts and push the lines out of place. Columns checked by a script before shipping.
