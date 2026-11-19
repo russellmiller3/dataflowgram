@@ -151,3 +151,8 @@ Tests: 35 of 35 pass (run through Runner).
   (blue dashed box plus a "Move here" arrow) and Delete this (red box with an X). The notes command now reads them as
   instructions: "Move The hub to near Claude", "Delete the founder's phone", "Note on notes@ inbox: ...". Toolbar cut to one
   row. Checked by hand in a browser: drew all 3, typed, read back from a copy. Tests 50 of 50.
+- **Notes: fixed a crash and added a ready arrow.** Removing the note being typed in set off its own clean-up, which
+  removed the box a second time: "Failed to execute remove on Element" (owner report). Notes now tidy up only when the
+  reader moves on, never while being removed. Each new note comes with a short arrow beside it; dragging the tip keeps
+  it, otherwise it goes when the note is done; an empty note goes too; a click on empty space finishes the open note.
+  Checked by hand in a browser with an error listener: 0 errors.

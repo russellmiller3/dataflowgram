@@ -1140,7 +1140,7 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   var NS = 'http://www.w3.org/2000/svg';
   var TOOLS = [['note', 'Note'], ['move', 'Move this'], ['del', 'Delete this']];
   var HINTS = {
-    note: 'Drag from the thing to point at it, or click.',
+    note: 'Click to add a note. Drag its arrow tip to point at something.',
     move: 'Box it, then click where it goes.',
     del: 'Box the thing to delete.',
   };
@@ -1171,6 +1171,26 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   }
   function remember() { undoStack.push(JSON.stringify(data.items)); if (undoStack.length > 100) undoStack.shift(); }
   function drop(i) { data.items.splice(i, 1); sel = -1; aiming = -1; }
+  // A note is done when the reader moves on: an arrow never stretched goes away, and an empty note goes away.
+  // Returns the place of a note that went away, or -1.
+  function finish(i) {
+    var it = data.items[i];
+    if (!it || it.type !== 'note') return -1;
+    if (!it.tipSet) it.tip = null;
+    if (!String(it.text || '').trim()) { data.items.splice(i, 1); return i; }
+    tagDiagram(it);
+    return -1;
+  }
+  // Select mark i (or none: -1), finishing the note selected before. Returns i, moved down if an earlier mark went away.
+  function select(i) {
+    if (sel >= 0 && sel !== i) {
+      var gone = finish(sel);
+      if (gone >= 0 && i > gone) i -= 1;
+      if (gone >= 0 && aiming > gone) aiming -= 1;
+    }
+    sel = i;
+    return i;
+  }
 
   // Each tab is one anchor; a page with no tabs uses the whole page.
   function anchors() {
@@ -1223,7 +1243,8 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
       var X = function (f) { return f * s.w; };
       var Y = function (f) { return f * s.h; };
       g.innerHTML = '';
-      l.querySelectorAll('.mk-note').forEach(function (n) { n.remove(); });
+      // nothing reacts to a note leaving the page, so removing the one being typed in cannot start a second redraw
+      l.querySelectorAll('.mk-note').forEach(function (n) { if (n.parentNode) n.parentNode.removeChild(n); });
       data.items.forEach(function (it, i) {
         if (it.anchor !== id) return;
         var mine = i === sel ? ' mk-sel' : '';
@@ -1236,10 +1257,6 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
           n.contentEditable = on ? 'true' : 'false';
           n.dataset.i = i;
           n.addEventListener('input', function () { it.text = n.textContent; save(); });
-          n.addEventListener('blur', function () {
-            var k = data.items.indexOf(it);
-            if (k >= 0 && !n.textContent.trim()) { remember(); drop(k); save(); render(); }
-          });
           l.appendChild(n);
           if (it.tip) {
             var r = { x: n.offsetLeft, y: n.offsetTop, w: n.offsetWidth, h: n.offsetHeight };
@@ -1317,6 +1334,7 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   function down(e) {
     if (!on || e.button !== 0) return;
     var a = e.currentTarget.parentNode;
+    var layer = e.currentTarget;
     var p = frac(a, e);
     // the click that says where a Move mark should go
     if (aiming >= 0 && data.items[aiming]) {
@@ -1332,21 +1350,30 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
       var i = Number(hit.getAttribute('data-i'));
       var handle = hit.getAttribute('data-h');
       if (data.items[i].type === 'note' && !handle && document.activeElement === hit) return; // typing: just move the cursor
-      sel = i;
       remember();
+      i = select(i);
+      if (i < 0) { render(); return; }
       drag = { a: a, mode: handle ? 'handle' : 'shift', handle: handle, start: p, orig: JSON.parse(JSON.stringify(data.items[i])), moved: false };
-      e.currentTarget.setPointerCapture(e.pointerId);
+      layer.setPointerCapture(e.pointerId);
       e.preventDefault();
       render();
       return;
     }
+    // a click on empty space while a note is open finishes that note; it does not start another
+    if (tool === 'note' && data.items[sel] && data.items[sel].type === 'note') {
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      select(-1); save(); render();
+      e.preventDefault();
+      return;
+    }
     remember();
+    select(-1);
     var it = { anchor: idOf(a), type: tool, x1: p[0], y1: p[1], x2: p[0], y2: p[1] };
-    if (tool === 'note') { it.text = ''; it.tip = null; }
+    if (tool === 'note') { it.text = ''; it.tip = null; it.tipSet = false; }
     data.items.push(it);
     sel = data.items.length - 1;
     drag = { a: a, mode: 'draw', start: p, moved: false };
-    e.currentTarget.setPointerCapture(e.pointerId);
+    layer.setPointerCapture(e.pointerId);
     e.preventDefault();
     render();
   }
@@ -1370,6 +1397,7 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
       } else { it.x2 = p[0]; it.y2 = p[1]; }
     } else if (drag.mode === 'handle') {
       it[drag.handle] = p;
+      if (drag.handle === 'tip' && drag.moved) it.tipSet = true; // stretched: the arrow stays
     } else {
       var dx = p[0] - drag.start[0], dy = p[1] - drag.start[1], o = drag.orig;
       it.x1 = o.x1 + dx; it.y1 = o.y1 + dy;
@@ -1387,6 +1415,13 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
     if (!it) { render(); return; }
     if (d.mode === 'draw') {
       if (it.type === 'note') {
+        if (d.moved) it.tipSet = true; // dragged out from the thing: the arrow is meant
+        else {
+          // a plain click: a short arrow waits beside the box; stretch it to point, or it goes away when the note is done
+          var sz = size(d.a);
+          it.tip = [Math.max(0, it.x1 - 34 / sz.w), Math.min(1, it.y1 + 64 / sz.h)];
+          it.tipSet = false;
+        }
         tagDiagram(it); save(); render();
         var nn = d.a.querySelector('.mk-note[data-i="' + sel + '"]');
         if (nn) { pendingFocus = nn; setTimeout(function () { nn.focus(); }, 0); }
@@ -1420,6 +1455,7 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   function setTool(t) {
     tool = t;
     aiming = -1;
+    if (sel >= 0) { select(-1); save(); render(); }
     bar.querySelectorAll('[data-tool]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.tool === t ? 'true' : 'false'); });
     bar.querySelector('.mk-hint').textContent = HINTS[t];
     document.body.setAttribute('data-mk-tool', t);
@@ -1435,11 +1471,11 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   });
   function setOn(v) {
     on = v;
-    sel = -1;
+    select(-1);
     aiming = -1;
     document.body.classList.toggle('mk-on', on);
+    save();
     render();
-    refreshButtons();
   }
   document.addEventListener('keydown', function (e) {
     if (!on) return;
