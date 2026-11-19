@@ -12,7 +12,7 @@
 
 - 🟦 **The line that moves data lights up** in the colour of the part that sends it, with an arrow for the direction.
 - 🏷️ **A tag sits on the line** and names what is moving, with an arrow for its direction: "$19.00 card charge →", "2 new rows ↓".
-- 🧘 **Calm by default.** Nothing moves until you switch "Motion" on; then the tag travels its line.
+- 🧘 **Calm by default.** Nothing moves until you switch "Moving tags" on; then each tag travels its line. Start over, Back, Play and Next step sit in one row.
 - 🗂️ **A side panel shows the real item**: the email, the new row, the request, with its fields.
 - 🔴 **Data that leaves your system is flagged**, such as a card sent to a payment provider or an email sent to an AI model.
 - 🟡 **"If not" lines** say what happens when a check fails.

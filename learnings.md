@@ -56,3 +56,8 @@ Tests: 40 of 40 pass.
   with a soft shadow in their own colour, a cooler page grey with brighter colour glows.
 
 Tests: 35 of 35 pass (run through Runner).
+
+## 19 November 2026: no phone layout
+
+- **Russell: "phone view not needed."** These pages are read on a laptop or desktop. Do not test, screenshot or fix
+  phone widths. The phone fix already shipped stays, because it costs nothing.
