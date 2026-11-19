@@ -133,6 +133,7 @@ When the user points at code ("draw the data flow of the checkout folder"), read
 
 ## Rules for a good diagram
 
+- **The person goes at the top.** The reader starts where the person starts. Put whatever the person talks to directly in the row below (a mailbox, an assistant like Copilot), then the program and its storage below that. The check warns when no person is in the top row.
 - **One step, one action.** If a step both reads and writes, split it into 2 steps.
 - **Every step that moves data gets a `carry` tag** naming the thing itself, not the action.
 - **Give the steps that matter an `item`.** A real-looking sample is what makes the diagram click.
