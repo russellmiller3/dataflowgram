@@ -43,10 +43,10 @@ Every part has its own colour, and data takes the colour of the part that sends 
 
 ```bash
 git clone https://github.com/russellmiller3/dataflowgram.git
-cp -r dataflowgram/skills/dataflowgram ~/.claude/skills/
+cp -r dataflowgram/skills/dataflowgram dataflowgram/skills/khan ~/.claude/skills/
 ```
 
-**In any other agent** (Codex, Cursor, Gemini CLI and others): point it at `skills/dataflowgram/SKILL.md`. The skill is one instruction file and one Node.js script, so any agent that can read a file and run a command can use it.
+**In any other agent** (Codex, Cursor, Gemini CLI and others): point it at `skills/dataflowgram/SKILL.md` (and `skills/khan/SKILL.md` for the explain-anything skill). The skill is one instruction file and one Node.js script, so any agent that can read a file and run a command can use it.
 
 It needs Node.js 18 or later, and nothing else: the icons are stored in the skill, so it works offline.
 
