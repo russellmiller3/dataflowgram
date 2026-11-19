@@ -329,6 +329,8 @@ export function compile(spec) {
 
   // ---- scenarios and steps
   const ids = new Set();
+  // Steps that move data but name nothing: the reader sees a line light up with no idea what moved.
+  const warnings = [];
   const scns = scenarios.map((s, si) => {
     if (!s.id || !ID.test(s.id)) fail(`scenario ${si + 1} needs an "id" of lower-case letters, digits and hyphens`);
     if (ids.has(s.id)) fail(`scenario id "${s.id}" is used twice`);
@@ -363,6 +365,7 @@ export function compile(spec) {
         if (!focus) focus = id;
       });
       if (lit.length === 0) fail(`${where}: give "flow" (data that moves) or "at" (the part that works)`);
+      if (stepEdges.length > 0 && st.carry === undefined) warnings.push(`${where} moves data but names nothing: add "carry" ({ "icon": "...", "label": "..." })`);
       let carry = null;
       if (st.carry !== undefined) {
         const cy = st.carry;
@@ -420,7 +423,7 @@ export function compile(spec) {
   order.forEach((id) => { kindOf[id] = nodes[id].kind; });
   const tones = colourParts(order, kindOf, edges.map((e) => [e.from, e.to]));
   order.forEach((id) => { nodes[id].color = tones[id].color; nodes[id].tint = tones[id].tint; });
-  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns };
+  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns, warnings };
 }
 
 // The data the page's own script needs. "<" is written as a code so text can never close the script early.
@@ -811,6 +814,7 @@ if (isMain) {
       const out = compile(JSON.parse(fs.readFileSync(a, 'utf8')));
       const steps = out.scenarios.reduce((t, s) => t + s.steps.length, 0);
       console.log(`ok: ${Object.keys(out.nodes).length} parts, ${out.edges.length} lines, ${out.scenarios.length} scenarios, ${steps} steps`);
+      if (out.warnings.length) console.log(`warning: ${out.warnings.length} step${out.warnings.length === 1 ? '' : 's'} with no tag\n  ` + out.warnings.join('\n  '));
     } else if (cmd === 'book' && a && b) {
       const book = JSON.parse(fs.readFileSync(a, 'utf8'));
       const dir = path.dirname(path.resolve(a));
