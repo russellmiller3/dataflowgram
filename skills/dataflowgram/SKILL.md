@@ -66,6 +66,18 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 Every diagram shows a small credit in its lower right corner, linked to the author's site. The licence (PolyForm Noncommercial 1.0.0 with one added term) requires the credit to stay. Only a commercial licence from the author allows `"credit": false`. Personal and noncommercial use is free; use at or for a company needs a commercial licence from rmiller@zavient.com.
 
+## When the user cannot describe the process well
+
+Most people cannot list the parts and steps of a process from memory, but they can spot what is wrong in a picture of it. So guess first, show the guess, and let the user correct it:
+
+1. **Read before you ask.** Collect what already exists: code, documents, an email thread, a screenshot, notes from a call. Ask only for what none of these says.
+2. **Show a rough sketch in the chat** before you write any description file. Draw boxes for the parts and number the arrows between them in order, each naming what moves. Use 8 steps at most. Put `?` on each part or step you guessed.
+3. **Ask 3 questions at most, about the `?` marks only.** Make each one concrete, with choices to pick from: "When the email arrives, who reads it first: a person, or a program?" Never ask "describe the process".
+4. **Redraw once** if the answers change more than 2 parts or steps. Then build the page.
+5. **Keep a guess visible.** If a step is still a guess, say so in its text ("assumed: ...") and list it for the user when you hand over the page.
+
+The finished page is also a check: the user steps through it, and every step they stop at is a correction.
+
 ## Starting from a codebase
 
 When the user points at code ("draw the data flow of the checkout folder"), read before you write the description file:
@@ -89,6 +101,6 @@ When the user points at code ("draw the data flow of the checkout folder"), read
 
 ## Tests
 
-`node --test <skill>/scripts/dataflow.test.mjs` runs 21 tests. They step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, the tag fade, the credit line, that boxes do not overlap, that text from the description cannot break the page, and that a wrong description is refused with a message that names the fault.
+`node --test <skill>/scripts/dataflow.test.mjs` runs 40 tests. They step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, the tag fade, the credit line, that boxes do not overlap, that text from the description cannot break the page, and that a wrong description is refused with a message that names the fault.
 
 Icons: [Lucide](https://lucide.dev) 1.75.0, ISC licence, stored in `<skill>/assets/` so no internet is needed. To update them, download the `lucide-static` package and run `node <skill>/scripts/make-icons.mjs <icon-nodes.json> <version>`.
