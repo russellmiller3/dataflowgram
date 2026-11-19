@@ -50,7 +50,7 @@ const LIMITS = { 1: { label: 22, sub: 30 }, 2: { label: 19, sub: 24 }, 3: { labe
 const ID = /^[a-z][a-z0-9-]*$/;
 // The credit in the lower right of every diagram. The licence requires it; only holders of a
 // commercial licence from Russell Miller may turn it off with "credit": false.
-const CREDIT = { text: 'Made with Dataflow Steps · Russell Miller, product manager', href: 'https://russellmiller.io' };
+const CREDIT = { text: 'Made with Dataflowgram · Russell Miller, product manager', href: 'https://russellmiller.io' };
 const CARRY_MAX = 22;
 // Kinds of part that sit outside the owner's own system unless a part says otherwise.
 const OUTSIDE_KINDS = ['outside', 'web'];

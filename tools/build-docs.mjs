@@ -2,10 +2,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { renderPage } from '../skills/dataflow-steps/scripts/dataflow.mjs';
+import { renderPage } from '../skills/dataflowgram/scripts/dataflow.mjs';
 
 const root = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
-const ex = path.join(root, 'skills/dataflow-steps/examples');
+const ex = path.join(root, 'skills/dataflowgram/examples');
 const docs = path.join(root, 'docs');
 fs.mkdirSync(path.join(docs, 'examples'), { recursive: true });
 
@@ -19,7 +19,7 @@ const cards = names.map((n) => {
 
 fs.writeFileSync(path.join(docs, 'index.html'), `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dataflow Steps</title>
+<title>Dataflowgram</title>
 <meta name="description" content="Interactive, step-by-step data-flow diagrams, built by Claude from a short description.">
 <style>
 *{box-sizing:border-box}
@@ -36,9 +36,9 @@ p{max-width:680px}
 a{color:#1D4ED8}
 </style></head>
 <body><main>
-<h1>Dataflow Steps</h1>
+<h1>Dataflowgram</h1>
 <p>Interactive data-flow diagrams for Claude. Describe the parts and the steps; get a page where each step lights the line that moves, names what is moving, and shows a sample of the real item. Open an example and press Play.</p>
-<p><a href="https://github.com/russellmiller3/dataflow-steps">Get the skill on GitHub</a></p>
+<p><a href="https://github.com/russellmiller3/dataflowgram">Get the skill on GitHub</a></p>
 <div class="grid">
 ${cards.join('\n')}
 </div>

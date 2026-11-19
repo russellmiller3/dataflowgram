@@ -1,4 +1,4 @@
-# Dataflow Steps
+# Dataflowgram
 
 **Interactive data-flow diagrams for Claude.** Describe the parts of a system and the steps; Claude builds one page that shows what moves, where it goes, and why, one step at a time.
 
@@ -6,7 +6,7 @@
 
 **Free for personal use. Using it at a company needs a licence: [rmiller@zavient.com](mailto:rmiller@zavient.com).**
 
-**[Open the live examples →](https://russellmiller3.github.io/dataflow-steps/)** Press Play, or step through.
+**[Open the live examples →](https://russellmiller3.github.io/dataflowgram/)** Press Play, or step through.
 
 ## What each step shows
 
@@ -25,23 +25,23 @@ Every kind of part (a person, a mailbox, a program, an AI model, a table...) and
 
 | | |
 |---|---|
-| [![An online order](docs/images/online-order.png)](https://russellmiller3.github.io/dataflow-steps/examples/online-order.html) **An online order.** From Pay to the warehouse pick list, with the card payment flagged as leaving the shop's system. | [![A notes inbox with AI](docs/images/notes-inbox.png)](https://russellmiller3.github.io/dataflow-steps/examples/notes-inbox.html) **A notes inbox with AI.** Forward an email to one address and it is filed; ask a question the same way and the answer comes back. |
-| [![Support email, sorted by AI](docs/images/support-triage.png)](https://russellmiller3.github.io/dataflow-steps/examples/support-triage.html) **Support email, sorted by AI.** An AI model tags each email, and the urgent ones reach a person at once. | [![Sign-up with an email check](docs/images/sign-up.png)](https://russellmiller3.github.io/dataflow-steps/examples/sign-up.html) **Sign-up with an email check.** The account goes live only when the user clicks the link. |
+| [![An online order](docs/images/online-order.png)](https://russellmiller3.github.io/dataflowgram/examples/online-order.html) **An online order.** From Pay to the warehouse pick list, with the card payment flagged as leaving the shop's system. | [![A notes inbox with AI](docs/images/notes-inbox.png)](https://russellmiller3.github.io/dataflowgram/examples/notes-inbox.html) **A notes inbox with AI.** Forward an email to one address and it is filed; ask a question the same way and the answer comes back. |
+| [![Support email, sorted by AI](docs/images/support-triage.png)](https://russellmiller3.github.io/dataflowgram/examples/support-triage.html) **Support email, sorted by AI.** An AI model tags each email, and the urgent ones reach a person at once. | [![Sign-up with an email check](docs/images/sign-up.png)](https://russellmiller3.github.io/dataflowgram/examples/sign-up.html) **Sign-up with an email check.** The account goes live only when the user clicks the link. |
 
 ## Install
 
 **As a Claude Code plugin:**
 
 ```
-/plugin marketplace add russellmiller3/dataflow-steps
-/plugin install dataflow-steps@dataflow-steps
+/plugin marketplace add russellmiller3/dataflowgram
+/plugin install dataflowgram@dataflowgram
 ```
 
 **Or copy the skill into your skills folder:**
 
 ```bash
-git clone https://github.com/russellmiller3/dataflow-steps.git
-cp -r dataflow-steps/skills/dataflow-steps ~/.claude/skills/
+git clone https://github.com/russellmiller3/dataflowgram.git
+cp -r dataflowgram/skills/dataflowgram ~/.claude/skills/
 ```
 
 It needs Node.js 18 or later, and nothing else: the icons are stored in the skill, so it works offline.
@@ -54,7 +54,7 @@ It needs Node.js 18 or later, and nothing else: the icons are stored in the skil
 | Charities, schools, government | Free |
 | Use at or for a company, including freelance client work | Commercial licence: [rmiller@zavient.com](mailto:rmiller@zavient.com) |
 
-Every diagram carries a small credit in its lower right corner, "Made with Dataflow Steps · Russell Miller, product manager". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
+Every diagram carries a small credit in its lower right corner, "Made with Dataflowgram · Russell Miller, product manager". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
 
 ## Use it
 
@@ -69,8 +69,8 @@ Claude writes a short description of the parts and steps, checks it, and builds 
 ## Build one by hand
 
 ```bash
-node skills/dataflow-steps/scripts/dataflow.mjs check my-flow.json
-node skills/dataflow-steps/scripts/dataflow.mjs build my-flow.json my-flow.html
+node skills/dataflowgram/scripts/dataflow.mjs check my-flow.json
+node skills/dataflowgram/scripts/dataflow.mjs build my-flow.json my-flow.html
 ```
 
 A description is plain JSON. This one is the start of the sign-up example:
@@ -99,7 +99,7 @@ A description is plain JSON. This one is the start of the sign-up example:
 }
 ```
 
-The full list of fields is in [the skill's instructions](skills/dataflow-steps/SKILL.md). The check refuses a description with a fault and names it: a label too long for its box, a step on a line that does not exist, an icon that is not in the set.
+The full list of fields is in [the skill's instructions](skills/dataflowgram/SKILL.md). The check refuses a description with a fault and names it: a label too long for its box, a step on a line that does not exist, an icon that is not in the set.
 
 **Link to one step** by adding `#df=<scenario>.<step>` to the page address, such as `online-order.html#df=paid.2`.
 
@@ -113,7 +113,7 @@ npm test
 
 ## Credits
 
-Icons: [Lucide](https://lucide.dev), ISC licence ([copy](skills/dataflow-steps/assets/LUCIDE-LICENSE.txt)). The skill: PolyForm Noncommercial 1.0.0 with a credit term ([LICENSE](LICENSE)).
+Icons: [Lucide](https://lucide.dev), ISC licence ([copy](skills/dataflowgram/assets/LUCIDE-LICENSE.txt)). The skill: PolyForm Noncommercial 1.0.0 with a credit term ([LICENSE](LICENSE)).
 
 ---
 

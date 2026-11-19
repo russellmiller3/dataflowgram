@@ -1,5 +1,5 @@
 {
-  "name": "dataflow-steps",
+  "name": "dataflowgram",
   "version": "1.0.0",
   "private": true,
   "description": "Interactive, step-by-step data-flow diagrams for Claude.",
@@ -8,7 +8,7 @@
   "author": "Russell Miller (https://russellmiller.io)",
   "engines": { "node": ">=18" },
   "scripts": {
-    "test": "node --test skills/dataflow-steps/scripts/dataflow.test.mjs",
+    "test": "node --test skills/dataflowgram/scripts/dataflow.test.mjs",
     "docs": "node tools/build-docs.mjs",
     "pictures": "node tools/shoot.mjs"
   },

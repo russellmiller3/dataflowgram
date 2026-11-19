@@ -1,5 +1,5 @@
 ---
-name: dataflow-steps
+name: dataflowgram
 description: Build an interactive, step-by-step data-flow diagram as one HTML page - boxes for each part of a system, lines between them, and a step list that shows what moves where, in which direction, and why. A tag rides each line naming what moves, a side panel shows a sample of the real item, data that leaves the owner's system is flagged, and a Play button runs the steps. Use when the user asks for a data flow, "how the data travels", "walk me through what happens when...", an interactive diagram of a process, or a step-by-step system explainer.
 ---
 
