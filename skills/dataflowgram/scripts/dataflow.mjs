@@ -882,7 +882,13 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .pg-sendnotes[hidden]{display:none!important}
 .df-scroll{position:relative}
 /* mark up: a clear layer over each tab; marks are drawn on the page itself */
-main,.pg-panel{position:relative}
+main,.pg-panel,.pg-head{position:relative}
+/* the page buttons sit above the drawing layer, so they still work while marking */
+.pg-top{position:relative;z-index:30;pointer-events:none}
+.pg-top button{pointer-events:auto}
+/* while marking, a click never selects text; only a note being typed does */
+body.mk-on main{-webkit-user-select:none;user-select:none}
+body.mk-on .mk-note{-webkit-user-select:text;user-select:text}
 .mk-layer{position:absolute;inset:0;z-index:20;pointer-events:none}
 body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
 .mk-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -943,10 +949,10 @@ ${extraCss}</style>
 </head>
 <body>
 <main>
-<div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
+<header class="pg-head"><div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
 <div class="pg-btns"><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page">${iconSvg('pencil')}<span>Mark up</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-theme" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
-${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
+${intro ? `<p class="lede">${esc(intro)}</p>` : ''}</header>
 ${body}
 </main>
 <script>
@@ -1005,7 +1011,7 @@ export function renderBook(book) {
     + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n'
     + '.pg-print-title{display:none}\n'
     // Paper: every tab prints, one page each, turned to suit its drawing
-    + '@media print{.pg-tabs,main>h1,main>.lede{display:none}'
+    + '@media print{.pg-tabs,main>h1,main>.lede,.pg-head{display:none}'
     + '.pg-off{position:static;visibility:visible;width:auto;max-width:none}'
     + '.pg-panel{break-after:page}.pg-panel:last-of-type{break-after:auto}'
     + '.pg-panel.pg-wide{page:df-wide}.pg-panel.pg-tall{page:df-tall}'
@@ -1041,8 +1047,8 @@ export function readNotes(html, specs) {
     const byBlock = /^d(\d+)$/.exec(it.on || '');
     const byTab = /^p(\d+)$/.exec(it.anchor || '');
     const k = byBlock ? Number(byBlock[1]) - 1 : byTab ? Number(byTab[1]) - 1 : 0;
-    const spec = specs[k];
-    let diagram = spec ? spec.title || '' : '';
+    const spec = it.anchor === 'head' ? null : specs[k];
+    let diagram = it.anchor === 'head' ? 'Page title and intro' : spec ? spec.title || '' : '';
     let at = '';
     let from = '';
     if (spec && !isPageTab(spec) && it.on) {

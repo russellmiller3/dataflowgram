@@ -64,12 +64,13 @@
     return i;
   }
 
-  // Each tab is one anchor; a page with no tabs uses the whole page.
+  // Each tab is one anchor, and the title with its intro is one more; a page with no tabs uses the whole page.
   function anchors() {
     var p = document.querySelectorAll('.pg-panel');
-    return p.length ? Array.prototype.slice.call(p) : [document.querySelector('main')];
+    var head = document.querySelector('.pg-head');
+    return p.length ? (head ? [head] : []).concat(Array.prototype.slice.call(p)) : [document.querySelector('main')];
   }
-  function idOf(a) { return a.classList.contains('pg-panel') ? 'p' + a.getAttribute('data-panel') : 'main'; }
+  function idOf(a) { return a.classList.contains('pg-panel') ? 'p' + a.getAttribute('data-panel') : a.classList.contains('pg-head') ? 'head' : 'main'; }
   function anchorById(id) { return anchors().filter(function (a) { return idOf(a) === id; })[0]; }
   function size(a) { return { w: a.offsetWidth || 1, h: a.offsetHeight || 1 }; }
 
