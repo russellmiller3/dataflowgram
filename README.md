@@ -54,7 +54,7 @@ It needs Node.js 18 or later, and nothing else: the icons are stored in the skil
 | Charities, schools, government | Free |
 | Use at or for a company, including freelance client work | Commercial licence: [rmiller@zavient.com](mailto:rmiller@zavient.com) |
 
-Every diagram carries a small credit in its lower right corner, "Made with Dataflowgram · Russell Miller, product manager". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
+Every diagram carries a small credit in its lower right corner, "Made with Dataflowgram by Russell Miller · Free for personal use · Companies: rmiller@zavient.com". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
 
 ## Use it
 

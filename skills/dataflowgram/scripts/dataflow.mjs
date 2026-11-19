@@ -50,7 +50,11 @@ const LIMITS = { 1: { label: 22, sub: 30 }, 2: { label: 19, sub: 24 }, 3: { labe
 const ID = /^[a-z][a-z0-9-]*$/;
 // The credit in the lower right of every diagram. The licence requires it; only holders of a
 // commercial licence from Russell Miller may turn it off with "credit": false.
-const CREDIT = { text: 'Made with Dataflowgram · Russell Miller, product manager', href: 'https://russellmiller.io' };
+const CREDIT = {
+  site: 'https://russellmiller.io',
+  repo: 'https://github.com/russellmiller3/dataflowgram',
+  email: 'rmiller@zavient.com',
+};
 const CARRY_MAX = 22;
 // Kinds of part that sit outside the owner's own system unless a part says otherwise.
 const OUTSIDE_KINDS = ['outside', 'web'];
@@ -376,7 +380,7 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
-.df-credit{margin:18px 0 0;text-align:right;font-size:.85rem}
+.df-credit{margin:18px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
 .df-credit a{color:var(--df-ink2);text-decoration:none;border-bottom:1px solid var(--df-line)}
 .df-credit a:hover{color:var(--df-ink);border-bottom-color:var(--df-ink)}
 .df-legend small{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--df-ink2);margin-right:2px}
@@ -494,7 +498,7 @@ export function renderFragment(spec, prefix = 'df') {
       <ol class="df-steps"></ol>
     </div>
   </div>
-  ${c.credit ? `<p class="df-credit"><a href="${CREDIT.href}" target="_blank" rel="noopener">${esc(CREDIT.text)}</a></p>` : ''}
+  ${c.credit ? `<p class="df-credit">Made with <a href="${CREDIT.repo}" target="_blank" rel="noopener">Dataflowgram</a> by <a href="${CREDIT.site}" target="_blank" rel="noopener">Russell Miller</a> · Free for personal use · Companies: <a href="mailto:${CREDIT.email}?subject=Dataflowgram%20licence">${CREDIT.email}</a></p>` : ''}
 </div>
 <script>
 (function(){

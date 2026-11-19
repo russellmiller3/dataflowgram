@@ -310,7 +310,11 @@ test('a one-way tag fades in as it leaves and out as it arrives, so it never jum
 
 test('every diagram carries the credit link in the lower right unless the description turns it off', () => {
   const on = renderFragment(tiny(), 'c1');
-  assert.match(on, /<p class="df-credit"><a href="https:\/\/russellmiller\.io" target="_blank" rel="noopener">Made with Dataflowgram · Russell Miller, product manager<\/a><\/p>/);
+  const credit = /<p class="df-credit">(.*?)<\/p>/.exec(on);
+  assert.ok(credit, 'the credit is on the page');
+  assert.equal(credit[1].replace(/<[^>]+>/g, ''), 'Made with Dataflowgram by Russell Miller · Free for personal use · Companies: rmiller@zavient.com');
+  assert.match(credit[1], /href="https:\/\/russellmiller\.io"/);
+  assert.match(credit[1], /href="mailto:rmiller@zavient\.com\?subject=Dataflowgram%20licence"/);
   assert.match(renderPage(example()), /class="df-credit"/, 'a whole page carries it too');
   const spec = tiny();
   spec.credit = false;
