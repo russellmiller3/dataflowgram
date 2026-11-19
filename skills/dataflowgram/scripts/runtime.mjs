@@ -722,6 +722,10 @@ export function mount(root, data, prefix) {
     });
   });
   setPlayLabel(false);
+  // On paper, show everything at once: every line lit and named. The reader's view comes back after printing.
+  let viewBeforePrint = null;
+  window.addEventListener('beforeprint', () => { viewBeforePrint = view; setView('all'); });
+  window.addEventListener('afterprint', () => { if (viewBeforePrint) setView(viewBeforePrint); viewBeforePrint = null; });
   build();
   draw();
   window.requestAnimationFrame(tick);

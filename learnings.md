@@ -102,3 +102,9 @@ Tests: 35 of 35 pass (run through Runner).
   All 4 examples and all 7 client tabs now carry one, with what was added by us marked. Tests: 46 of 46.
 - **Outer boxes sat 10 units from the drawing's edge,** so they looked jammed against their frame. Fix: 24 units on every
   side, for every diagram. The spacing test now checks a margin of 20 to 30 units, equal on both sides, top and bottom.
+- **A Print button: one page per diagram.** Each page faces the way its drawing does (wider than tall prints sideways),
+  shows everything at once, lists every step under the drawing (3 columns sideways, 2 upright), and keeps the source and
+  a credit line. The drawing gets shorter as the step list grows, so every page fits. Checked by printing to PDF: the
+  7-tab client page gives 7 pages (5 sideways, 2 upright), each example 1 page. First tries spilled 1 to 4 pages: a
+  credit pinned to the page edge landed mid-page on upright pages, so each page now carries its own credit line.
+  Tests: 47 of 47.

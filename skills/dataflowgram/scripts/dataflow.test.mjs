@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook } from './dataflow.mjs';
+import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape } from './dataflow.mjs';
 import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves, stepBadge } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
@@ -388,6 +388,34 @@ test('on a phone the page fits the screen: the stacked column can shrink, and th
   assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
 });
 
+test('printing gives one page per diagram, turned to suit its shape, with every step listed', async () => {
+  // 19 November 2026: "add a print icon ... each tab should be one page, and each one should be layout tall or wide"
+  const wideSpec = example();
+  // one part per row, 5 rows: a tall drawing
+  const ids = ['a', 'b', 'c', 'd', 'e'];
+  const tallSpec = { title: 'Tall', source: 'test', rows: ids.map((id) => [id]),
+    parts: Object.fromEntries(ids.map((id) => [id, { label: id.toUpperCase(), kind: id === 'a' ? 'person' : 'program' }])),
+    lines: ids.slice(1).map((id, k) => [ids[k], id]),
+    scenarios: [{ id: 's', label: 'S', steps: ids.slice(1).map((id, k) => ({ action: 'send', flow: [`${ids[k]}>${id}`], text: `Step ${k + 1}.`, carry: { icon: 'mail', label: 'x' } })) }] };
+  assert.equal(printShape(compile(wideSpec)), 'wide');
+  assert.equal(printShape(compile(tallSpec)), 'tall');
+  const book = renderBook({ title: 'B', diagrams: [wideSpec, tallSpec] });
+  assert.match(book, /<button type="button" class="pg-mode pg-print"[^>]*>[\s\S]*?<span>Print<\/span>/, 'a Print button');
+  assert.match(book, /class="pg-panel pg-wide" data-panel="1"/);
+  assert.match(book, /class="pg-panel pg-tall pg-off" data-panel="2"/);
+  assert.match(book, /\.pg-panel\.pg-wide\{page:df-wide\}\.pg-panel\.pg-tall\{page:df-tall\}/, 'each panel takes its own page shape');
+  assert.match(book, /@page df-wide\{size:landscape/);
+  assert.match(book, /\.pg-panel\{break-after:page\}/, 'one page each');
+  // the printed list holds every step of every scenario
+  const steps = compile(wideSpec).scenarios.reduce((t, s) => t + s.steps.length, 0);
+  const list = /<div class="df-printsteps">([\s\S]*?)<\/div><\/div>/.exec(renderFragment(wideSpec, 'x'))[0];
+  assert.equal((list.match(/<li>/g) || []).length, steps);
+  // more steps make the drawing shorter, so the page still fits
+  const heightOf = (s) => Number(/--df-print-h:([\d.]+)in/.exec(renderFragment(s, 'x'))[1]);
+  const many = { ...wideSpec, scenarios: [...wideSpec.scenarios, ...wideSpec.scenarios.map((s) => ({ ...s, id: s.id + '-b' }))] };
+  assert.ok(heightOf(many) < heightOf(wideSpec), 'twice the steps, a shorter drawing');
+});
+
 test('a diagram shows where it came from, and the check names a diagram that does not say', async () => {
   // 19 November 2026: "we should always source, even if it's a footnote so we dont get sharpshooter'd"
   const spec = { ...example(), source: 'Client requirements, page 2; call of 17 November' };
@@ -460,7 +488,7 @@ test('a book puts several diagrams in one page, one tab each, each working on it
   assert.match(html, /id="d2"/);
   assert.equal((html.match(/mount\(document\.getElementById\("d[12]"\)/g) || []).length, 2, 'each diagram is started');
   // the second tab starts hidden off screen, not removed
-  assert.match(html, /class="pg-panel pg-off" data-panel="2"/);
+  assert.match(html, /class="pg-panel pg-(wide|tall) pg-off" data-panel="2"/);
   // the credit appears once, at the end
   assert.equal((html.match(/class="df-credit"/g) || []).length, 1);
   // a bad diagram anywhere in the book stops the build before anything is written

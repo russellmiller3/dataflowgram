@@ -39,6 +39,36 @@ export const ACTIONS = {
 };
 
 const PAD = 24; // room between the outer boxes and the edge of the drawing
+
+// A drawing clearly wider than tall prints on a sideways page; anything else prints upright.
+export function printShape(c) {
+  return c.width / c.height > 1.15 ? 'wide' : 'tall';
+}
+
+// Paper: one page per diagram, the drawing sized to the page, the steps listed in 2 columns below it.
+const PRINT_CSS = `
+.df-printsteps,.df-printcredit{display:none}
+@page df-wide{size:landscape;margin:10mm}
+@page df-tall{size:portrait;margin:10mm}
+@media print{
+.df,.df *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.df .df-grid{display:block}
+.df .df-grid>div:first-child{position:static}
+.df .df-grid>div:nth-child(2),.df .df-keyfold,.df .df-info{display:none!important}
+.df .df-scroll{overflow:visible}
+.df .df-svg{width:100%;height:var(--df-print-h);border:0;min-width:0}
+.df.df-wide .df-printsteps{columns:3}
+.df .df-printsteps{display:block;columns:2;column-gap:22px;font-size:8.5pt;line-height:1.3;margin-top:8px}
+.df .df-printsteps>div{break-inside:avoid}
+.df .df-printsteps h4{margin:0 0 2px;font-size:9pt}
+.df .df-printsteps ol{margin:0 0 6px;padding-left:18px}
+.df .df-source{font-size:8pt;margin-top:6px}
+.df-credit{display:none}
+.df .df-printcredit{display:block;margin:4px 0 0;text-align:right;font-size:7pt;color:var(--df-ink2)}
+main:has(> .df.df-wide){page:df-wide}
+main:has(> .df.df-tall){page:df-tall}
+}
+`;
 const GAPX = 56;
 const BOX_W = { 1: 240, 2: 200, 3: 160 }; // box width by how many share a row
 const NODE_H = 86;
@@ -739,8 +769,16 @@ export function renderFragment(spec, prefix = 'df') {
   const runtime = fs.readFileSync(path.join(HERE, 'runtime.mjs'), 'utf8').replace(/^export /gm, '');
   const title = esc(c.title || 'Data flow');
 
-  return `<style>${CSS}</style>
-<div class="df" id="${prefix}">
+  // On paper each diagram gets one page, turned to suit its shape, with every step listed under the drawing.
+  const shape = printShape(c);
+  // Fit one page: the more steps to list, the shorter the drawing (in inches; a line of the list is about 0.16 inch).
+  const cols = shape === 'wide' ? 3 : 2;
+  const lines = Math.ceil(c.scenarios.reduce((t, s) => t + s.steps.length + 2, 0) / cols) + 2;
+  const printH = Math.max(2.6, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
+  const firstSentence = (t) => (String(t).match(/^.*?[.?!](?=\s|$)/) || [String(t)])[0];
+  const printSteps = `<div class="df-printsteps">${c.scenarios.map((s) => `<div><h4>${esc(s.label)}</h4><ol>${s.steps.map((st) => `<li>${esc(firstSentence(st.text))}</li>`).join('')}</ol></div>`).join('')}</div>`;
+  return `<style>${CSS}${PRINT_CSS}</style>
+<div class="df df-${shape}" id="${prefix}" style="--df-print-h:${printH}in">
   <div class="df-grid" style="--df-w:${num(c.width * 1.3)}px">
     <div>
       <div class="df-scroll"><svg class="df-svg" viewBox="0 0 ${num(c.width)} ${num(c.height)}" role="img" aria-label="${title}">
@@ -752,7 +790,9 @@ export function renderFragment(spec, prefix = 'df') {
         <g class="df-packets"></g>
       </svg></div>
       <p class="df-info" aria-live="polite" hidden></p>
+      ${printSteps}
       ${c.source ? `<p class="df-source"><span>Source:</span> ${esc(c.source)}</p>` : ''}
+      <p class="df-printcredit">Made with Dataflowgram by Russell Miller · russellmiller.io · Free for personal use · Companies: ${CREDIT.email}</p>
       <details class="df-keyfold"><summary>Key: what the colours, icons and lines mean</summary>
       <p class="df-hint">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small>${partKeys}</div>
@@ -817,12 +857,14 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .pg-mode{white-space:nowrap;flex:none;font:inherit;font-size:.9rem;display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;cursor:pointer;color:var(--pg-ink);
   background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pg-mode svg{width:16px;height:16px}
+.pg-btns{display:flex;gap:8px}
+@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}}
 ${extraCss}</style>
 </head>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
-<button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div>
+<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
 ${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
 ${body}
@@ -831,6 +873,10 @@ ${body}
 (function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
 var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
+(function(){var p=document.querySelector('.pg-print');if(p)p.addEventListener('click',function(){window.print();});
+var r=document.documentElement,was=null;
+window.addEventListener('beforeprint',function(){was=r.getAttribute('data-df-theme');r.setAttribute('data-df-theme','light');});
+window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-theme',was);else r.removeAttribute('data-df-theme');});})();
 ${extraScript}</script>
 </body>
 </html>
@@ -853,13 +899,23 @@ export function renderBook(book) {
   const panels = specs.map((s, k) => {
     const c = compiled[k];
     const lede = c.intro ? `<p class="pg-panel-lede">${esc(c.intro)}</p>` : '';
-    return `<section class="pg-panel${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(c.title || '')}">${lede}${renderFragment({ ...s, credit: k === specs.length - 1 && s.credit !== false }, 'd' + (k + 1))}</section>`;
+    const printTitle = `<h2 class="pg-print-title"><span>${esc(book.title || '')}</span>${esc(c.title || '')}</h2>`;
+    return `<section class="pg-panel pg-${printShape(c)}${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(c.title || '')}">${printTitle}${lede}${renderFragment({ ...s, credit: k === specs.length - 1 && s.credit !== false }, 'd' + (k + 1))}</section>`;
   }).join('\n');
   const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
     + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}\n'
     + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink)}\n'
     + '.pg-off{position:absolute;left:-20000px;top:0;width:calc(100vw - 96px);max-width:1624px;visibility:hidden}\n'
-    + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n';
+    + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n'
+    + '.pg-print-title{display:none}\n'
+    // Paper: every tab prints, one page each, turned to suit its drawing
+    + '@media print{.pg-tabs,main>h1,main>.lede{display:none}'
+    + '.pg-off{position:static;visibility:visible;width:auto;max-width:none}'
+    + '.pg-panel{break-after:page}.pg-panel:last-of-type{break-after:auto}'
+    + '.pg-panel.pg-wide{page:df-wide}.pg-panel.pg-tall{page:df-tall}'
+    + '.pg-print-title{display:block;font-size:16pt;font-weight:650;margin:0 0 2px}'
+    + '.pg-print-title span{display:block;font-size:9pt;font-weight:500;color:var(--pg-ink2)}'
+    + '.pg-panel-lede{font-size:9.5pt;margin:0 0 6px;max-width:none}}\n';
   const extraScript = '(function(){var bs=document.querySelectorAll(".pg-tab");function show(n){bs.forEach(function(b){b.setAttribute("aria-pressed",b.getAttribute("data-tab")===String(n)?"true":"false");});'
     + 'document.querySelectorAll(".pg-panel").forEach(function(p){p.classList.toggle("pg-off",p.getAttribute("data-panel")!==String(n));});'
     + 'try{history.replaceState(null,"","#tab="+n);}catch(e){}}'
