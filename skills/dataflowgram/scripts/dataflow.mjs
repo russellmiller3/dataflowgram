@@ -908,13 +908,24 @@ body.mk-on .mk-note{cursor:move}
 .mk-note.mk-sel{border-color:#6B4423}
 .mk-note:empty::before{content:"Type a note";color:#9CA3AF}
 /* marking up: a soft butter-yellow strip across the top; the page moves down so the strip covers nothing */
-.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#F8E3A3;color:#4A3510;padding:7px 12px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
+.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;align-items:center;background:#F8E3A3;color:#4A3510;padding:8px 16px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
 body.mk-on .mk-bar{display:flex}
-.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#4A3510;background:rgba(255,255,255,.5);border:1px solid rgba(74,53,16,.25);border-radius:6px;padding:5px 10px;cursor:pointer;transition:background .12s,transform .08s}
-.mk-bar button:hover{background:rgba(255,255,255,.85)}
-.mk-bar button[aria-pressed="true"]{background:#4A3510;color:#F8E3A3;border-color:#4A3510}
-.mk-bar .mk-done{background:#4A3510;color:#fff;border-color:#4A3510}
-.mk-hint{font-size:.875rem;color:#6B4E16;margin:0 8px;padding:2px 8px;border-radius:4px;transition:background .3s}
+.mk-bar button{font:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s,color .12s,transform .08s}
+.mk-bar svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* the marks: a palette of tools, each in its mark's own colour; the chosen one fills with that colour */
+.mk-tools{display:flex;gap:4px;padding:3px;background:#fff;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(74,53,16,.18)}
+.mk-tool{font-size:.95rem;font-weight:650;padding:7px 13px;border-radius:7px;border:0;background:transparent;color:var(--mkc)}
+.mk-tool:hover{background:color-mix(in srgb,var(--mkc) 10%,#fff)}
+.mk-tool[aria-pressed="true"]{background:var(--mkc);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mk-t-note{--mkc:#8A5A2B}
+.mk-t-move{--mkc:#2563EB}
+.mk-t-del{--mkc:#E11D48}
+/* the page actions: quieter, apart on the right; only Done is filled */
+.mk-utils{display:flex;gap:4px;align-items:center}
+.mk-util{font-size:.875rem;font-weight:600;color:#4A3510;background:transparent;border:0;border-radius:6px;padding:6px 9px}
+.mk-util:hover{background:rgba(255,255,255,.6)}
+.mk-done{font-size:.875rem;font-weight:700;background:#4A3510;color:#fff;border:0;border-radius:7px;padding:7px 14px;margin-left:4px}
+.mk-hint{flex:1;text-align:center;min-width:180px;font-size:.875rem;color:#6B4E16;padding:3px 8px;border-radius:4px;transition:background .3s}
 .mk-hint.mk-flash{background:#fff;font-weight:700}
 /* Mark up stands out a little when off (pale yellow), and matches the strip when on */
 .pg-markup{background:#FFF7DC!important;border-color:#E6CB78!important;color:#5B4513!important}

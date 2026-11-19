@@ -177,3 +177,7 @@ Tests: 35 of 35 pass (run through Runner).
   nothing visible. Now every button dips when pressed, and the instruction ("Now click the thing, then type") flashes on
   each tool click. Strip and the on-state Mark up button are soft butter yellow (#F8E3A3); off, Mark up is pale yellow.
   Also fixed: a note left empty when the page closed came back as a blank box; empty notes are now dropped on load.
+- **The 3 marks look like tools; page actions look like actions** (owner: they looked alike). Marks sit in a white palette
+  on the left, each with an icon and its own colour (Note brown, Move blue, Delete red); the chosen one fills with its
+  colour, as in Figma. Undo and Clear all are quiet icon-and-word buttons on the right; only Done is filled. Checked in a
+  browser at 1,400 and 858 pixels wide.

@@ -364,11 +364,22 @@
   bar.className = 'mk-bar';
   bar.setAttribute('role', 'toolbar');
   bar.setAttribute('aria-label', 'Mark up tools');
-  bar.innerHTML = TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-t-' + k[0] + '">' + k[1] + '</button>'; }).join('') +
-    '<span class="mk-hint"></span>' +
-    '<button type="button" data-act="undo">Undo</button>' +
-    '<button type="button" data-act="clear">Clear all</button>' +
-    '<button type="button" data-act="done" class="mk-done">Done</button>';
+  // the 3 marks are a palette of tools, each with its own icon and colour; the page actions sit apart, quieter
+  var ICON = {
+    note: '<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>',
+    move: '<path d="M12 2v20"/><path d="m15 19-3 3-3-3"/><path d="m19 9 3 3-3 3"/><path d="M2 12h20"/><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/>',
+    del: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+    undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+    clear: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+    done: '<path d="M20 6 9 17l-5-5"/>',
+  };
+  var ico = function (k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[k] + '</svg>'; };
+  bar.innerHTML = '<div class="mk-tools" role="group" aria-label="Marks">' +
+    TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-tool mk-t-' + k[0] + '">' + ico(k[0]) + '<span>' + k[1] + '</span></button>'; }).join('') +
+    '</div><span class="mk-hint"></span><div class="mk-utils">' +
+    '<button type="button" data-act="undo" class="mk-util">' + ico('undo') + '<span>Undo</span></button>' +
+    '<button type="button" data-act="clear" class="mk-util">' + ico('clear') + '<span>Clear all</span></button>' +
+    '<button type="button" data-act="done" class="mk-done">' + ico('done') + '<span>Done</span></button></div>';
   document.body.appendChild(bar);
   function setTool(t) {
     tool = t;

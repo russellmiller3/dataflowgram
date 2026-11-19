@@ -62,13 +62,24 @@ body.mk-on .mk-note{cursor:move}
 .mk-note.mk-sel{border-color:#6B4423}
 .mk-note:empty::before{content:"Type a note";color:#9CA3AF}
 /* marking up: a soft butter-yellow strip across the top; the page moves down so the strip covers nothing */
-.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#F8E3A3;color:#4A3510;padding:7px 12px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
+.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;align-items:center;background:#F8E3A3;color:#4A3510;padding:8px 16px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
 body.mk-on .mk-bar{display:flex}
-.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#4A3510;background:rgba(255,255,255,.5);border:1px solid rgba(74,53,16,.25);border-radius:6px;padding:5px 10px;cursor:pointer;transition:background .12s,transform .08s}
-.mk-bar button:hover{background:rgba(255,255,255,.85)}
-.mk-bar button[aria-pressed="true"]{background:#4A3510;color:#F8E3A3;border-color:#4A3510}
-.mk-bar .mk-done{background:#4A3510;color:#fff;border-color:#4A3510}
-.mk-hint{font-size:.875rem;color:#6B4E16;margin:0 8px;padding:2px 8px;border-radius:4px;transition:background .3s}
+.mk-bar button{font:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s,color .12s,transform .08s}
+.mk-bar svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* the marks: a palette of tools, each in its mark's own colour; the chosen one fills with that colour */
+.mk-tools{display:flex;gap:4px;padding:3px;background:#fff;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(74,53,16,.18)}
+.mk-tool{font-size:.95rem;font-weight:650;padding:7px 13px;border-radius:7px;border:0;background:transparent;color:var(--mkc)}
+.mk-tool:hover{background:color-mix(in srgb,var(--mkc) 10%,#fff)}
+.mk-tool[aria-pressed="true"]{background:var(--mkc);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.mk-t-note{--mkc:#8A5A2B}
+.mk-t-move{--mkc:#2563EB}
+.mk-t-del{--mkc:#E11D48}
+/* the page actions: quieter, apart on the right; only Done is filled */
+.mk-utils{display:flex;gap:4px;align-items:center}
+.mk-util{font-size:.875rem;font-weight:600;color:#4A3510;background:transparent;border:0;border-radius:6px;padding:6px 9px}
+.mk-util:hover{background:rgba(255,255,255,.6)}
+.mk-done{font-size:.875rem;font-weight:700;background:#4A3510;color:#fff;border:0;border-radius:7px;padding:7px 14px;margin-left:4px}
+.mk-hint{flex:1;text-align:center;min-width:180px;font-size:.875rem;color:#6B4E16;padding:3px 8px;border-radius:4px;transition:background .3s}
 .mk-hint.mk-flash{background:#fff;font-weight:700}
 /* Mark up stands out a little when off (pale yellow), and matches the strip when on */
 .pg-markup{background:#FFF7DC!important;border-color:#E6CB78!important;color:#5B4513!important}
@@ -1504,11 +1515,22 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
   bar.className = 'mk-bar';
   bar.setAttribute('role', 'toolbar');
   bar.setAttribute('aria-label', 'Mark up tools');
-  bar.innerHTML = TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-t-' + k[0] + '">' + k[1] + '</button>'; }).join('') +
-    '<span class="mk-hint"></span>' +
-    '<button type="button" data-act="undo">Undo</button>' +
-    '<button type="button" data-act="clear">Clear all</button>' +
-    '<button type="button" data-act="done" class="mk-done">Done</button>';
+  // the 3 marks are a palette of tools, each with its own icon and colour; the page actions sit apart, quieter
+  var ICON = {
+    note: '<path d="M16 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8Z"/><path d="M15 3v4a2 2 0 0 0 2 2h4"/>',
+    move: '<path d="M12 2v20"/><path d="m15 19-3 3-3-3"/><path d="m19 9 3 3-3 3"/><path d="M2 12h20"/><path d="m5 9-3 3 3 3"/><path d="m9 5 3-3 3 3"/>',
+    del: '<rect width="18" height="18" x="3" y="3" rx="2"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>',
+    undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+    clear: '<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>',
+    done: '<path d="M20 6 9 17l-5-5"/>',
+  };
+  var ico = function (k) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICON[k] + '</svg>'; };
+  bar.innerHTML = '<div class="mk-tools" role="group" aria-label="Marks">' +
+    TOOLS.map(function (k) { return '<button type="button" data-tool="' + k[0] + '" class="mk-tool mk-t-' + k[0] + '">' + ico(k[0]) + '<span>' + k[1] + '</span></button>'; }).join('') +
+    '</div><span class="mk-hint"></span><div class="mk-utils">' +
+    '<button type="button" data-act="undo" class="mk-util">' + ico('undo') + '<span>Undo</span></button>' +
+    '<button type="button" data-act="clear" class="mk-util">' + ico('clear') + '<span>Clear all</span></button>' +
+    '<button type="button" data-act="done" class="mk-done">' + ico('done') + '<span>Done</span></button></div>';
   document.body.appendChild(bar);
   function setTool(t) {
     tool = t;
