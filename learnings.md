@@ -130,3 +130,7 @@ Tests: 35 of 35 pass (run through Runner).
   steps, not the lines they wrap to. A client tab with 4 walkthroughs and a long source printed on 2 pages. It now
   counts wrapped lines (about 55 characters a line) and the source footnote. Checked: client page 10 tabs = 10 pages;
   each of the 4 examples 1 page. The test fails under the old rule.
+- **Walkthrough choices look like tabs; the view switch moved down.** The walkthrough buttons were styled like the
+  play controls, so choosing what to watch looked the same as running it. They are now underlined tabs under a
+  "Walkthrough" label. "Step by step / Everything at once" moved below the steps, beside "Moving tags", since both only
+  change how the diagram is shown. Checked in a browser: switching walkthrough and view both work. Tests 49 of 49.

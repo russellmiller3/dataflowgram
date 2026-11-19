@@ -669,13 +669,13 @@ export function mount(root, data, prefix) {
     });
   }
 
-  qa('.df-seg:not(.df-view) button').forEach((b) => {
+  qa('.df-scen button').forEach((b) => {
     b.setAttribute('aria-pressed', b.getAttribute('data-s') === cur ? 'true' : 'false');
     b.addEventListener('click', () => {
       stop();
       cur = b.getAttribute('data-s');
       i = 0;
-      qa('.df-seg:not(.df-view) button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+      qa('.df-scen button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
       build();
       draw();
     });

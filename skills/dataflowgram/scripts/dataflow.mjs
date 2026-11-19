@@ -609,6 +609,15 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-seg{display:flex;flex-wrap:wrap;border:1px solid var(--df-line);border-radius:3px;overflow:hidden;background:var(--df-card);width:max-content;max-width:100%;margin-bottom:12px}
 .df-seg button{font:inherit;font-size:.95rem;border:0;border-right:1px solid var(--df-line);background:transparent;padding:8px 12px;cursor:pointer;color:var(--df-ink)}
 .df-seg button:last-child{border-right:0}
+.df-scen{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px 18px;margin:0 0 14px;border-bottom:1px solid var(--df-line)}
+.df-scen-l{width:100%;font-size:.8125rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--df-ink2)}
+.df-scen button{font:inherit;font-size:1rem;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:6px 0 7px;cursor:pointer;color:var(--df-ink2)}
+.df-scen button:hover{color:var(--df-ink)}
+.df-scen button[aria-pressed="true"]{color:var(--df-ink);font-weight:650;border-bottom-color:var(--df-ink)}
+.df-viewrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+.df-viewrow-l{font-size:.95rem;color:var(--df-ink2)}
+.df-viewrow .df-seg{margin:0}
+.df-viewrow .df-seg button{font-size:.875rem;padding:5px 10px}
 .df-seg button[aria-pressed="true"]{background:var(--df-ink);color:#fff}
 .df-cap{background:var(--df-card);border:1px solid var(--df-line);border-left:5px solid var(--df-ink);border-radius:4px;padding:12px 14px;min-height:112px}
 .df-caphead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -765,7 +774,8 @@ export function renderFragment(spec, prefix = 'df') {
     })
     .join('');
   const seg = c.scenarios.length > 1
-    ? `<div class="df-seg" role="group" aria-label="Scenario">${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
+    // walkthrough choices look like tabs under a label, not like the play controls below them
+    ? `<div class="df-scen" role="group" aria-label="Walkthrough"><span class="df-scen-l">Walkthrough</span>${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
     : '';
   const partKeys = usedKinds.map((k) => `<span class="df-key df-kind">${iconSvg(KINDS[k].icon)}<span>${esc(KINDS[k].label)}</span></span>`).join('');
   const stepKeys = usedActions.map((a) => `<span class="df-key act" style="--a:${ACTIONS[a].color}">${iconSvg(ACTIONS[a].icon)}${esc(ACTIONS[a].label)}</span>`).join('');
@@ -809,13 +819,13 @@ export function renderFragment(spec, prefix = 'df') {
       </details>
     </div>
     <div>
-      <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
       <div class="df-nav"><button type="button" class="df-restart" title="Back to step 1 (Home key)">${iconSvg('rotate-ccw')}<span>Start over</span></button><button type="button" class="df-back" title="Previous step (left arrow key)">${iconSvg('chevron-left')}<span>Back</span></button><button type="button" class="df-play" aria-pressed="false" title="Run the steps by themselves"></button><button type="button" class="df-next" title="Next step (right arrow key)"><span>Next step</span>${iconSvg('chevron-right')}</button></div>
       <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
       <button type="button" class="df-motion" role="switch" aria-checked="false" title="Make the tags travel along their lines"><span class="df-switch" aria-hidden="true"></span><span>Moving tags: <b class="df-motion-state">off</b></span></button>
+      <div class="df-viewrow"><span class="df-viewrow-l">View</span><div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div></div>
       <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
