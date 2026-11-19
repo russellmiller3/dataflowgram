@@ -207,3 +207,4 @@ Tests: 35 of 35 pass (run through Runner).
   checks clicked only inside one tab with scripted clicks, so they could not see it. New: a driver that runs the page
   in headless Chrome with real mouse presses, drags and typing; 3 tests use it (mark everywhere, buttons still work,
   2 tabs print as 2 pages). Each failed before its fix. 56 of 56 pass; the client set still prints 10 pages.
+- **TOOLS.md lists the real-click driver** (19 November 2026): the tools index now names drive.mjs, the headless-Chrome driver the mark-up tests use, so a later session finds it instead of building another.
