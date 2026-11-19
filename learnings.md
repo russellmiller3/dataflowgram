@@ -126,3 +126,7 @@ Tests: 35 of 35 pass (run through Runner).
 - **Background in blue tones, slower hover sheen.** The page and website wash moved from lavender and indigo to
   blue and teal, in light and dark; the tab hover sheen now takes 8 seconds a pass instead of 3. Owner asked for both.
   README pictures and the moving demo retaken in the new colours.
+- **Long step sentences no longer push a diagram onto a second printed page.** The drawing height on paper counted
+  steps, not the lines they wrap to. A client tab with 4 walkthroughs and a long source printed on 2 pages. It now
+  counts wrapped lines (about 55 characters a line) and the source footnote. Checked: client page 10 tabs = 10 pages;
+  each of the 4 examples 1 page. The test fails under the old rule.

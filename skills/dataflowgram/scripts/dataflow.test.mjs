@@ -441,6 +441,13 @@ test('printing gives one page per diagram, turned to suit its shape, with every 
   const heightOf = (s) => Number(/--df-print-h:([\d.]+)in/.exec(renderFragment(s, 'x'))[1]);
   const many = { ...wideSpec, scenarios: [...wideSpec.scenarios, ...wideSpec.scenarios.map((s) => ({ ...s, id: s.id + '-b' }))] };
   assert.ok(heightOf(many) < heightOf(wideSpec), 'twice the steps, a shorter drawing');
+  // 19 November 2026: a client tab with long step sentences spilled onto a second page.
+  // The same number of steps, written longer, wraps to more lines, so the drawing must be shorter still.
+  const wordy = { ...many, scenarios: many.scenarios.map((s) => ({ ...s, steps: s.steps.map((st) => ({ ...st, text: st.text + ' ' + 'It then does more, and the list wraps onto further lines.'.repeat(3) })) })) };
+  assert.ok(heightOf(wordy) < heightOf(many), 'longer step sentences, a shorter drawing');
+  // a long source footnote takes room too
+  const sourced = { ...many, source: 'x'.repeat(700) };
+  assert.ok(heightOf(sourced) < heightOf({ ...many, source: 'x' }), 'a long source, a shorter drawing');
 });
 
 test('a diagram shows where it came from, and the check names a diagram that does not say', async () => {

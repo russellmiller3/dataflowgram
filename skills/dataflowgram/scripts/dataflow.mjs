@@ -776,8 +776,13 @@ export function renderFragment(spec, prefix = 'df') {
   const shape = printShape(c);
   // Fit one page: the more steps to list, the shorter the drawing (in inches; a line of the list is about 0.16 inch).
   const cols = shape === 'wide' ? 3 : 2;
-  const lines = Math.ceil(c.scenarios.reduce((t, s) => t + s.steps.length + 2, 0) / cols) + 2;
-  const printH = Math.max(2.6, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
+  // a long step wraps: count the lines each step really takes in its column (about 55 characters a line),
+  // and the lines the source footnote takes across the page (about 170 characters a line)
+  const perLine = 55;
+  const stepLines = c.scenarios.reduce((t, s) => t + 2 + s.steps.reduce((u, st) => u + Math.max(1, Math.ceil(String(st.text || '').length / perLine)), 0), 0);
+  const sourceLines = c.source ? Math.ceil(String(c.source).length / 170) : 0;
+  const lines = Math.ceil(stepLines / cols) + 2 + sourceLines;
+  const printH = Math.max(2.2, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
   const firstSentence = (t) => (String(t).match(/^.*?[.?!](?=\s|$)/) || [String(t)])[0];
   const printSteps = `<div class="df-printsteps">${c.scenarios.map((s) => `<div><h4>${esc(s.label)}</h4><ol>${s.steps.map((st) => `<li>${esc(firstSentence(st.text))}</li>`).join('')}</ol></div>`).join('')}</div>`;
   return `<style>${CSS}${PRINT_CSS}</style>
