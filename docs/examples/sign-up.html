@@ -35,7 +35,13 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .pg-sendnotes[hidden]{display:none!important}
 .df-scroll{position:relative}
 /* mark up: a clear layer over each tab; marks are drawn on the page itself */
-main,.pg-panel{position:relative}
+main,.pg-panel,.pg-head{position:relative}
+/* the page buttons sit above the drawing layer, so they still work while marking */
+.pg-top{position:relative;z-index:30;pointer-events:none}
+.pg-top button{pointer-events:auto}
+/* while marking, a click never selects text; only a note being typed does */
+body.mk-on main{-webkit-user-select:none;user-select:none}
+body.mk-on .mk-note{-webkit-user-select:text;user-select:text}
 .mk-layer{position:absolute;inset:0;z-index:20;pointer-events:none}
 body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
 .mk-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -96,10 +102,10 @@ button:active{transform:translateY(1px) scale(.97);filter:brightness(.9)}
 </head>
 <body>
 <main>
-<div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
+<header class="pg-head"><div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
 <div class="pg-btns"><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg><span>Mark up</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 15V3"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/></svg><span>Save a copy with my notes</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 9V3a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v6"/><rect x="6" y="14" width="12" height="8" rx="1"/></svg><span>Print</span></button><button type="button" class="pg-mode pg-theme" aria-label="Switch light or dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2"/><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"/><path d="M16 12a4 4 0 0 0-4-4"/><path d="m19 5-1.256 1.256"/><path d="M20 12h2"/></svg><span>Light / dark</span></button></div></div>
 <h1>Sign-up with an email check</h1>
-<p class="lede">A new user signs up, and the account only goes live once they click the link in their email.</p>
+<p class="lede">A new user signs up, and the account only goes live once they click the link in their email.</p></header>
 <style>
 .df{--df-ink:#14233A;--df-ink2:#51627A;--df-line:#C9D4E2;--df-card:#fff;--df-head:#F3F6FA;color:var(--df-ink)}
 .df-grid{display:grid;grid-template-columns:minmax(0,var(--df-w,2.1fr)) minmax(320px,440px);justify-content:start;gap:28px;align-items:start}
@@ -1231,12 +1237,13 @@ window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-t
     return i;
   }
 
-  // Each tab is one anchor; a page with no tabs uses the whole page.
+  // Each tab is one anchor, and the title with its intro is one more; a page with no tabs uses the whole page.
   function anchors() {
     var p = document.querySelectorAll('.pg-panel');
-    return p.length ? Array.prototype.slice.call(p) : [document.querySelector('main')];
+    var head = document.querySelector('.pg-head');
+    return p.length ? (head ? [head] : []).concat(Array.prototype.slice.call(p)) : [document.querySelector('main')];
   }
-  function idOf(a) { return a.classList.contains('pg-panel') ? 'p' + a.getAttribute('data-panel') : 'main'; }
+  function idOf(a) { return a.classList.contains('pg-panel') ? 'p' + a.getAttribute('data-panel') : a.classList.contains('pg-head') ? 'head' : 'main'; }
   function anchorById(id) { return anchors().filter(function (a) { return idOf(a) === id; })[0]; }
   function size(a) { return { w: a.offsetWidth || 1, h: a.offsetHeight || 1 }; }
 

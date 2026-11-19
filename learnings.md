@@ -199,3 +199,11 @@ Tests: 35 of 35 pass (run through Runner).
   ("Step C1 of 4"), the tags on the drawing, the Everything list, the process switch ("A · Files a note") and the
   printed list. A diagram with 1 process keeps 1, 2, 3. A headless-browser test reads A1, A2, A3 on a 2-process
   example and 1, 2 on a 1-process one. Checked on the client set: 3 processes read A, B, C; tags still fit.
+- **Mark-up works wherever a reader clicks, proven by real clicks** (owner, 19 November 2026: "click button but mouse
+  cursor doesnt change and when you click on page it just highlights text ... always test first and build tests").
+  Cause: marks could only go inside a tab, so the title, intro and page label showed a plain pointer and a click
+  selected text; on a page with no tabs the drawing layer covered the page buttons. Fix: the title block is a
+  marking area of its own, the button row sits above the layer, and marking turns off text selection. My earlier
+  checks clicked only inside one tab with scripted clicks, so they could not see it. New: a driver that runs the page
+  in headless Chrome with real mouse presses, drags and typing; 3 tests use it (mark everywhere, buttons still work,
+  2 tabs print as 2 pages). Each failed before its fix. 56 of 56 pass; the client set still prints 10 pages.
