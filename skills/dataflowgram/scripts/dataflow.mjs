@@ -566,6 +566,7 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-text{margin:6px 0 0;font-size:1.05rem}
 .df-nav{display:grid;grid-template-columns:auto auto auto 1fr;gap:8px;margin-top:12px}
 .df-nav button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;font-weight:600;white-space:nowrap}
+@media (max-width:480px){.df-nav{grid-template-columns:1fr 1fr}}
 .df-nav button svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 .df-nav button:disabled{opacity:.35}
 .df-motion{margin-top:14px;display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:.95rem;color:var(--df-ink2);background:none;border:0;padding:4px 0;cursor:pointer}
@@ -608,7 +609,7 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-chip{width:26px;height:26px;border-radius:3px;display:grid;place-items:center;color:#fff}
 .df-chip svg{width:15px;height:15px}
 .df-num{color:var(--df-ink2);font-variant-numeric:tabular-nums}
-@media (max-width:860px){.df-grid{grid-template-columns:1fr}.df-grid>div:first-child{position:static}.df-svg{max-height:none}}
+@media (max-width:860px){.df-grid{grid-template-columns:minmax(0,1fr)}.df-grid>div:first-child{position:static}.df-svg{max-height:none}}
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{

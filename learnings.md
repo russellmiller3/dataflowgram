@@ -21,10 +21,13 @@
   labelled switch, "Moving tags: off", below the step list.
 - **A later style rule silently beat the new padding**, so "Start over" wrapped onto 2 lines and the row ran
   5 pixels past the panel. Fix: one padding rule, words kept on one line. Checked on a screenshot.
+- **On a phone the page ran past the screen edge.** The stacked column was a plain `1fr`, which grows to
+  its widest item. Fix: `minmax(0,1fr)`, and the 4 step buttons go 2 by 2 below 480 pixels. Checked inside
+  390-pixel frames: headless Chrome keeps a wider minimum window, so a 390-pixel window screenshot lies.
 
 no trigger: design requests from Russell, not a repeated mistake; no single tool action shows them starting.
 
-Tests: 39 of 39 pass.
+Tests: 40 of 40 pass.
 
 ## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
 

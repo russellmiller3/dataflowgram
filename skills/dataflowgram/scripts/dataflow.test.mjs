@@ -380,6 +380,13 @@ test('the page stays calm: the key and the full step list fold away, and progres
   assert.match(html, /\.df-cap \.df-carry\{display:none!important\}/, 'the step card does not repeat the tag');
 });
 
+test('on a phone the page fits the screen: the stacked column can shrink, and the step buttons go 2 by 2', () => {
+  // 19 November 2026: at 390 pixels wide the page ran past the screen edge
+  const html = renderFragment(example(), 'demo');
+  assert.match(html, /@media \(max-width:860px\)\{\.df-grid\{grid-template-columns:minmax\(0,1fr\)\}/, 'a plain 1fr column grows to its widest item');
+  assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
+});
+
 test('the check names every step that moves data but carries no tag', () => {
   // 18 November 2026: a client's 72 moving steps had no tags, and nothing said so
   const spec = { title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'store' } }, lines: [['a', 'b']],
