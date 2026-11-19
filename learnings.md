@@ -114,3 +114,8 @@ Tests: 35 of 35 pass (run through Runner).
   Capsule needs its app installed. Checked by hand in a browser: marks drawn, kept, saved in a copy, read back with
   browser storage empty. Faults found and fixed on the way: notes started with the word "Text"; the copy kept the page's
   own button; saved marks did not reappear (they were restored before the editor was ready). Tests: 48 of 48.
+- **Page tabs: a book can stand in for a slide deck.** A tab may hold plain page markup (a plan and timeline, screen
+  sketches) instead of a diagram, named by `htmlFile` in the book. `printScale` shrinks a long tab to one sheet. Checked by
+  printing a 10-tab client page to PDF: first 13 pages (3 page tabs spilled, and their narrow-screen layout stacked the
+  cards on paper); with print layouts and scales set, 10 pages. Tests: 49 of 49; the new test fails when the print scale
+  is removed.

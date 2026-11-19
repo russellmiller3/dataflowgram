@@ -524,6 +524,27 @@ test('a book puts several diagrams in one page, one tab each, each working on it
   assert.throws(() => renderBook({ title: 'x', diagrams: [] }), /at least 1 diagram/);
 });
 
+test('a book can hold plain page tabs (a plan, sketches) beside its diagrams', () => {
+  // 19 November 2026: a client page had to stand in for a slide deck, so it needed a plan tab and a sketch tab
+  const a = example();
+  const plan = { title: 'Plan', intro: 'The order we build in', html: '<p class="mine">Week 1: load</p>', printScale: 0.7 };
+  const html = renderBook({ title: 'Deck', diagrams: [plan, a] });
+  assert.equal((html.match(/class="pg-tab"/g) || []).length, 2, 'one tab for the page, one for the diagram');
+  assert.match(html, /data-tab="1" aria-pressed="true">Plan</, 'the page tab opens first');
+  assert.match(html, /<div class="pg-page" style="--pg-print-zoom:0.7"><p class="mine">Week 1: load<\/p><\/div>/, 'its own markup goes in as written, with its print scale');
+  assert.match(html, /<p class="pg-panel-lede">The order we build in<\/p>/);
+  assert.match(html, /class="pg-panel pg-wide" data-panel="1"/, 'a page tab prints wide unless it asks for tall');
+  assert.match(html, /\.pg-page\{zoom:var\(--pg-print-zoom,1\)\}/, 'the print scale is applied on paper');
+  // the diagram after it still mounts and still carries the credit, because it is the last diagram
+  assert.match(html, /mount\(document\.getElementById\("d2"\)/);
+  assert.equal((html.match(/class="df-credit"/g) || []).length, 1);
+  // a page tab after the last diagram does not steal or drop the credit
+  const after = renderBook({ title: 'Deck', diagrams: [a, { ...plan, print: 'tall', printScale: 2 }] });
+  assert.equal((after.match(/class="df-credit"/g) || []).length, 1);
+  assert.match(after, /class="pg-panel pg-tall pg-off" data-panel="2"/);
+  assert.doesNotMatch(after, /--pg-print-zoom:2/, 'a scale of 1 or more is ignored');
+});
+
 test('boxes grow to fit their words, share one width per row size, and stop at a cap', () => {
   // 18 November 2026: Jason's diagrams had second lines 1 to 4 characters too long for fixed boxes
   assert.equal(boxWidth(2, ['A'], ['short']), 200, 'short words keep the narrow box');

@@ -131,6 +131,8 @@ Several diagrams for one client or one system go in one page, one tab each. A bo
 node skills/dataflowgram/scripts/dataflow.mjs book my-book.json my-book.html
 ```
 
+A book can also carry plain page tabs, such as a plan and timeline or rough screen sketches, so one file can stand in for a slide deck. Name the page's file in the book: `{ "title": "Plan", "htmlFile": "plan.html", "printScale": 0.8 }`. `printScale` shrinks a long tab so it prints on one sheet.
+
 A description is plain JSON. This one is the start of the sign-up example:
 
 ```json
