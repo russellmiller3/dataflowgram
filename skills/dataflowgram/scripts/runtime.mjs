@@ -98,6 +98,14 @@ export function arrowLabel(label, dir, dx, dy) {
   return label + (sign >= 0 ? ' \u2193' : ' \u2191');
 }
 
+// The words on a tag's number badge: the step, or the steps, that send this item.
+export function stepBadge(steps) {
+  const list = (steps || []).filter((n) => Number.isFinite(n));
+  if (list.length === 0) return '';
+  if (list.length <= 2) return list.join(', ');
+  return list.slice(0, 2).join(', ') + ' +' + (list.length - 2);
+}
+
 export function lanesOf(sends) {
   const dirs = ['f', 'x', 'b'].filter((d) => sends.some((s) => s.dir === d));
   const GAP = 34;
@@ -176,7 +184,8 @@ export function mount(root, data, prefix) {
   let timer = null;
 
   // A tag that rides along a line: an icon and a few words, in the step's colour.
-  function makePacket(path, dir, carry, color) {
+  function makePacket(path, dir, carry, color, badge) {
+    // badge: the step number(s) this item moves in, drawn as a filled pill at the tag's left end
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'df-packet');
     const rect = document.createElementNS(NS, 'rect');
@@ -192,16 +201,44 @@ export function mount(root, data, prefix) {
     text.setAttribute('y', '4.4');
     text.textContent = carry.label;
     g.appendChild(rect);
+    let pill = null;
+    let pillText = null;
+    if (badge) {
+      pill = document.createElementNS(NS, 'rect');
+      pill.setAttribute('class', 'df-badge');
+      pill.setAttribute('rx', '9');
+      pill.setAttribute('height', '18');
+      pill.setAttribute('y', '-9');
+      pill.style.fill = color;
+      pillText = document.createElementNS(NS, 'text');
+      pillText.setAttribute('class', 'df-badge-t');
+      pillText.setAttribute('y', '4.6');
+      pillText.setAttribute('text-anchor', 'middle');
+      pillText.textContent = badge;
+      g.appendChild(pill);
+      g.appendChild(pillText);
+    }
     g.appendChild(icon);
     g.appendChild(text);
     packetLayer.appendChild(g);
     let tw = 0;
     try { tw = text.getComputedTextLength(); } catch (e) { tw = 0; }
-    const w = tw ? tw + 34 : tagWidth(carry.label); // the panel is hidden, so measure by count
+    let bw = 0;
+    if (badge) {
+      try { bw = pillText.getComputedTextLength(); } catch (e) { bw = 0; }
+      bw = Math.max(18, (bw || badge.length * 7.4) + 10);
+    }
+    const lead = badge ? bw + 6 : 0; // room the badge takes at the left
+    const w = (tw ? tw + 34 : tagWidth(carry.label)) + lead; // the panel is hidden, so measure by count
     rect.setAttribute('x', String(-w / 2));
     rect.setAttribute('width', String(w));
-    icon.setAttribute('transform', 'translate(' + (-w / 2 + 7) + ' -7) scale(.5833)');
-    text.setAttribute('x', String(-w / 2 + 26));
+    if (badge) {
+      pill.setAttribute('x', String(-w / 2 + 4));
+      pill.setAttribute('width', String(bw));
+      pillText.setAttribute('x', String(-w / 2 + 4 + bw / 2));
+    }
+    icon.setAttribute('transform', 'translate(' + (-w / 2 + 7 + lead) + ' -7) scale(.5833)');
+    text.setAttribute('x', String(-w / 2 + 26 + lead));
     const tag = path.getAttribute('data-tag');
     const len0 = path.getTotalLength();
     // The tag rides its line. Only when the line is far shorter than the tag does it sit beside the line instead.
@@ -380,7 +417,7 @@ export function mount(root, data, prefix) {
         const named = lane.sends.filter((s) => s.label);
         named.forEach((s, j) => {
           // the tag itself says which way it goes, because a wide tag can cover its line's arrowhead
-          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''));
+          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''), stepBadge(s.steps));
           // candidate places: on its own lane first, then a little off it
           const spots = [];
           const stack = (j - (named.length - 1) / 2) * 30; // tags that share a lane start stacked around its middle
@@ -519,7 +556,7 @@ export function mount(root, data, prefix) {
           const b = p.getPointAtLength(p.getTotalLength());
           carry = { label: arrowLabel(v.carry.label, dir, b.x - a.x, b.y - a.y), icon: v.carry.icon };
         }
-        packets.push(makePacket(p, dir, carry, tone));
+        packets.push(makePacket(p, dir, carry, tone, String(v.index + 1)));
       }
       const riding = v.carry && !packets[packets.length - 1].fixed; // a tag that travels the line already shows the movement
       if (!riding) dots.push(makeDot(p, dir, tone, null));

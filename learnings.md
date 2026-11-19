@@ -10,9 +10,14 @@
   beside "Step 4 of 8" shows where you are. Finished steps in the list get a tick and fade. The step card no
   longer repeats the tag that the drawing already shows. In "Everything at once", each send is one line.
 
+- **Tags did not say which step they belong to.** Every tag on the drawing now starts with a filled number
+  badge in the sender's colour: the step number in the step view, every step that sends it in "Everything
+  at once" ("1, 3"; a long list shortens to "1, 4 +2"). The gap between side-by-side boxes grew 30 units
+  to fit the badge.
+
 no trigger: design requests from Russell, not a repeated mistake; no single tool action shows them starting.
 
-Tests: 37 of 37 pass.
+Tests: 38 of 38 pass.
 
 ## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
 
