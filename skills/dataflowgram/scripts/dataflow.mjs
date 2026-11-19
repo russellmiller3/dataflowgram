@@ -38,7 +38,7 @@ export const ACTIONS = {
   reply: { label: 'Reply', color: '#C2410C', icon: 'reply' },
 };
 
-const PAD = 10;
+const PAD = 24; // room between the outer boxes and the edge of the drawing
 const GAPX = 56;
 const BOX_W = { 1: 240, 2: 200, 3: 160 }; // box width by how many share a row
 const NODE_H = 86;

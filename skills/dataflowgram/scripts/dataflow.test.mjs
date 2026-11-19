@@ -393,7 +393,7 @@ test('a diagram shows where it came from, and the check names a diagram that doe
   const spec = { ...example(), source: 'Client requirements, page 2; call of 17 November' };
   const html = renderFragment(spec, 'demo');
   assert.match(html, /<p class="df-source"><span>Source:<\/span> Client requirements, page 2; call of 17 November<\/p>/);
-  assert.doesNotMatch(renderFragment(example(), 'demo'), /class="df-source"/, 'no source, no empty footnote');
+  assert.doesNotMatch(renderFragment({ ...example(), source: undefined }, 'demo'), /class="df-source"/, 'no source, no empty footnote');
   // the check command, as a person runs it
   const { execFileSync } = await import('node:child_process');
   const { writeFileSync, mkdtempSync } = await import('node:fs');
@@ -497,8 +497,15 @@ test('boxes in a row sit just far enough apart to read the data between them, an
   assert.ok(gapOf(long) >= tagWide + 60, `gap ${gapOf(long)} holds a ${tagWide} tag with line each side`);
   assert.ok(gapOf(long) <= tagWide + 80, 'and is no wider than that needs');
   assert.ok(gapOf(short) <= 160, 'a short tag keeps the boxes close');
-  // the drawing is only as wide as its row: no empty band at either side
-  assert.ok(short.nodes.a.x <= 12 && short.width - (short.nodes.b.x + short.nodes.b.w) <= 12);
+  // a clear margin between the outer boxes and the drawing's edge, the same on both sides, and no wide empty band
+  // 19 November 2026: boxes touched the edge of their frame
+  const left = short.nodes.a.x;
+  const right = short.width - (short.nodes.b.x + short.nodes.b.w);
+  assert.ok(left >= 20 && left <= 30, `left margin ${left}`);
+  assert.equal(right, left, 'the same margin on both sides');
+  // and on top and bottom
+  assert.ok(short.nodes.a.y >= 20, `top margin ${short.nodes.a.y}`);
+  assert.ok(short.height - (short.nodes.a.y + short.nodes.a.h) >= 20, 'bottom margin');
   // a row of 3 is capped so the drawing stays compact
   assert.equal(gapFor(22, 3), 170);
   assert.equal(gapFor(22, 2), gapOf(long));
