@@ -916,13 +916,22 @@ export function renderPage(spec) {
 export function renderBook(book) {
   const specs = (book && book.diagrams) || [];
   if (specs.length === 0) fail('a book needs at least 1 diagram in "diagrams"');
-  const compiled = specs.map((s) => compile(s)); // checks every diagram before any is drawn
-  const tabs = compiled.map((c, k) => `<button type="button" class="pg-tab" data-tab="${k + 1}" aria-pressed="${k === 0}">${esc(c.title || `Diagram ${k + 1}`)}</button>`).join('');
+  // A tab is a diagram, or a page of your own (a plan, a timeline, sample screens): { title, intro, html, print }.
+  const isPage = (s) => s && typeof s.html === 'string';
+  const compiled = specs.map((s) => (isPage(s) ? null : compile(s))); // checks every diagram before any is drawn
+  const titleOf = (s, k) => (isPage(s) ? s.title : compiled[k].title) || `Tab ${k + 1}`;
+  const lastDiagram = specs.map((s, k) => (isPage(s) ? -1 : k)).reduce((a, b) => Math.max(a, b), -1);
+  const tabs = specs.map((s, k) => `<button type="button" class="pg-tab" data-tab="${k + 1}" aria-pressed="${k === 0}">${esc(titleOf(s, k))}</button>`).join('');
   const panels = specs.map((s, k) => {
-    const c = compiled[k];
-    const lede = c.intro ? `<p class="pg-panel-lede">${esc(c.intro)}</p>` : '';
-    const printTitle = `<h2 class="pg-print-title"><span>${esc(book.title || '')}</span>${esc(c.title || '')}</h2>`;
-    return `<section class="pg-panel pg-${printShape(c)}${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(c.title || '')}">${printTitle}${lede}${renderFragment({ ...s, credit: k === specs.length - 1 && s.credit !== false }, 'd' + (k + 1))}</section>`;
+    const intro = isPage(s) ? s.intro : compiled[k].intro;
+    const lede = intro ? `<p class="pg-panel-lede">${esc(intro)}</p>` : '';
+    const printTitle = `<h2 class="pg-print-title"><span>${esc(book.title || '')}</span>${esc(titleOf(s, k))}</h2>`;
+    const shape = isPage(s) ? (s.print === 'tall' ? 'tall' : 'wide') : printShape(compiled[k]);
+    const content = isPage(s)
+      // printScale (0.4 to 1) shrinks a long page tab so it fits on one sheet of paper
+      ? `<div class="pg-page"${s.printScale > 0 && s.printScale < 1 ? ` style="--pg-print-zoom:${Math.max(0.4, Number(s.printScale))}"` : ''}>${s.html}</div>`
+      : renderFragment({ ...s, credit: k === lastDiagram && s.credit !== false }, 'd' + (k + 1));
+    return `<section class="pg-panel pg-${shape}${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(titleOf(s, k))}">${printTitle}${lede}${content}</section>`;
   }).join('\n');
   const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
     + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}\n'
@@ -935,6 +944,7 @@ export function renderBook(book) {
     + '.pg-off{position:static;visibility:visible;width:auto;max-width:none}'
     + '.pg-panel{break-after:page}.pg-panel:last-of-type{break-after:auto}'
     + '.pg-panel.pg-wide{page:df-wide}.pg-panel.pg-tall{page:df-tall}'
+    + '.pg-page{zoom:var(--pg-print-zoom,1)}'
     + '.pg-print-title{display:block;font-size:16pt;font-weight:650;margin:0 0 2px}'
     + '.pg-print-title span{display:block;font-size:9pt;font-weight:500;color:var(--pg-ink2)}'
     + '.pg-panel-lede{font-size:9.5pt;margin:0 0 6px;max-width:none}}\n';
@@ -1002,8 +1012,10 @@ if (isMain) {
       const dir = path.dirname(path.resolve(a));
       // a diagram may be written in the book, or named by its file next to the book
       book.diagrams = (book.diagrams || []).map((d) => (typeof d === 'string' ? JSON.parse(fs.readFileSync(path.resolve(dir, d), 'utf8')) : d));
+      // a page tab may name its content file instead of holding it: { "title": "...", "htmlFile": "plan.html" }
+      book.diagrams = book.diagrams.map((d) => (d && d.htmlFile ? { ...d, html: fs.readFileSync(path.resolve(dir, d.htmlFile), 'utf8') } : d));
       fs.writeFileSync(b, renderBook(book));
-      console.log(`written: ${b} (${book.diagrams.length} diagrams)`);
+      console.log(`written: ${b} (${book.diagrams.length} tabs)`);
     } else if (cmd === 'notes' && a && b) {
       // a: the page someone sent back with marks; b: the diagram or book it was built from
       const src = JSON.parse(fs.readFileSync(b, 'utf8'));
