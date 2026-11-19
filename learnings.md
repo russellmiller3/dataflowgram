@@ -85,3 +85,6 @@ Tests: 35 of 35 pass (run through Runner).
   4-line step. Tests: 42 of 42.
 - **The copy-install step left out the khan skill.** It copied only the diagram skill. Fix: the README copies both, and
   tells other agents where the khan instructions are.
+- **Icons with a rectangle showed as empty squares** (mail, table-2 and 32 others on one client page). The box and tag
+  styles fill every rectangle, and that fill covered the icon lines drawn under it. Fix: an icon's own rectangles are
+  outlines only. Measured in a browser: 34 of 34 icon rectangles filled before, 0 after. Tests: 43 of 43.
