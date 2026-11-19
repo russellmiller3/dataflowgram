@@ -48,6 +48,9 @@ const ZONE_BOTTOM = 24;
 // The longest label and second line that fit a box, by how many boxes share the row.
 const LIMITS = { 1: { label: 22, sub: 30 }, 2: { label: 19, sub: 24 }, 3: { label: 14, sub: 17 } };
 const ID = /^[a-z][a-z0-9-]*$/;
+// The credit in the lower right of every diagram. The licence requires it; only holders of a
+// commercial licence from Russell Miller may turn it off with "credit": false.
+const CREDIT = { text: 'Made with Dataflow Steps · Russell Miller, product manager', href: 'https://russellmiller.io' };
 const CARRY_MAX = 22;
 // Kinds of part that sit outside the owner's own system unless a part says otherwise.
 const OUTSIDE_KINDS = ['outside', 'web'];
@@ -309,7 +312,8 @@ export function compile(spec) {
     return { id: s.id, label: s.label, steps };
   });
 
-  return { title: spec.title || '', intro: spec.intro || '', width: W, height, nodes, edges, zones: zoneList, rowY, scenarios: scns };
+  if (spec.credit !== undefined && typeof spec.credit !== 'boolean') fail('"credit" must be true or false');
+  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width: W, height, nodes, edges, zones: zoneList, rowY, scenarios: scns };
 }
 
 // The data the page's own script needs. "<" is written as a code so text can never close the script early.
@@ -372,6 +376,9 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
+.df-credit{margin:18px 0 0;text-align:right;font-size:.85rem}
+.df-credit a{color:var(--df-ink2);text-decoration:none;border-bottom:1px solid var(--df-line)}
+.df-credit a:hover{color:var(--df-ink);border-bottom-color:var(--df-ink)}
 .df-legend small{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;color:var(--df-ink2);margin-right:2px}
 .df-key{display:inline-flex;align-items:center;gap:6px;font-size:.88rem;border:1px solid var(--df-line);border-radius:3px;padding:3px 8px 3px 6px;background:var(--df-card);color:var(--df-ink)}
 .df-key svg{width:16px;height:16px;flex:none}
@@ -487,6 +494,7 @@ export function renderFragment(spec, prefix = 'df') {
       <ol class="df-steps"></ol>
     </div>
   </div>
+  ${c.credit ? `<p class="df-credit"><a href="${CREDIT.href}" target="_blank" rel="noopener">${esc(CREDIT.text)}</a></p>` : ''}
 </div>
 <script>
 (function(){

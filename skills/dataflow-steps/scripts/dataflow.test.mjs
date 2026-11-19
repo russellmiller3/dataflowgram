@@ -1,4 +1,4 @@
-// Run through Runner: see SKILL.md. Each test uses the builder the way a person would and checks the result.
+// Tests for the data-flow builder. Each test uses the builder the way a person would and checks the result.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -306,6 +306,17 @@ test('a one-way tag fades in as it leaves and out as it arrives, so it never jum
   // there-and-back tags and tags that do not move never fade
   assert.equal(tagOpacity(0, 'x', false), 1);
   assert.equal(tagOpacity(0.99, 'f', true), 1);
+});
+
+test('every diagram carries the credit link in the lower right unless the description turns it off', () => {
+  const on = renderFragment(tiny(), 'c1');
+  assert.match(on, /<p class="df-credit"><a href="https:\/\/russellmiller\.io" target="_blank" rel="noopener">Made with Dataflow Steps · Russell Miller, product manager<\/a><\/p>/);
+  assert.match(renderPage(example()), /class="df-credit"/, 'a whole page carries it too');
+  const spec = tiny();
+  spec.credit = false;
+  assert.ok(!renderFragment(spec, 'c2').includes('class="df-credit"'));
+  spec.credit = 'no';
+  assert.throws(() => compile(spec), /"credit" must be true or false/);
 });
 
 test('a link can open the diagram at one step of one scenario', () => {

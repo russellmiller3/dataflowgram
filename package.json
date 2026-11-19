@@ -4,7 +4,7 @@
   "private": true,
   "description": "Interactive, step-by-step data-flow diagrams for Claude.",
   "type": "module",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE",
   "author": "Russell Miller (https://russellmiller.io)",
   "engines": { "node": ">=18" },
   "scripts": {

@@ -54,6 +54,10 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 **Label sizes that fit:** a row of 1 part fits a label of 22 characters, a row of 2 fits 19, a row of 3 fits 14. The second line fits 30, 24 and 17. The check names any label that is too long.
 
+## Credit and licence
+
+Every diagram shows a small credit in its lower right corner, linked to the author's site. The licence (PolyForm Noncommercial 1.0.0 with one added term) requires the credit to stay. Only a commercial licence from the author allows `"credit": false`. Personal and noncommercial use is free; use at or for a company needs a commercial licence from rmiller@zavient.com.
+
 ## Rules for a good diagram
 
 - **One step, one action.** If a step both reads and writes, split it into 2 steps.
@@ -64,6 +68,6 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 ## Tests
 
-`node --test <skill>/scripts/dataflow.test.mjs` runs 20 tests. They step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, the tag fade, that boxes do not overlap, that text from the description cannot break the page, and that a wrong description is refused with a message that names the fault.
+`node --test <skill>/scripts/dataflow.test.mjs` runs 21 tests. They step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, the tag fade, the credit line, that boxes do not overlap, that text from the description cannot break the page, and that a wrong description is refused with a message that names the fault.
 
 Icons: [Lucide](https://lucide.dev) 1.75.0, ISC licence, stored in `<skill>/assets/` so no internet is needed. To update them, download the `lucide-static` package and run `node <skill>/scripts/make-icons.mjs <icon-nodes.json> <version>`.

@@ -4,6 +4,8 @@
 
 ![An online order, step by step](docs/images/demo.gif)
 
+**Free for personal use. Using it at a company needs a licence: [rmiller@zavient.com](mailto:rmiller@zavient.com).**
+
 **[Open the live examples →](https://russellmiller3.github.io/dataflow-steps/)** Press Play, or step through.
 
 ## What each step shows
@@ -43,6 +45,16 @@ cp -r dataflow-steps/skills/dataflow-steps ~/.claude/skills/
 ```
 
 It needs Node.js 18 or later, and nothing else: the icons are stored in the skill, so it works offline.
+
+## Licence
+
+| Who | Price |
+|---|---|
+| Personal use, hobby projects, study | Free |
+| Charities, schools, government | Free |
+| Use at or for a company, including freelance client work | Commercial licence: [rmiller@zavient.com](mailto:rmiller@zavient.com) |
+
+Every diagram carries a small credit in its lower right corner, "Made with Dataflow Steps · Russell Miller, product manager". The licence asks you to keep it; a commercial licence lets you remove it. The full terms are in [LICENSE](LICENSE): the PolyForm Noncommercial License 1.0.0, with that one added term.
 
 ## Use it
 
@@ -97,11 +109,11 @@ The full list of fields is in [the skill's instructions](skills/dataflow-steps/S
 npm test
 ```
 
-20 tests step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, that boxes never overlap, that text from a description cannot break the page, and that every wrong description is refused.
+21 tests step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, that boxes never overlap, that text from a description cannot break the page, and that every wrong description is refused.
 
 ## Credits
 
-Icons: [Lucide](https://lucide.dev), ISC licence ([copy](skills/dataflow-steps/assets/LUCIDE-LICENSE.txt)). The skill: MIT licence.
+Icons: [Lucide](https://lucide.dev), ISC licence ([copy](skills/dataflow-steps/assets/LUCIDE-LICENSE.txt)). The skill: PolyForm Noncommercial 1.0.0 with a credit term ([LICENSE](LICENSE)).
 
 ---
 
