@@ -125,3 +125,4 @@ Tests: 35 of 35 pass (run through Runner).
   a change to how public pages look waits for the owner to see it.
 - **Background in blue tones, slower hover sheen.** The page and website wash moved from lavender and indigo to
   blue and teal, in light and dark; the tab hover sheen now takes 8 seconds a pass instead of 3. Owner asked for both.
+  README pictures and the moving demo retaken in the new colours.
