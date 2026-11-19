@@ -476,6 +476,22 @@ test('parts outside the owner system get one shaded region when they sit togethe
   assert.equal((split.match(/class="df-out-l"/g) || []).length, 2, 'each of the 2 outside parts is marked');
 });
 
+test('a Start over button sits first among the step buttons', () => {
+  // 19 November 2026: "should be a start over button"
+  const html = renderFragment(example(), 'demo');
+  // 4 matching buttons, each an icon plus a word, in reading order
+  const nav = /<div class="df-nav">([\s\S]*?)<\/div>/.exec(html)[1];
+  assert.deepEqual([...nav.matchAll(/class="(df-[a-z]+)"/g)].map((m) => m[1]), ['df-restart', 'df-back', 'df-play', 'df-next']);
+  assert.match(nav, /class="df-restart"[^>]*><svg[\s\S]*?<span>Start over<\/span>/);
+  assert.match(nav, /class="df-back"[^>]*><svg[\s\S]*?<span>Back<\/span>/);
+  assert.match(nav, /class="df-next"[^>]*><span>Next step<\/span><svg/);
+  assert.doesNotMatch(nav, /df-motion/, 'the motion switch is not among the step buttons');
+  // the page wires it: back to step 1, and the Home key does the same
+  assert.match(html, /restart\.addEventListener\('click', \(\) => \{ stop\(\); i = 0; draw\(\); \}\)/);
+  assert.match(html, /e\.key === 'Home'\) \{ stop\(\); i = 0; draw\(\); \}/);
+  assert.match(html, /restart\.disabled = v\.first/, 'greyed out on step 1');
+});
+
 test('every tag on the drawing carries the number of the step, or steps, that send it', () => {
   // 19 November 2026: "need to add numbers to steps in diagram"
   assert.equal(stepBadge([3]), '3');
@@ -499,7 +515,7 @@ test('nothing moves unless the reader switches movement on, and never when the c
   assert.equal(moves(undefined, false), false);
   // the page carries the switch, and it starts off
   const html = renderFragment(example(), 'demo');
-  assert.match(html, /class="df-motion" aria-pressed="false"[^>]*>Motion: off</);
+  assert.match(html, /class="df-motion" role="switch" aria-checked="false"[\s\S]*?Moving tags: <b class="df-motion-state">off<\/b>/);
 });
 
 test('the page explains what a dashed, a faint, a coloured and a grey line mean', () => {

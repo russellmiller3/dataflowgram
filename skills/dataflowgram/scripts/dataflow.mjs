@@ -564,10 +564,18 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-act{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:3px 8px 3px 6px}
 .df-act svg{width:15px;height:15px}
 .df-text{margin:6px 0 0;font-size:1.05rem}
-.df-nav{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
-.df-nav .df-motion{margin-left:auto;color:var(--df-ink2)}
-.df-nav .df-motion[aria-pressed="true"]{color:var(--df-ink);border-color:var(--df-ink)}
-.df-nav button{font:inherit;font-size:.95rem;border:1px solid var(--df-line);background:var(--df-card);border-radius:3px;padding:7px 14px;cursor:pointer;color:var(--df-ink)}
+.df-nav{display:grid;grid-template-columns:auto auto auto 1fr;gap:8px;margin-top:12px}
+.df-nav button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;font-weight:600;white-space:nowrap}
+.df-nav button svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.df-nav button:disabled{opacity:.35}
+.df-motion{margin-top:14px;display:inline-flex;align-items:center;gap:10px;font:inherit;font-size:.95rem;color:var(--df-ink2);background:none;border:0;padding:4px 0;cursor:pointer}
+.df-motion b{color:var(--df-ink)}
+.df-switch{width:36px;height:20px;border-radius:999px;background:var(--df-line);position:relative;flex:none;transition:background .15s}
+.df-switch::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:left .15s}
+.df-motion[aria-checked="true"] .df-switch{background:var(--df-ink)}
+.df-motion[aria-checked="true"] .df-switch::after{left:18px}
+.df-motion[hidden]{display:none}
+.df-nav button{font:inherit;font-size:.95rem;border:1px solid var(--df-line);background:var(--df-card);border-radius:3px;padding:7px 11px;cursor:pointer;color:var(--df-ink)}
 .df-nav button:disabled{opacity:.4;cursor:default}
 .df-nav .df-next{background:var(--df-ink);border-color:var(--df-ink);color:#fff}
 .df-play{display:inline-flex;align-items:center;gap:6px}
@@ -733,9 +741,10 @@ export function renderFragment(spec, prefix = 'df') {
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
       <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
-      <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button><button type="button" class="df-motion" aria-pressed="false" title="Switch the moving tags and dashes on or off">Motion: off</button></div>
+      <div class="df-nav"><button type="button" class="df-restart" title="Back to step 1 (Home key)">${iconSvg('rotate-ccw')}<span>Start over</span></button><button type="button" class="df-back" title="Previous step (left arrow key)">${iconSvg('chevron-left')}<span>Back</span></button><button type="button" class="df-play" aria-pressed="false" title="Run the steps by themselves"></button><button type="button" class="df-next" title="Next step (right arrow key)"><span>Next step</span>${iconSvg('chevron-right')}</button></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
+      <button type="button" class="df-motion" role="switch" aria-checked="false" title="Make the tags travel along their lines"><span class="df-switch" aria-hidden="true"></span><span>Moving tags: <b class="df-motion-state">off</b></span></button>
       <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
