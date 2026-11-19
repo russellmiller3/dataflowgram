@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape, readNotes } from './dataflow.mjs';
-import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves, stepBadge } from './runtime.mjs';
+import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves, stepBadge, stepName } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -391,9 +391,42 @@ test('"Everything at once" lists every send in step order, not grouped by line',
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'df-order-')), 'page.html');
   fs.writeFileSync(file, renderPage(example()));
   const dom = execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--virtual-time-budget=3000', '--dump-dom', 'file://' + file + '#df=all'], { encoding: 'utf8', timeout: 60000, stdio: ['ignore', 'pipe', 'ignore'] });
-  const steps = [...dom.matchAll(/class="df-all-step">steps? (\d+)/g)].map((m) => Number(m[1]));
+  const steps = [...dom.matchAll(/class="df-all-step">steps? [A-Z]?(\d+)/g)].map((m) => Number(m[1]));
   assert.ok(steps.length >= 5, 'the list has its rows (' + steps.length + ')');
   assert.deepEqual(steps, [...steps].sort((a, b) => a - b), 'rows read in step order: ' + steps.join(', '));
+});
+
+test('a diagram with 2 or more processes names steps A1, A2 ... B1, B2; a diagram with 1 process keeps 1, 2, 3', () => {
+  // 19 November 2026, owner: "if there are 2 separate processes on one page, use A1, A2, A3, B1, B2, B3".
+  // So anyone can point at one step without saying which process: "B3 is wrong".
+  const two = [{ id: 'file' }, { id: 'move' }];
+  assert.equal(stepName(two, 'file', 3), 'A3');
+  assert.equal(stepName(two, 'move', 2), 'B2');
+  assert.equal(stepName([{ id: 'only' }], 'only', 3), '3', 'one process: plain numbers');
+  assert.equal(stepBadge([1, 7], (n) => stepName(two, 'file', n)), 'A1, A7', 'the tag on the drawing uses the same names');
+  assert.equal(stepBadge([1, 2, 3, 4], (n) => stepName(two, 'move', n)), 'B1, B2 +2');
+});
+
+test('on a page with 2 processes a reader sees A1 ... in the step list, the counter, the tags and the Everything list', { skip: !fs.existsSync(CHROME) && 'needs Google Chrome to run the page' }, () => {
+  const run = (spec, hash) => {
+    const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'df-names-')), 'page.html');
+    fs.writeFileSync(file, renderPage(spec));
+    return execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--virtual-time-budget=3000', '--dump-dom', 'file://' + file + hash], { encoding: 'utf8', timeout: 60000, stdio: ['ignore', 'pipe', 'ignore'] });
+  };
+  const spec = example();
+  assert.ok(spec.scenarios.length >= 2, 'the example has 2 processes');
+  const steps = run(spec, '');
+  assert.deepEqual([...steps.matchAll(/class="df-num">([^<]*)</g)].map((m) => m[1]).slice(0, 3), ['A1', 'A2', 'A3'], 'the step list');
+  assert.match(steps, /class="df-count">Step A1 of \d+</, 'the counter');
+  assert.match(steps, /data-s="[^"]+" aria-pressed="true">A · /, 'the process switch shows the letter that goes with it');
+  assert.match(steps, /<li><b>A1<\/b> /, 'the printed step list');
+  const all = run(spec, '#df=all');
+  assert.match(all, /class="df-all-step">step A1</, 'the Everything list');
+  assert.match(all, /class="df-badge-t"[^>]*>A1</, 'the tag on the drawing');
+  const one = { ...spec, scenarios: [spec.scenarios[0]] };
+  const plain = run(one, '');
+  assert.deepEqual([...plain.matchAll(/class="df-num">([^<]*)</g)].map((m) => m[1]).slice(0, 2), ['1', '2'], 'one process keeps plain numbers');
+  assert.doesNotMatch(plain, /aria-pressed="true">A · /);
 });
 
 test('on a phone the page fits the screen: the stacked column can shrink, and the step buttons go 2 by 2', () => {

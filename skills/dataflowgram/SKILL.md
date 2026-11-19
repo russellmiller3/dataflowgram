@@ -13,7 +13,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 - a side panel shows a sample of the real item: the email, the row, the request;
 - a red note appears when data leaves the owner's system, such as to a payment provider or an AI model;
 - earlier steps stay faintly coloured, so the last step shows the whole path;
-- the "Everything at once" switch shows a still picture: every line lit, every item named on it with an arrow for its direction, and a list of who sends what to whom, in step order. A line used both ways is drawn as 2 lanes.
+- the "Everything at once" switch shows a still picture: every line lit, every item named on it with an arrow for its direction, and a list of who sends what to whom, in step order. With 2 or more processes in one diagram, steps are named by process: A1, A2 … B1, B2, and the process switch shows each letter ("A · Files a note"). A line used both ways is drawn as 2 lanes.
 
 **Colour means "which part".** Each part gets its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, and neither do 2 parts that send to the same part. A part keeps the colour of its kind when that colour is free. The builder does this; do not set colours by hand.
 

@@ -63,7 +63,7 @@ const PRINT_CSS = `
 .df .df-printsteps{display:block;columns:2;column-gap:22px;font-size:8.5pt;line-height:1.3;margin-top:8px}
 .df .df-printsteps>div{break-inside:avoid}
 .df .df-printsteps h4{margin:0 0 2px;font-size:9pt}
-.df .df-printsteps ol{margin:0 0 6px;padding-left:18px}
+.df .df-printsteps ol{margin:0 0 6px;padding-left:18px}.df-printsteps ol.df-lettered{list-style:none;padding-left:0}
 .df .df-source{font-size:8pt;margin-top:6px}
 .df-credit{display:none}
 .df .df-printcredit{display:block;margin:4px 0 0;text-align:right;font-size:7pt;color:var(--df-ink2)}
@@ -774,7 +774,7 @@ export function renderFragment(spec, prefix = 'df') {
     .join('');
   const seg = c.scenarios.length > 1
     // walkthrough choices look like tabs under a label, not like the play controls below them
-    ? `<div class="df-scen" role="group" aria-label="Walkthrough"><span class="df-scen-l">Walkthrough</span>${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
+    ? `<div class="df-scen" role="group" aria-label="Walkthrough"><span class="df-scen-l">Walkthrough</span>${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${c.scenarios.length > 1 ? String.fromCharCode(65 + k) + ' · ' : ''}${esc(s.label)}</button>`).join('')}</div>`
     : '';
   const partKeys = usedKinds.map((k) => `<span class="df-key df-kind">${iconSvg(KINDS[k].icon)}<span>${esc(KINDS[k].label)}</span></span>`).join('');
   const stepKeys = usedActions.map((a) => `<span class="df-key act" style="--a:${ACTIONS[a].color}">${iconSvg(ACTIONS[a].icon)}${esc(ACTIONS[a].label)}</span>`).join('');
@@ -793,7 +793,8 @@ export function renderFragment(spec, prefix = 'df') {
   const lines = Math.ceil(stepLines / cols) + 2 + sourceLines;
   const printH = Math.max(2.2, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
   const firstSentence = (t) => (String(t).match(/^.*?[.?!](?=\s|$)/) || [String(t)])[0];
-  const printSteps = `<div class="df-printsteps">${c.scenarios.map((s) => `<div><h4>${esc(s.label)}</h4><ol>${s.steps.map((st) => `<li>${esc(firstSentence(st.text))}</li>`).join('')}</ol></div>`).join('')}</div>`;
+  const lettered = c.scenarios.length > 1;
+  const printSteps = `<div class="df-printsteps">${c.scenarios.map((s, k) => `<div><h4>${lettered ? String.fromCharCode(65 + k) + ' · ' : ''}${esc(s.label)}</h4><ol${lettered ? ' class="df-lettered"' : ''}>${s.steps.map((st, j) => `<li>${lettered ? `<b>${String.fromCharCode(65 + k)}${j + 1}</b> ` : ''}${esc(firstSentence(st.text))}</li>`).join('')}</ol></div>`).join('')}</div>`;
   return `<style>${CSS}${PRINT_CSS}</style>
 <div class="df df-${shape}" id="${prefix}" style="--df-print-h:${printH}in">
   <div class="df-grid" style="--df-w:${num(c.width * 1.3)}px">
