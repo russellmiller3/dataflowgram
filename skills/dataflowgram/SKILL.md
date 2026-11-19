@@ -155,6 +155,7 @@ A client book is often shown on a call instead of slides. These rules come from 
 - **Every box is a short phrase**, 3 to 6 words. A table cell, a card line or a step box must be read in a glance on a call. Cut words; do not add bullets to a crowded box.
 - **When there are 2 ways to do a thing, show both as equals** side by side, each with a real example (what to type, where to send it). Do not call one "the main way".
 - **Sketches of an app are labelled sample data**, and the intro of each page tab is 1 short sentence.
+- **The client's own people appear by name only if the client named them**; otherwise by role ("the analyst"). An invented teammate reads as a stranger on a call.
 - **After any change, give the reader the link to the page** and print it again: one page per tab.
 
 ## Tests

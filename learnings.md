@@ -168,3 +168,5 @@ Tests: 35 of 35 pass (run through Runner).
   arrow that appears and disappears. A note being typed can still be dragged: a short click moves the cursor, a drag
   moves the box. **Clear all** removes every mark after a confirm; Undo brings them back. The page now moves down by the
   strip's real height (it wraps to 2 rows on a narrow window). Checked by hand in a browser: 0 errors.
+- **Skill rule: name the client's people only as the client named them, else by role.** A client page used an invented
+  teammate, "Dave", in 8 places; the client asked who Dave was. Replaced with "the analyst".
