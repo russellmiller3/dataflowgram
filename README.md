@@ -19,6 +19,7 @@
 - ⏱️ **Times** say how long a step takes.
 - 👣 **A trail** keeps earlier steps faintly coloured, so the last step shows the whole path.
 - ▶️ **Play** runs the steps by themselves, for a screen share or a demo.
+- 🖨️ **Print** gives one page per diagram, turned sideways or upright to suit its shape, with every line named and every step listed below the drawing.
 - 🗺️ **Everything at once** is a still picture: every line lit, every item named on it with its direction, and a list of who sends what to whom. A line used both ways is drawn as 2 lanes.
 
 Every part has its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, so you can always tell whose data is whose. Every kind of part (a person, a mailbox, a program, an AI model, a table...) and every kind of step (send, read, think, write, reply...) has its own [Lucide](https://lucide.dev) icon.
