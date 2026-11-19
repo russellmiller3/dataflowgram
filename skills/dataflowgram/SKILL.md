@@ -71,8 +71,37 @@ Every diagram shows a small credit in its lower right corner, linked to the auth
 Most people cannot list the parts and steps of a process from memory, but they can spot what is wrong in a picture of it. So guess first, show the guess, and let the user correct it:
 
 1. **Read before you ask.** Collect what already exists: code, documents, an email thread, a screenshot, notes from a call. Ask only for what none of these says.
-2. **Show a rough sketch in the chat** before you write any description file. Draw boxes for the parts and number the arrows between them in order, each naming what moves. Use 8 steps at most. Put `?` on each part or step you guessed.
-3. **Ask 3 questions at most, about the `?` marks only.** Make each one concrete, with choices to pick from: "When the email arrives, who reads it first: a person, or a program?" Never ask "describe the process".
+2. **Show a rough sketch in the chat** before you write any description file, in a code block, in the shape below. Use 8 steps at most. Put ❓ on each part or step you guessed.
+3. **Ask 3 questions at most, about the ❓ marks only.** Number them, and give each lettered choices, so the user answers "1a 2b 3a". Never ask "describe the process".
+
+The sketch shape keeps it easy to scan:
+
+- One part per line, with its emoji, and one main path from top to bottom.
+- A blank line, a `│` and a `▼` between parts, so each part stands alone.
+- Each step on its own line, numbered 1️⃣ 2️⃣ 3️⃣, naming what moves.
+- A side trip (to an AI model, a payment provider) is 2 lines: one going out `──▶`, one coming back `◀──`. Mark a part run by another company "(outside)".
+- At most 60 characters wide. No side-by-side boxes.
+
+```
+  📧  Customer
+        │
+        │   1️⃣  sends an email
+        ▼
+  📥  support@ inbox
+        │
+        │   2️⃣  passes the email on
+        ▼
+  ⚙️  Sorting program   ❓
+        │
+        │   3️⃣  email text   ──▶  🤖 AI model  (outside)
+        │   4️⃣  "urgent" tag ◀──  🤖 AI model
+        │
+        │   5️⃣  urgent emails only   ❓
+        ▼
+  👤  On-call person
+```
+
+Questions for that sketch: "1. Who handles step 2? a) a program b) a person reads the inbox first", and so on.
 4. **Redraw once** if the answers change more than 2 parts or steps. Then build the page.
 5. **Keep a guess visible.** If a step is still a guess, say so in its text ("assumed: ...") and list it for the user when you hand over the page.
 

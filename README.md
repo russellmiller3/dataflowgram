@@ -72,6 +72,37 @@ Ask your agent in plain words:
 
 The agent writes a short description of the parts and steps, checks it, and builds the page.
 
+### Not sure how your process works?
+
+Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. Each ❓ is a guess:
+
+```
+  📧  Customer
+        │
+        │   1️⃣  sends an email
+        ▼
+  📥  support@ inbox
+        │
+        │   2️⃣  passes the email on
+        ▼
+  ⚙️  Sorting program   ❓
+        │
+        │   3️⃣  email text   ──▶  🤖 AI model  (outside)
+        │   4️⃣  "urgent" tag ◀──  🤖 AI model
+        │
+        │   5️⃣  urgent emails only   ❓
+        ▼
+  👤  On-call person
+```
+
+Then it asks at most 3 questions, about the ❓ marks only, each with choices:
+
+1. Who handles step 2? **a)** a program **b)** a person reads the inbox first
+2. Where do urgent emails go? **a)** one person **b)** a shared team channel
+3. Where do the other emails go? **a)** saved in a table **b)** they stay in the inbox
+
+You pick letters. It fixes the sketch, then builds the page.
+
 ## Build one by hand
 
 ```bash

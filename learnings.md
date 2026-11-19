@@ -65,3 +65,6 @@ Tests: 35 of 35 pass (run through Runner).
 - **People who cannot describe their process got no help.** The skill now has Claude guess first: read what exists, show
   a rough sketch in the chat with `?` on each guess, ask at most 3 questions with choices, then build. People correct a
   picture faster than they describe one from memory. The test count in the skill file was also out of date (21, now 40).
+- **The guess-first sketch needed a set shape.** A cramped first example (side-by-side boxes, steps on the lines) was hard to
+  scan. The skill and the README now show one shape: one part per line, blank space between parts, numbered steps, side
+  trips as one line out and one back, ❓ on guesses, and lettered choices for the questions.
