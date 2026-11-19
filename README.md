@@ -74,34 +74,41 @@ The agent writes a short description of the parts and steps, checks it, and buil
 
 ### Not sure how your process works?
 
-Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. Each ❓ is a guess:
+Say so. The agent reads what you already have (code, documents, an email thread), then shows a rough sketch in the chat. Each ❓ is a guess. Here is one for a team that files notes by forwarding emails:
 
 ```
-  📧  Customer
+  📱  Sam's phone  (any email app)
         │
-        │   1️⃣  sends an email
+        │   1️⃣  forwards email + attachment
         ▼
-  📥  support@ inbox
+  📥  Notes inbox  (shared mailbox)
         │
-        │   2️⃣  passes the email on
+        │   2️⃣  hub fetches it, checks the sender  ❓
         ▼
-  ⚙️  Sorting program   ❓
+  ⚙️  The hub  (our program)
         │
-        │   3️⃣  email text   ──▶  🤖 AI model  (outside)
-        │   4️⃣  "urgent" tag ◀──  🤖 AI model
+        │   3️⃣  sender's company  ──▶  📋 Lists
+        │       company row       ◀──  📋 Lists
         │
-        │   5️⃣  urgent emails only   ❓
+        │   4️⃣  email text        ──▶  🤖 AI model (outside)
+        │   5️⃣  summary + 1 task  ◀──  🤖 AI model
+        │
+        │   6️⃣  2 new rows        ──▶  📋 Lists  ❓
+        │
+        │   7️⃣  attachment        ──▶  📁 File library  ❓
+        │
+        │   8️⃣  "what I filed", 5 lines
         ▼
-  👤  On-call person
+  📥  Notes inbox  ──▶  📱 Sam's phone
 ```
 
-Then it asks at most 3 questions, about the ❓ marks only, each with choices:
+Then it asks at most 3 questions, one per ❓, each with lettered choices:
 
-1. Who handles step 2? **a)** a program **b)** a person reads the inbox first
-2. Where do urgent emails go? **a)** one person **b)** a shared team channel
-3. Where do the other emails go? **a)** saved in a table **b)** they stay in the inbox
+1. Step 2: who may file a note? **a)** anyone on the team list **b)** anyone at the company's email domain
+2. Step 6: what gets written? **a)** 1 note row only **b)** 1 note row plus 1 task row for each follow-up
+3. Step 7: where do attachments go? **a)** the file library, tagged by company **b)** attached to the note row
 
-You pick letters. It fixes the sketch, then builds the page.
+You answer "1a 2b 3a". It fixes the sketch, then builds the page.
 
 ## Build one by hand
 
