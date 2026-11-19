@@ -662,3 +662,12 @@ test('the sketch check finds every line an emoji would bend, and passes a straig
   const box = ['┌────┐', '│ 📱 │', '└────┘'].join('\n');
   assert.ok(checkSketch(box).length > 0, 'an emoji inside a box bends its right edge');
 });
+
+test('the step buttons sit above the step card, so a longer step never moves them', () => {
+  // 19 November 2026: "move buttons above the step so they don't shift down if step gets longer"
+  const html = renderFragment(example(), 'demo');
+  const nav = html.indexOf('<div class="df-nav">');
+  const cap = html.indexOf('<div class="df-cap"');
+  assert.ok(nav > 0 && cap > 0, 'both are on the page');
+  assert.ok(nav < cap, 'the buttons come before the step text');
+});
