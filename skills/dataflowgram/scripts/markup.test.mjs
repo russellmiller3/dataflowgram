@@ -51,7 +51,7 @@ test('a reader marks the title, a diagram and a page tab; every click there show
     // a Note on a page tab of your own
     await page.click(...await page.centre('.pg-tab[data-tab="2"]'));
     await page.click(...await page.centre('.mk-bar [data-tool="note"]'));
-    await page.click(...await page.centre('.pg-panel:not(.pg-off) p'));
+    await page.click(...await page.centre('.pg-panel:not(.pg-off) .pg-page p'));
     await page.type('move to week 2');
     await page.click(...await page.centre('.mk-done'));
     const items = await marks(page);
@@ -65,6 +65,37 @@ test('a reader marks the title, a diagram and a page tab; every click there show
     const notes = readNotes(html, book.diagrams);
     assert.equal(notes[0].diagram, 'Page title and intro');
     assert.equal(notes[0].text, 'rename this');
+    assert.equal(notes[4].at, 'Plan text to mark', 'a note on a page tab names the words it points at');
+  } finally { await page.close(); }
+});
+
+test('a note arrow can be dragged onto a tab button, shows above it, stands out, and is read back as pointing at that tab', { skip }, async () => {
+  // 19 November 2026, owner (a note on the page): "Make it so that arrows can go over tabs. Also arrows should be
+  // thicker and brighter color to stand out. maybe a bright highlighter yellow green?" The tip stopped at its tab's edge.
+  const book = { title: 'Deck title', intro: 'Intro', diagrams: [example(), { title: 'Plan', intro: 'The plan', html: '<p>Plan text</p>' }] };
+  const page = await openPage(write(renderBook(book)));
+  const rect = (sel) => page.evaluate(`(() => { const r = document.querySelector(${JSON.stringify(sel)}).getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; })()`);
+  try {
+    await page.click(...await rect('.pg-markup'));
+    await page.evaluate('window.scrollTo(0, 0)');
+    const [lx, ly] = await rect('.pg-panel:not(.pg-off) .pg-panel-lede');
+    await page.click(lx - 100, ly);
+    await page.type('this tab');
+    // drag the arrow's tip from where it was made up onto the button of tab 2
+    const [hx, hy] = await rect('.pg-panel:not(.pg-off) .mk-handle');
+    const [tx, ty] = await rect('.pg-tab[data-tab="2"]');
+    await page.drag(hx, hy, tx, ty, 10);
+    const item = (await marks(page))[0];
+    assert.ok(item.tip[1] < 0, 'the tip sits above its own tab area, on the tab bar (' + item.tip[1] + ')');
+    const top = await page.evaluate(`(() => { const e = document.elementsFromPoint(${tx}, ${ty})[0]; return e ? !!e.closest('.mk-layer') : false; })()`);
+    assert.ok(top, 'the arrow is drawn over the tab button, not hidden behind it');
+    const look = await page.evaluate(`(() => { const l = document.querySelector('.pg-panel:not(.pg-off) .mk-note-line'); const s = getComputedStyle(l); return [parseFloat(s.strokeWidth), s.stroke]; })()`);
+    assert.ok(look[0] >= 5, 'the arrow is thick: ' + look[0] + 'px');
+    assert.equal(look[1], 'rgb(204, 245, 38)', 'the arrow is highlighter yellow-green');
+    await page.click(...await rect('.mk-done'));
+    const notes = readNotes(await page.evaluate('document.documentElement.outerHTML'), book.diagrams);
+    assert.match(notes[0].at, /Plan/, 'read back as pointing at the Plan tab: ' + JSON.stringify(notes[0]));
+    assert.deepEqual(page.errors, []);
   } finally { await page.close(); }
 });
 
