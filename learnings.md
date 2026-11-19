@@ -73,3 +73,10 @@ Tests: 35 of 35 pass (run through Runner).
 - **The sketch was a single column, unlike the finished page.** It now uses the same boxes in the same rows as the page,
   with a numbered arrow for each step, and a separate arrow each way on a two-way line. Plain digits only: emoji and
   circled digits are wider in some fonts and push the lines out of place. Columns checked by a script before shipping.
+- **Visual changes go to Russell before they go public.** The page-like sketch was pushed before he saw it; he asked to
+  see it first. From now on a look-and-feel change is shown in chat and pushed only after his yes.
+- **The guess-first sketch now matches the page and stays straight.** Russell picked the two-sided layout. On screen an
+  emoji is 19 pixels where 2 letters are 18, so an emoji left of a line bends that line. Rule: every row a line passes
+  through has the same number of emoji to its left; no emoji inside boxes; the gap between side-by-side boxes widens
+  until each arrow label fits on its arrow. New checker names every line that would bend; its test failed when the
+  checker was broken on purpose. The khan skill now ships in the package, with no personal names. Tests: 41 of 41.
