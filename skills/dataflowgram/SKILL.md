@@ -58,6 +58,8 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 
 **Kinds of part, each with a colour and a default icon:** person, mail, program, ai, store, files, outside, web, output, time. Parts of kind `outside` and `web` count as outside the owner's system; set `"outside": true` on any other part (an AI model at an outside company, say) to flag data sent to it.
 
+**Tags:** the check warns, naming the step, when a step moves data but has no `carry` tag.
+
 **Label sizes that fit:** boxes grow to fit their words, up to a cap. A row of 1 part fits a label of 31 characters, a row of 2 fits 27, a row of 3 fits 22. The second line fits 40, 35 and 27. Shorter words keep the boxes narrow, which keeps the whole diagram easy to take in. The check names any label that is too long.
 
 ## Credit and licence

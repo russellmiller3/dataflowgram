@@ -369,6 +369,21 @@ test('in the everything-at-once view, a tag never lands on a tag placed before i
   assert.deepEqual(freeSpot([{ x: 100, y: 100 }], 120, 26, placed), { x: 100, y: 100 });
 });
 
+test('the check names every step that moves data but carries no tag', () => {
+  // 18 November 2026: a client's 72 moving steps had no tags, and nothing said so
+  const spec = { title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'store' } }, lines: [['a', 'b']],
+    scenarios: [{ id: 's', label: 'S', steps: [
+      { action: 'send', flow: ['a>b'], text: 'A sends to B', carry: { icon: 'package', label: 'one row' } },
+      { action: 'write', flow: ['a>b'], text: 'A writes again' },
+      { action: 'think', at: ['a'], text: 'A works alone' },
+    ] }] };
+  const c = compile(spec);
+  assert.equal(c.warnings.length, 1, 'only the moving step with no tag is named; a step with no flow is fine');
+  assert.match(c.warnings[0], /scenario "s", step 2 moves data but names nothing/);
+  // the public examples carry a tag on every moving step
+  assert.deepEqual(compile(example()).warnings, []);
+});
+
 test('a book puts several diagrams in one page, one tab each, each working on its own', () => {
   const a = example();
   const b = { ...example(), title: 'Second flow' };
