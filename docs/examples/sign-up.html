@@ -245,6 +245,8 @@ html[data-df-theme="dark"] .df [class^="df-k-"],html[data-df-theme="dark"] .df [
 .df .df-edge{stroke:var(--df-edge)}
 .df .df-zone{stroke:var(--df-ink2);opacity:.55}
 .df .df-packet rect,.df .df-dot rect{fill:var(--df-solid)}
+/* an icon's own rectangles are outlines: the box and tag fills must not cover the icon's lines (mail, table-2) */
+.df .df-node .df-ico rect,.df .df-node.on .df-ico rect,.df .df-packet .df-pico rect{fill:none!important;filter:none!important;stroke:inherit!important;stroke-width:inherit!important}
 .df .df-carry{background:var(--df-solid)}
 .df .df-key svg{color:var(--cs,currentColor)}
 .df .df-key.act{box-shadow:none;border-color:transparent}

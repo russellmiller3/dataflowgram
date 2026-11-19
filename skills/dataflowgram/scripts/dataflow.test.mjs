@@ -671,3 +671,15 @@ test('the step buttons sit above the step card, so a longer step never moves the
   assert.ok(nav > 0 && cap > 0, 'both are on the page');
   assert.ok(nav < cap, 'the buttons come before the step text');
 });
+
+test('an icon drawn with a rectangle keeps its lines visible inside boxes and tags', () => {
+  // 19 November 2026: the mail and table-2 icons showed as empty squares; the box fill covered their lines
+  const html = renderFragment(example(), 'demo');
+  const rule = /\.df \.df-node \.df-ico rect,\.df \.df-node\.on \.df-ico rect,\.df \.df-packet \.df-pico rect\{fill:none!important/;
+  assert.match(html, rule);
+  // the rule must come after every rule that fills a box or tag rectangle, or those win
+  const at = html.search(rule);
+  for (const filler of ['.df .df-node rect{fill:', '.df .df-node.on rect{fill:', '.df .df-packet rect,.df .df-dot rect{fill:']) {
+    assert.ok(html.lastIndexOf(filler) < at, filler + ' comes before the icon rule');
+  }
+});
