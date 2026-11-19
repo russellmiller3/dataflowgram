@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook } from './dataflow.mjs';
-import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves } from './runtime.mjs';
+import { stepView, shortText, readLink, tagOpacity, dotPosition, dotOpacity, tagRides, tagWidth, overview, freeSpot, lanesOf, arrowLabel, moves, stepBadge } from './runtime.mjs';
 import { cleanIcon } from './make-icons.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -440,7 +440,7 @@ test('boxes in a row sit just far enough apart to read the data between them, an
   const long = mk('x'.repeat(22));
   assert.ok(gapOf(long) > gapOf(short), 'a longer tag gets a wider gap');
   // the longest tag, with its arrow, fits with at least 30 units of line showing on each side
-  const tagWide = tagWidth('x'.repeat(22)) + 14;
+  const tagWide = tagWidth("x".repeat(22)) + 14 + 30; // arrow, then the step-number badge
   assert.ok(gapOf(long) >= tagWide + 60, `gap ${gapOf(long)} holds a ${tagWide} tag with line each side`);
   assert.ok(gapOf(long) <= tagWide + 80, 'and is no wider than that needs');
   assert.ok(gapOf(short) <= 160, 'a short tag keeps the boxes close');
@@ -474,6 +474,22 @@ test('parts outside the owner system get one shaded region when they sit togethe
   const split = renderFragment(spec([['b', 'a'], ['d', 'c']]), 'df');
   assert.doesNotMatch(split, /class="df-outzone"/);
   assert.equal((split.match(/class="df-out-l"/g) || []).length, 2, 'each of the 2 outside parts is marked');
+});
+
+test('every tag on the drawing carries the number of the step, or steps, that send it', () => {
+  // 19 November 2026: "need to add numbers to steps in diagram"
+  assert.equal(stepBadge([3]), '3');
+  assert.equal(stepBadge([2, 7]), '2, 7', 'an item sent twice shows both steps');
+  assert.equal(stepBadge([1, 4, 6, 9]), '1, 4 +2', 'a long list stays short');
+  assert.equal(stepBadge([]), '', 'no steps, no badge');
+  // the everything view lists each send's steps, which the badge then shows
+  const data = compile({ title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'store' } }, lines: [['a', 'b']],
+    scenarios: [{ id: 's', label: 'S', steps: [
+      { action: 'send', flow: ['a>b'], text: 'x', carry: { icon: 'package', label: 'row' } },
+      { action: 'think', at: ['a'], text: 'y' },
+      { action: 'send', flow: ['a>b'], text: 'z', carry: { icon: 'package', label: 'row' } },
+    ] }] });
+  assert.equal(stepBadge(overview(data, 's')[0].sends[0].steps), '1, 3');
 });
 
 test('nothing moves unless the reader switches movement on, and never when the computer asks for less', () => {

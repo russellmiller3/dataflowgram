@@ -132,7 +132,7 @@ function roundPath(points, radius = 6) {
 // tag in characters; 'n' is how many boxes share the row. A row of 3 is capped so the drawing stays compact.
 export function gapFor(longest, n) {
   const LINE_EACH_SIDE = 32;
-  const tag = longest * 7.7 + 34 + 14;
+  const tag = longest * 7.7 + 34 + 14 + 30; // 30 for the step-number badge
   const want = Math.max(160, Math.min(320, Math.round(tag + 2 * LINE_EACH_SIDE)));
   return n >= 3 ? Math.min(want, 170) : want;
 }
@@ -481,6 +481,7 @@ const CSS = `
 .df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
 .df-packet text{font-size:14px;font-weight:600;fill:var(--df-ink)}
+.df .df-packet text.df-badge-t{font-size:13px;font-weight:700;fill:#fff}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
 .df-carry[hidden]{display:none}

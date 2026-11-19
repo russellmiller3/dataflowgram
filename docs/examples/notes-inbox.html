@@ -67,6 +67,7 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-dot rect{fill:#fff;stroke-width:2}
 .df-packet rect{fill:#fff;stroke-width:1.6}
 .df-packet text{font-size:14px;font-weight:600;fill:var(--df-ink)}
+.df .df-packet text.df-badge-t{font-size:13px;font-weight:700;fill:#fff}
 .df-pico{fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .df-carry{display:inline-flex;align-items:center;gap:6px;margin:8px 0 0;font-size:.95rem;font-weight:600;border:1.5px solid var(--df-line);border-radius:3px;padding:3px 8px;background:#fff}
 .df-carry[hidden]{display:none}
@@ -263,9 +264,9 @@ html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
       <div class="df-scroll"><svg class="df-svg" viewBox="0 0 840 677" role="img" aria-label="A notes inbox with AI">
         <defs><marker id="df-m-send" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-check" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-read" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-think" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-write" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-save" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker><marker id="df-m-reply" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
         
-        <rect class="df-outzone" x="538.5" y="383" width="298.5" height="290" rx="8"/>
-        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M420 96 L420 200"/><path class="df-edge" data-edge="e1" d="M420 286 L420 332 Q420 338 414 338 L200.5 338 Q194.5 338 194.5 344 L194.5 390"/><path class="df-edge" data-edge="e2" d="M294.5 433 L545.5 433" data-tag="420,368"/><path class="df-edge" data-edge="e3" d="M144.5 476 L144.5 496.7 Q144.5 502.7 138.5 502.7 L96 502.7 Q90 502.7 90 508.7 L90 580"/><path class="df-edge" data-edge="e4" d="M194.5 476 L194.5 522 Q194.5 528 200.5 528 L414 528 Q420 528 420 534 L420 580"/><path class="df-edge" data-edge="e5" d="M244.5 476 L244.5 547.3 Q244.5 553.3 250.5 553.3 L744 553.3 Q750 553.3 750 559.3 L750 580"/></g>
-        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="phone" tabindex="0" role="button" aria-label="Sam's phone"><rect x="300" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 20) scale(.9167)"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></g><text class="df-t" x="420" y="63" text-anchor="middle">Sam's phone</text><text class="df-s" x="420" y="82" text-anchor="middle">any email app</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="inbox" tabindex="0" role="button" aria-label="Notes inbox"><rect x="300" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="420" y="253" text-anchor="middle">Notes inbox</text><text class="df-s" x="420" y="272" text-anchor="middle">a shared mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="hub" tabindex="0" role="button" aria-label="The hub"><rect x="94.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(183.5 400) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="194.5" y="443" text-anchor="middle">The hub</text><text class="df-s" x="194.5" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="545.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(634.5 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="645.5" y="443" text-anchor="middle">AI model</text><text class="df-out-l" x="551.5" y="407">OUTSIDE</text><text class="df-s" x="645.5" y="462" text-anchor="middle">returns fields</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="lists" tabindex="0" role="button" aria-label="Lists"><rect x="10" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(79 590) scale(.9167)"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></g><text class="df-t3" x="90" y="633" text-anchor="middle">Lists</text><text class="df-s3" x="90" y="652" text-anchor="middle">rows of records</text></g><g class="df-node df-k-files" style="--c:#0F766E;--t:#E3F5F2" data-node="files" tabindex="0" role="button" aria-label="File library"><rect x="340" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(409 590) scale(.9167)"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></g><text class="df-t3" x="420" y="633" text-anchor="middle">File library</text><text class="df-s3" x="420" y="652" text-anchor="middle">saved attachments</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="ledger" tabindex="0" role="button" aria-label="Ledger export"><rect x="670" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(739 590) scale(.9167)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></g><text class="df-t3" x="750" y="633" text-anchor="middle">Ledger export</text><text class="df-out-l" x="676" y="597">OUTSIDE</text><text class="df-s3" x="750" y="652" text-anchor="middle">the money figures</text></g>
+        <rect class="df-outzone" x="553.5" y="383" width="283.5" height="290" rx="8"/>
+        <g class="df-edges"><path class="df-edge" data-edge="e0" d="M420 96 L420 200"/><path class="df-edge" data-edge="e1" d="M420 286 L420 332 Q420 338 414 338 L185.5 338 Q179.5 338 179.5 344 L179.5 390"/><path class="df-edge" data-edge="e2" d="M279.5 433 L560.5 433" data-tag="420,368"/><path class="df-edge" data-edge="e3" d="M129.5 476 L129.5 496.7 Q129.5 502.7 123.5 502.7 L96 502.7 Q90 502.7 90 508.7 L90 580"/><path class="df-edge" data-edge="e4" d="M179.5 476 L179.5 522 Q179.5 528 185.5 528 L414 528 Q420 528 420 534 L420 580"/><path class="df-edge" data-edge="e5" d="M229.5 476 L229.5 547.3 Q229.5 553.3 235.5 553.3 L744 553.3 Q750 553.3 750 559.3 L750 580"/></g>
+        <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="phone" tabindex="0" role="button" aria-label="Sam's phone"><rect x="300" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 20) scale(.9167)"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></g><text class="df-t" x="420" y="63" text-anchor="middle">Sam's phone</text><text class="df-s" x="420" y="82" text-anchor="middle">any email app</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="inbox" tabindex="0" role="button" aria-label="Notes inbox"><rect x="300" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="420" y="253" text-anchor="middle">Notes inbox</text><text class="df-s" x="420" y="272" text-anchor="middle">a shared mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="hub" tabindex="0" role="button" aria-label="The hub"><rect x="79.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(168.5 400) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="179.5" y="443" text-anchor="middle">The hub</text><text class="df-s" x="179.5" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="560.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(649.5 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="660.5" y="443" text-anchor="middle">AI model</text><text class="df-out-l" x="566.5" y="407">OUTSIDE</text><text class="df-s" x="660.5" y="462" text-anchor="middle">returns fields</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="lists" tabindex="0" role="button" aria-label="Lists"><rect x="10" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(79 590) scale(.9167)"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></g><text class="df-t3" x="90" y="633" text-anchor="middle">Lists</text><text class="df-s3" x="90" y="652" text-anchor="middle">rows of records</text></g><g class="df-node df-k-files" style="--c:#0F766E;--t:#E3F5F2" data-node="files" tabindex="0" role="button" aria-label="File library"><rect x="340" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(409 590) scale(.9167)"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></g><text class="df-t3" x="420" y="633" text-anchor="middle">File library</text><text class="df-s3" x="420" y="652" text-anchor="middle">saved attachments</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="ledger" tabindex="0" role="button" aria-label="Ledger export"><rect x="670" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(739 590) scale(.9167)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></g><text class="df-t3" x="750" y="633" text-anchor="middle">Ledger export</text><text class="df-out-l" x="676" y="597">OUTSIDE</text><text class="df-s3" x="750" y="652" text-anchor="middle">the money figures</text></g>
         <g class="df-packets"></g>
       </svg></div>
       <p class="df-info" aria-live="polite" hidden></p>
@@ -390,6 +391,14 @@ function arrowLabel(label, dir, dx, dy) {
   return label + (sign >= 0 ? ' \u2193' : ' \u2191');
 }
 
+// The words on a tag's number badge: the step, or the steps, that send this item.
+function stepBadge(steps) {
+  const list = (steps || []).filter((n) => Number.isFinite(n));
+  if (list.length === 0) return '';
+  if (list.length <= 2) return list.join(', ');
+  return list.slice(0, 2).join(', ') + ' +' + (list.length - 2);
+}
+
 function lanesOf(sends) {
   const dirs = ['f', 'x', 'b'].filter((d) => sends.some((s) => s.dir === d));
   const GAP = 34;
@@ -468,7 +477,8 @@ function mount(root, data, prefix) {
   let timer = null;
 
   // A tag that rides along a line: an icon and a few words, in the step's colour.
-  function makePacket(path, dir, carry, color) {
+  function makePacket(path, dir, carry, color, badge) {
+    // badge: the step number(s) this item moves in, drawn as a filled pill at the tag's left end
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'df-packet');
     const rect = document.createElementNS(NS, 'rect');
@@ -484,16 +494,44 @@ function mount(root, data, prefix) {
     text.setAttribute('y', '4.4');
     text.textContent = carry.label;
     g.appendChild(rect);
+    let pill = null;
+    let pillText = null;
+    if (badge) {
+      pill = document.createElementNS(NS, 'rect');
+      pill.setAttribute('class', 'df-badge');
+      pill.setAttribute('rx', '9');
+      pill.setAttribute('height', '18');
+      pill.setAttribute('y', '-9');
+      pill.style.fill = color;
+      pillText = document.createElementNS(NS, 'text');
+      pillText.setAttribute('class', 'df-badge-t');
+      pillText.setAttribute('y', '4.6');
+      pillText.setAttribute('text-anchor', 'middle');
+      pillText.textContent = badge;
+      g.appendChild(pill);
+      g.appendChild(pillText);
+    }
     g.appendChild(icon);
     g.appendChild(text);
     packetLayer.appendChild(g);
     let tw = 0;
     try { tw = text.getComputedTextLength(); } catch (e) { tw = 0; }
-    const w = tw ? tw + 34 : tagWidth(carry.label); // the panel is hidden, so measure by count
+    let bw = 0;
+    if (badge) {
+      try { bw = pillText.getComputedTextLength(); } catch (e) { bw = 0; }
+      bw = Math.max(18, (bw || badge.length * 7.4) + 10);
+    }
+    const lead = badge ? bw + 6 : 0; // room the badge takes at the left
+    const w = (tw ? tw + 34 : tagWidth(carry.label)) + lead; // the panel is hidden, so measure by count
     rect.setAttribute('x', String(-w / 2));
     rect.setAttribute('width', String(w));
-    icon.setAttribute('transform', 'translate(' + (-w / 2 + 7) + ' -7) scale(.5833)');
-    text.setAttribute('x', String(-w / 2 + 26));
+    if (badge) {
+      pill.setAttribute('x', String(-w / 2 + 4));
+      pill.setAttribute('width', String(bw));
+      pillText.setAttribute('x', String(-w / 2 + 4 + bw / 2));
+    }
+    icon.setAttribute('transform', 'translate(' + (-w / 2 + 7 + lead) + ' -7) scale(.5833)');
+    text.setAttribute('x', String(-w / 2 + 26 + lead));
     const tag = path.getAttribute('data-tag');
     const len0 = path.getTotalLength();
     // The tag rides its line. Only when the line is far shorter than the tag does it sit beside the line instead.
@@ -672,7 +710,7 @@ function mount(root, data, prefix) {
         const named = lane.sends.filter((s) => s.label);
         named.forEach((s, j) => {
           // the tag itself says which way it goes, because a wide tag can cover its line's arrowhead
-          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''));
+          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''), stepBadge(s.steps));
           // candidate places: on its own lane first, then a little off it
           const spots = [];
           const stack = (j - (named.length - 1) / 2) * 30; // tags that share a lane start stacked around its middle
@@ -811,7 +849,7 @@ function mount(root, data, prefix) {
           const b = p.getPointAtLength(p.getTotalLength());
           carry = { label: arrowLabel(v.carry.label, dir, b.x - a.x, b.y - a.y), icon: v.carry.icon };
         }
-        packets.push(makePacket(p, dir, carry, tone));
+        packets.push(makePacket(p, dir, carry, tone, String(v.index + 1)));
       }
       const riding = v.carry && !packets[packets.length - 1].fixed; // a tag that travels the line already shows the movement
       if (!riding) dots.push(makeDot(p, dir, tone, null));
