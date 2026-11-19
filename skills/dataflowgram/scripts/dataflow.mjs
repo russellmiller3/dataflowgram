@@ -844,9 +844,9 @@ function pageShell({ title, intro, theme, body, extraCss = '', extraScript = '' 
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-wash:linear-gradient(135deg,#e4e2fb 0%,#eceff8 42%,#dff2ee 100%);--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
-:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+:root{--pg-wash:linear-gradient(135deg,#dbe7f8 0%,#eaf0f8 42%,#ddf0f1 100%);--pg-bg:#edf2f8;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(37,99,235,.17);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0a0f1a;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(37,99,235,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0a0f1a;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(37,99,235,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
   background-color:var(--pg-bg);
   background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px),var(--pg-wash);
@@ -936,7 +936,7 @@ export function renderBook(book) {
   const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
     // tabs stand apart from the page: a solid tinted fill and a firm edge; under the mouse a cool steel-and-teal sheen moves across them
     + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-ink) 9%,var(--pg-bg));border:1px solid color-mix(in srgb,var(--pg-ink) 28%,transparent);box-shadow:0 1px 0 color-mix(in srgb,var(--pg-ink) 12%,transparent);transition:border-color .2s}\n'
-    + '.pg-tab:hover,.pg-tab:focus-visible{background-image:linear-gradient(115deg,#c9d3db,#a9bccb,#9fc2bd,#dde3e7,#b4c0cc,#c9d3db);background-size:300% 100%;color:#1f2430;border-color:color-mix(in srgb,var(--pg-ink) 45%,transparent);animation:pg-opal 3s linear infinite}\n'
+    + '.pg-tab:hover,.pg-tab:focus-visible{background-image:linear-gradient(115deg,#c9d3db,#a9bccb,#9fc2bd,#dde3e7,#b4c0cc,#c9d3db);background-size:300% 100%;color:#1f2430;border-color:color-mix(in srgb,var(--pg-ink) 45%,transparent);animation:pg-opal 8s linear infinite}\n'
     + '@keyframes pg-opal{to{background-position:300% 0}}\n'
     + '@media (prefers-reduced-motion:reduce){.pg-tab:hover,.pg-tab:focus-visible{animation:none}}\n'
     + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink);animation:none}\n'
