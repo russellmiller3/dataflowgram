@@ -138,3 +138,11 @@ Tests: 35 of 35 pass (run through Runner).
 - **The skill now says how a book stands in for a slide deck:** tabs follow the client's stated needs and the build
   order, step 1 (loading the data) gets its own tab, every box is a short phrase, two equal ways sit side by side.
   Taken from the owner's notes on a client page, 19 November 2026.
+- **Mark up now draws straight on the page; marker.js is gone.** The owner found the separate editor window clunky. marker.js
+  can only mark up a picture of a diagram, so it needed that window and could not reach plain page tabs. Our own layer
+  (about 300 lines) sits over every tab: arrow, circle, box, typed note, pen, undo, delete, drag to move. Marks are
+  stored as fractions of the tab, plus the point in drawing units when on a diagram, so the notes command still names
+  the box. A saved copy carries its own name, so it never shows the original's marks from the same browser (found in
+  testing and fixed). Pages are 140 KB smaller. Checked by hand in a browser: drew, typed, moved, deleted, undid, reloaded,
+  opened a sent-back copy, read it back with the notes command. Tests 50 of 50; the new test fails without the reader.
+  Limit: on a text tab a mark can shift slightly if the window width changes, because the text rewraps.

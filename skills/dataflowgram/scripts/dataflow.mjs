@@ -11,7 +11,6 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ICONS = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'assets', 'lucide-icons.json'), 'utf8')).icons;
 // Mark-up tools, stored in the skill so a page works offline and sends nothing anywhere.
-const MARKERJS = fs.readFileSync(path.join(HERE, '..', 'assets', 'markerjs3.umd.js'), 'utf8');
 const MARKUP = fs.readFileSync(path.join(HERE, 'markup.js'), 'utf8');
 
 // A kind is what a part is. Each kind has one colour and one default icon.
@@ -879,24 +878,35 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .pg-sendnotes{border-color:#E11D48!important;color:#BE123C!important}
 .pg-sendnotes[hidden]{display:none!important}
 .df-scroll{position:relative}
-.df-mk-open{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;font-weight:600;padding:6px 11px;border-radius:999px;cursor:pointer;color:var(--df-ink);background:var(--df-card);border:1px solid var(--df-line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.df-mk-open svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.df-mk-shade{position:fixed;inset:0;z-index:1000;background:rgba(10,12,22,.55);display:flex;align-items:center;justify-content:center;padding:20px}
-.df-mk-box{background:#fff;color:#111827;border-radius:10px;padding:14px;width:min(1400px,100%);max-height:100%;display:flex;flex-direction:column;gap:8px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.df-mk-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.df-mk-bar button{font:inherit;font-size:.9rem;font-weight:600;padding:7px 12px;border-radius:6px;border:1px solid #CBD5E1;background:#F8FAFC;color:#111827;cursor:pointer}
-.df-mk-bar .df-mk-main{background:#111827;color:#fff;border-color:#111827}
-.df-mk-gap{flex:1}
-.df-mk-help{margin:0;font-size:.85rem;color:#475569}
-.df-mk-area{flex:1;min-height:0;overflow:auto}
-.df-mk-area mjs-marker-area{display:block;width:100%;height:min(72vh,900px)}
-@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.df-mk-open{display:none}}
+/* mark up: a clear layer over each tab; marks are drawn on the page itself */
+main,.pg-panel{position:relative}
+.mk-layer{position:absolute;inset:0;z-index:20;pointer-events:none}
+body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
+body.mk-on[data-mk-tool="note"] .mk-layer{cursor:text}
+.mk-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mk-shape{fill:none;stroke:#E11D48;stroke-width:3.5;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+body.mk-on .mk-shape{pointer-events:stroke;cursor:move}
+.mk-shape.mk-sel{stroke:#9F1239;stroke-width:5;filter:drop-shadow(0 0 3px rgba(225,29,72,.6))}
+.mk-head{fill:#E11D48}
+.mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FFF7D6;border:1.5px solid #E11D48;border-radius:4px;color:#111827;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:auto}
+body.mk-on .mk-note{cursor:move}
+.mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(225,29,72,.25),0 3px 10px rgba(0,0,0,.18)}
+.mk-note.mk-sel{border-width:2.5px}
+.mk-note:empty::before{content:"Type a note";color:#9CA3AF}
+.mk-bar{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:6px;align-items:center;background:#111827;color:#fff;padding:8px 10px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+body.mk-on .mk-bar{display:flex}
+.mk-bar button{font:inherit;font-size:.95rem;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:6px;padding:7px 12px;cursor:pointer}
+.mk-bar button[aria-pressed="true"]{background:#fff;color:#111827;border-color:#fff}
+.mk-bar .mk-done{background:#E11D48;border-color:#E11D48}
+.mk-hint{font-size:.875rem;color:#CBD5E1;margin:0 6px}
+.pg-markup[aria-pressed="true"]{background:#E11D48!important;color:#fff!important;border-color:#E11D48!important}
+@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.mk-bar,.mk-layer{display:none!important}}
 ${extraCss}</style>
 </head>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
-<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button></div></div>
+<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page">${iconSvg('pencil')}<span>Mark up</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
 ${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
 ${body}
@@ -911,8 +921,6 @@ window.addEventListener('beforeprint',function(){was=r.getAttribute('data-df-the
 window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-theme',was);else r.removeAttribute('data-df-theme');});})();
 ${extraScript}</script>
 <script type="application/json" id="df-marks">{}</script>
-<script>/* marker.js 3, (c) Alan Mendelevich, linkware licence: https://markerjs.com */
-${MARKERJS}</script>
 <script>
 ${MARKUP}</script>
 </body>
@@ -981,21 +989,43 @@ export function readNotes(html, specs) {
   const m = /<script type="application\/json" id="df-marks">([\s\S]*?)<\/script>/.exec(html);
   const marks = m ? JSON.parse(m[1] || '{}') : {};
   const out = [];
+  const isPageTab = (s) => s && (typeof s.html === 'string' || typeof s.htmlFile === 'string');
+  const boxFinder = (c) => (x, y) => {
+    const nodes = Object.values(c.nodes);
+    const inside = nodes.find((n) => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
+    if (inside) return inside.label;
+    const near = nodes.map((n) => [Math.hypot(n.x + n.w / 2 - x, n.y + n.h / 2 - y), n]).sort((p, q) => p[0] - q[0])[0];
+    return near ? `near ${near[1].label}` : '';
+  };
+  // marks drawn on the page itself: each knows its tab, and, when it sits on a diagram, the point in drawing units
+  const KIND = { arrow: 'Arrow', ellipse: 'Circle', rect: 'Box', note: 'Note', pen: 'Pen' };
+  for (const it of Array.isArray(marks.items) ? marks.items : []) {
+    const byBlock = /^d(\d+)$/.exec(it.on || '');
+    const byTab = /^p(\d+)$/.exec(it.anchor || '');
+    const k = byBlock ? Number(byBlock[1]) - 1 : byTab ? Number(byTab[1]) - 1 : 0;
+    const spec = specs[k];
+    let diagram = spec ? spec.title || '' : '';
+    let at = '';
+    let from = '';
+    if (spec && !isPageTab(spec) && it.on) {
+      const c = compile(spec);
+      diagram = c.title;
+      const boxAt = boxFinder(c);
+      if (Array.isArray(it.at)) at = boxAt(it.at[0], it.at[1]);
+      if (Array.isArray(it.from)) from = boxAt(it.from[0], it.from[1]);
+    }
+    out.push({ diagram, kind: KIND[it.type] || String(it.type || ''), text: String(it.text || '').trim(), at, from });
+  }
+  // older copies: marks drawn with marker.js on a picture of one diagram
   for (const [id, state] of Object.entries(marks)) {
     const k = id === 'df' ? 0 : Number((/^d(\d+)$/.exec(id) || [])[1]) - 1;
     const spec = specs[k];
-    if (!spec || !state || !Array.isArray(state.markers)) continue;
+    if (!spec || isPageTab(spec) || !state || !Array.isArray(state.markers)) continue;
     const c = compile(spec);
     // the marks were drawn on a picture of the drawing; scale back to the drawing's own units
     const sx = c.width / (state.width || c.width);
     const sy = c.height / (state.height || c.height);
-    const boxAt = (x, y) => {
-      const nodes = Object.values(c.nodes);
-      const inside = nodes.find((n) => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-      if (inside) return inside.label;
-      const near = nodes.map((n) => [Math.hypot(n.x + n.w / 2 - x, n.y + n.h / 2 - y), n]).sort((p, q) => p[0] - q[0])[0];
-      return near ? `near ${near[1].label}` : '';
-    };
+    const boxAt = boxFinder(c);
     for (const mk of state.markers) {
       const kind = String(mk.typeName || '').replace(/Marker$/, '');
       let at;

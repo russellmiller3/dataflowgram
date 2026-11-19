@@ -393,7 +393,9 @@ test('a reader marks up a page, sends it back, and each mark is read with the bo
   const spec = example();
   const page = renderPage(spec);
   assert.match(page, /<script type="application\/json" id="df-marks">\{\}<\/script>/, 'a place in the page for the marks');
-  assert.match(page, /globalThis:t\|\|self\)\.markerjs3=\{\}/, 'the mark-up tools are inside the page, so it works offline');
+  assert.match(page, /class="pg-mode pg-markup"/, 'one Mark up button for the whole page');
+  assert.doesNotMatch(page, /markerjs3/, 'no outside drawing library: marks are drawn on the page itself');
+  assert.match(page, /\.mk-layer\{position:absolute;inset:0/, 'a clear layer over each tab holds the marks');
   assert.match(page, /class="pg-mode pg-sendnotes" hidden/, 'a "Save a copy with my notes" button, hidden until there are marks');
   // the page as it comes back: the marks drawn on a picture twice the drawing's size
   const c = compile(spec);
@@ -413,6 +415,29 @@ test('a reader marks up a page, sends it back, and each mark is read with the bo
   assert.equal(notes[2].at, a.label, 'a pen mark is placed by where it was drawn');
   // a page with no marks reads as none
   assert.deepEqual(readNotes(page, [spec]), []);
+});
+
+test('marks drawn on the page itself are read back with their tab and the box under them', () => {
+  // 19 November 2026: "why does it have to open up a separate window why can't it be directly on the page"
+  const spec = example();
+  const c = compile(spec);
+  const [a, b] = Object.values(c.nodes);
+  const mid = (n) => [n.x + n.w / 2, n.y + n.h / 2];
+  const plan = { title: 'Plan', html: '<p>Week 1</p>' };
+  const marks = { v: 2, items: [
+    { anchor: 'p2', type: 'arrow', x1: 0.1, y1: 0.1, x2: 0.2, y2: 0.2, on: 'd2', from: mid(a), at: mid(b) },
+    { anchor: 'p2', type: 'note', x1: 0.3, y1: 0.3, text: ' wrong system ', on: 'd2', at: mid(b) },
+    { anchor: 'p1', type: 'ellipse', x1: 0.4, y1: 0.4, x2: 0.6, y2: 0.5 },
+    { anchor: 'p1', type: 'note', x1: 0.5, y1: 0.5, text: 'Week 1 is too soon' },
+  ] };
+  const page = renderBook({ title: 'Deck', diagrams: [plan, spec] });
+  const back = page.replace('<script type="application/json" id="df-marks">{}</script>', `<script type="application/json" id="df-marks">${JSON.stringify(marks)}</script>`);
+  const notes = readNotes(back, [plan, spec]);
+  assert.equal(notes.length, 4);
+  assert.deepEqual(notes[0], { diagram: c.title, kind: 'Arrow', text: '', at: b.label, from: a.label });
+  assert.deepEqual(notes[1], { diagram: c.title, kind: 'Note', text: 'wrong system', at: b.label, from: '' });
+  assert.deepEqual(notes[2], { diagram: 'Plan', kind: 'Circle', text: '', at: '', from: '' }, 'a mark on a plain page tab names its tab');
+  assert.equal(notes[3].text, 'Week 1 is too soon');
 });
 
 test('printing gives one page per diagram, turned to suit its shape, with every step listed', async () => {
