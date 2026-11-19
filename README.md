@@ -4,7 +4,7 @@
 
 ![An online order, step by step](docs/images/demo.gif)
 
-**[Open the live examples →](https://__OWNER__.github.io/dataflow-steps/)** Press Play, or step through.
+**[Open the live examples →](https://russellmiller3.github.io/dataflow-steps/)** Press Play, or step through.
 
 ## What each step shows
 
@@ -23,22 +23,22 @@ Every kind of part (a person, a mailbox, a program, an AI model, a table...) and
 
 | | |
 |---|---|
-| [![An online order](docs/images/online-order.png)](https://__OWNER__.github.io/dataflow-steps/examples/online-order.html) **An online order.** From Pay to the warehouse pick list, with the card payment flagged as leaving the shop's system. | [![A notes inbox with AI](docs/images/notes-inbox.png)](https://__OWNER__.github.io/dataflow-steps/examples/notes-inbox.html) **A notes inbox with AI.** Forward an email to one address and it is filed; ask a question the same way and the answer comes back. |
-| [![Support email, sorted by AI](docs/images/support-triage.png)](https://__OWNER__.github.io/dataflow-steps/examples/support-triage.html) **Support email, sorted by AI.** An AI model tags each email, and the urgent ones reach a person at once. | [![Sign-up with an email check](docs/images/sign-up.png)](https://__OWNER__.github.io/dataflow-steps/examples/sign-up.html) **Sign-up with an email check.** The account goes live only when the user clicks the link. |
+| [![An online order](docs/images/online-order.png)](https://russellmiller3.github.io/dataflow-steps/examples/online-order.html) **An online order.** From Pay to the warehouse pick list, with the card payment flagged as leaving the shop's system. | [![A notes inbox with AI](docs/images/notes-inbox.png)](https://russellmiller3.github.io/dataflow-steps/examples/notes-inbox.html) **A notes inbox with AI.** Forward an email to one address and it is filed; ask a question the same way and the answer comes back. |
+| [![Support email, sorted by AI](docs/images/support-triage.png)](https://russellmiller3.github.io/dataflow-steps/examples/support-triage.html) **Support email, sorted by AI.** An AI model tags each email, and the urgent ones reach a person at once. | [![Sign-up with an email check](docs/images/sign-up.png)](https://russellmiller3.github.io/dataflow-steps/examples/sign-up.html) **Sign-up with an email check.** The account goes live only when the user clicks the link. |
 
 ## Install
 
 **As a Claude Code plugin:**
 
 ```
-/plugin marketplace add __OWNER__/dataflow-steps
+/plugin marketplace add russellmiller3/dataflow-steps
 /plugin install dataflow-steps@dataflow-steps
 ```
 
 **Or copy the skill into your skills folder:**
 
 ```bash
-git clone https://github.com/__OWNER__/dataflow-steps.git
+git clone https://github.com/russellmiller3/dataflow-steps.git
 cp -r dataflow-steps/skills/dataflow-steps ~/.claude/skills/
 ```
 

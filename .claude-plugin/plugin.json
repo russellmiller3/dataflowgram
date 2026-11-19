@@ -6,8 +6,8 @@
     "name": "Russell Miller",
     "url": "https://russellmiller.io"
   },
-  "homepage": "https://github.com/__OWNER__/dataflow-steps",
-  "repository": "https://github.com/__OWNER__/dataflow-steps",
+  "homepage": "https://github.com/russellmiller3/dataflow-steps",
+  "repository": "https://github.com/russellmiller3/dataflow-steps",
   "license": "MIT",
   "keywords": ["diagram", "data flow", "explainer", "architecture", "interactive", "html"]
 }

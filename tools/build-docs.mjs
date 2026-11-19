@@ -38,7 +38,7 @@ a{color:#1D4ED8}
 <body><main>
 <h1>Dataflow Steps</h1>
 <p>Interactive data-flow diagrams for Claude. Describe the parts and the steps; get a page where each step lights the line that moves, names what is moving, and shows a sample of the real item. Open an example and press Play.</p>
-<p><a href="https://github.com/__OWNER__/dataflow-steps">Get the skill on GitHub</a></p>
+<p><a href="https://github.com/russellmiller3/dataflow-steps">Get the skill on GitHub</a></p>
 <div class="grid">
 ${cards.join('\n')}
 </div>
