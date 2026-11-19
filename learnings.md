@@ -156,3 +156,6 @@ Tests: 35 of 35 pass (run through Runner).
   reader moves on, never while being removed. Each new note comes with a short arrow beside it; dragging the tip keeps
   it, otherwise it goes when the note is done; an empty note goes too; a click on empty space finishes the open note.
   Checked by hand in a browser with an error listener: 0 errors.
+- **Mark-up toolbar moved to a highlighter-yellow strip across the top** (owner request); the page moves down 50 pixels
+  while marking up, so the strip covers nothing. The Mark up button turns the same yellow while on. Checked: a note lands
+  where clicked and keeps its place in the tab after Done.

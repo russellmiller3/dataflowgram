@@ -58,13 +58,16 @@ body.mk-on .mk-note{cursor:move}
 .mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(107,68,35,.25),0 3px 10px rgba(0,0,0,.18)}
 .mk-note.mk-sel{border-color:#6B4423}
 .mk-note:empty::before{content:"Type a note";color:#9CA3AF}
-.mk-bar{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:1000;display:none;flex-wrap:nowrap;white-space:nowrap;justify-content:center;gap:4px;align-items:center;background:#111827;color:#fff;padding:5px 6px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.3);max-width:calc(100vw - 32px)}
+/* marking up: a highlighter-yellow strip across the top; the page moves down so the strip covers nothing */
+.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:center;gap:5px;align-items:center;background:#FDE047;color:#422006;padding:7px 12px;border-bottom:1px solid #CA8A04;box-shadow:0 2px 10px rgba(66,32,6,.18);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
 body.mk-on .mk-bar{display:flex}
-.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#fff;background:transparent;border:1px solid rgba(255,255,255,.28);border-radius:6px;padding:5px 9px;cursor:pointer}
-.mk-bar button[aria-pressed="true"]{background:#fff;color:#111827;border-color:#fff}
-.mk-bar .mk-done{background:#E11D48;border-color:#E11D48}
-.mk-hint{font-size:.875rem;color:#CBD5E1;margin:0 6px}
-.pg-markup[aria-pressed="true"]{background:#E11D48!important;color:#fff!important;border-color:#E11D48!important}
+body.mk-on{padding-top:50px}
+.mk-bar button{font:inherit;font-size:.875rem;font-weight:600;color:#422006;background:rgba(255,255,255,.35);border:1px solid rgba(66,32,6,.3);border-radius:6px;padding:5px 10px;cursor:pointer}
+.mk-bar button:hover{background:rgba(255,255,255,.7)}
+.mk-bar button[aria-pressed="true"]{background:#422006;color:#FDE047;border-color:#422006}
+.mk-bar .mk-done{background:#422006;color:#fff;border-color:#422006}
+.mk-hint{font-size:.875rem;color:#713F12;margin:0 8px}
+.pg-markup[aria-pressed="true"]{background:#FDE047!important;color:#422006!important;border-color:#CA8A04!important}
 @media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.mk-bar,.mk-layer{display:none!important}}
 </style>
 </head>
