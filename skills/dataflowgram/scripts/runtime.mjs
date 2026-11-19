@@ -535,6 +535,16 @@ export function mount(root, data, prefix) {
       g.classList.toggle('dim', !on && !seen);
     });
     q('.df-count').textContent = 'Step ' + (v.index + 1) + ' of ' + v.count;
+    const dotsBox = q('.df-dots');
+    if (dotsBox) {
+      dotsBox.innerHTML = '';
+      for (let k = 0; k < v.count; k++) {
+        const d = document.createElement('i');
+        if (k < v.index) d.className = 'done';
+        if (k === v.index) d.className = 'now';
+        dotsBox.appendChild(d);
+      }
+    }
     const badge = q('.df-act');
     badge.innerHTML = act.icon + '<span></span>';
     badge.lastChild.textContent = act.label;
@@ -565,6 +575,7 @@ export function mount(root, data, prefix) {
     qa('.df-steps button').forEach((b, k) => {
       if (k === v.index) { b.setAttribute('aria-current', 'step'); b.style.setProperty('--a', tone); }
       else b.removeAttribute('aria-current');
+      b.classList.toggle('done', k < v.index);
     });
     root.setAttribute('data-scenario', v.scenario);
     root.setAttribute('data-step', String(v.index + 1));
@@ -593,6 +604,8 @@ export function mount(root, data, prefix) {
   function build() {
     list.innerHTML = '';
     const scn = data.scenarios.find((s) => s.id === cur);
+    const foldLabel = q('.df-stepfold-s');
+    if (foldLabel) foldLabel.textContent = 'All ' + scn.steps.length + ' steps';
     scn.steps.forEach((st, k) => {
       const act = data.actions[st.action];
       const li = document.createElement('li');
@@ -653,6 +666,7 @@ export function mount(root, data, prefix) {
   qa('.df-node').forEach((g) => {
     function pick() {
       const n = data.nodes[g.getAttribute('data-node')];
+      info.hidden = false;
       info.innerHTML = '';
       const b = document.createElement('b');
       b.textContent = n.label + '. ';

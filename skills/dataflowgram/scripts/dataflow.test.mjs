@@ -369,6 +369,17 @@ test('in the everything-at-once view, a tag never lands on a tag placed before i
   assert.deepEqual(freeSpot([{ x: 100, y: 100 }], 120, 26, placed), { x: 100, y: 100 });
 });
 
+test('the page stays calm: the key and the full step list fold away, and progress shows as dots', () => {
+  // 19 November 2026: "make everything more ADHD friendly" and "what about all the steps and all the text on the right side"
+  const html = renderFragment(example(), 'demo');
+  assert.match(html, /<details class="df-keyfold"><summary>Key: what the colours, icons and lines mean<\/summary>/);
+  assert.doesNotMatch(html, /<details class="df-keyfold" open/, 'the key starts closed');
+  assert.match(html, /<details class="df-stepfold"><summary class="df-stepfold-s">All steps<\/summary><ol class="df-steps"><\/ol><\/details>/);
+  assert.match(html, /<span class="df-dots" aria-hidden="true"><\/span>/, 'a place for the progress dots');
+  assert.match(html, /class="df-info" aria-live="polite" hidden/, 'the tapped-box line is hidden until a box is tapped');
+  assert.match(html, /\.df-cap \.df-carry\{display:none!important\}/, 'the step card does not repeat the tag');
+});
+
 test('the check names every step that moves data but carries no tag', () => {
   // 18 November 2026: a client's 72 moving steps had no tags, and nothing said so
   const spec = { title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'store' } }, lines: [['a', 'b']],

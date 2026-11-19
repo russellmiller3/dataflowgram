@@ -1,5 +1,19 @@
 # Learnings
 
+## 19 November 2026: calmer to read
+
+- **The light page had no depth, and panels blended into it.** Fix: a diagonal colour wash behind the light
+  page (lavender to grey to mint), and near-solid white panels (93% opaque, was 74%) with a firmer edge and
+  a deeper shadow. The dark page is unchanged.
+- **Too much on screen at once.** The key (parts, steps, lines) and the "tap a box" hint now fold behind one
+  "Key" button, closed by default. The full step list folds behind "All N steps"; a row of progress dots
+  beside "Step 4 of 8" shows where you are. Finished steps in the list get a tick and fade. The step card no
+  longer repeats the tag that the drawing already shows. In "Everything at once", each send is one line.
+
+no trigger: design requests from Russell, not a repeated mistake; no single tool action shows them starting.
+
+Tests: 37 of 37 pass.
+
 ## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
 
 - **Fixed-width boxes refused real words.** All 7 of the client's diagrams failed the label check, by 1 to

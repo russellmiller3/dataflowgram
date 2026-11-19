@@ -490,6 +490,35 @@ const CSS = `
 ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}}`).join('\n')}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
+.df-info[hidden]{display:none}
+.df-keyfold{margin-top:12px;border-top:1px dashed var(--df-line);padding-top:10px}
+.df-keyfold summary{cursor:pointer;font-size:.95rem;color:var(--df-ink2);list-style:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--df-line);border-radius:999px;background:var(--df-card)}
+.df-keyfold summary::-webkit-details-marker{display:none}
+.df-keyfold summary::before{content:'+';font-weight:700}
+.df-keyfold[open] summary::before{content:'−'}
+.df-hint{margin:10px 0 0;font-size:.95rem;color:var(--df-ink2)}
+.df-stepfold{margin-top:14px}
+.df-stepfold summary{cursor:pointer;font-size:.95rem;color:var(--df-ink2);list-style:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--df-line);border-radius:999px;background:var(--df-card)}
+.df-stepfold summary::-webkit-details-marker{display:none}
+.df-stepfold summary::before{content:'+';font-weight:700}
+.df-stepfold[open] summary::before{content:'−'}
+/* the tag on the drawing already says what moves, so the step card does not repeat it */
+.df-cap .df-carry{display:none!important}
+/* the everything list: one line per send */
+.df .df-all-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 10px}
+.df .df-all-who{font-size:.95rem}
+.df .df-all-what{display:contents}
+.df .df-all-step{margin-left:auto}
+.df-allview .df-stepfold{display:none}
+/* progress dots: done, now, still to come */
+.df-dots{display:inline-flex;gap:5px;align-items:center;margin-right:4px}
+.df-dots i{width:8px;height:8px;border-radius:50%;background:var(--df-line);display:block}
+.df-dots i.done{background:color-mix(in srgb,var(--df-ink2) 55%,transparent)}
+.df-dots i.now{width:22px;border-radius:4px;background:var(--a,var(--df-ink))}
+/* the step list: finished steps get a tick and fade, steps to come stay plain */
+.df-steps button.done{opacity:.55}
+.df-steps button.done .df-num{font-size:0}
+.df-steps button.done .df-num::before{content:'✓';font-size:.95rem}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
 .df-credit{margin:56px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
 .df-allview :is(.df-cap,.df-nav,.df-item,.df-steps,.df-only-steps){display:none}
@@ -574,9 +603,9 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{
-  --df-ink:#121726;--df-ink2:#545d72;--df-line:rgba(18,24,48,.10);--df-head:rgba(18,24,48,.04);
-  --df-card:rgba(255,255,255,.74);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
-  --df-glow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 2px rgba(18,24,48,.06),0 20px 44px -26px rgba(40,48,110,.38);
+  --df-ink:#121726;--df-ink2:#4b5468;--df-line:rgba(18,24,48,.15);--df-head:rgba(18,24,48,.045);
+  --df-card:rgba(255,255,255,.93);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
+  --df-glow:0 1px 0 rgba(255,255,255,1) inset,0 1px 3px rgba(18,24,48,.08),0 24px 50px -24px rgba(40,48,110,.42);
   --df-leaves-bg:#fdecee;--df-leaves-ink:#9f1239;--df-ifnot-bg:#fff6e0;--df-ifnot-ink:#7a4b00;
   --df-dots:rgba(18,24,48,.07);--df-node-tint:13%;--df-node-on:20%;
   --df-node-shadow:drop-shadow(0 1px 1px rgba(18,24,48,.06)) drop-shadow(0 8px 14px color-mix(in srgb,var(--c) 16%,transparent));
@@ -691,18 +720,21 @@ export function renderFragment(spec, prefix = 'df') {
         ${nodes}
         <g class="df-packets"></g>
       </svg></div>
-      <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
+      <p class="df-info" aria-live="polite" hidden></p>
+      <details class="df-keyfold"><summary>Key: what the colours, icons and lines mean</summary>
+      <p class="df-hint">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small>${partKeys}</div>
       <div class="df-legend"><small>Steps</small>${stepKeys}</div>
       <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span>${c.outsideRegion || Object.values(c.nodes).some((n) => n.outside) ? '<span class="df-key"><svg viewBox="0 0 34 14" class="df-ln"><rect x="1" y="1" width="32" height="12" rx="3" class="df-ln-out"/></svg>Red: outside your system; data sent there leaves you</span>' : ''}</div>
+      </details>
     </div>
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
-      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
+      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button><button type="button" class="df-motion" aria-pressed="false" title="Switch the moving tags and dashes on or off">Motion: off</button></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
-      <ol class="df-steps"></ol>
+      <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
       <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
@@ -736,13 +768,13 @@ function pageShell({ title, intro, theme, body, extraCss = '', extraScript = '' 
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
-:root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+:root{--pg-wash:linear-gradient(135deg,#e4e2fb 0%,#eceff8 42%,#dff2ee 100%);--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
   background-color:var(--pg-bg);
-  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px);
-  background-size:100% 100%,100% 100%,24px 24px;background-repeat:no-repeat,no-repeat,repeat;background-attachment:fixed,fixed,fixed}
+  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px),var(--pg-wash);
+  background-size:100% 100%,100% 100%,24px 24px,100% 100%;background-repeat:no-repeat,no-repeat,repeat,no-repeat;background-attachment:fixed,fixed,fixed,fixed}
 main{max-width:1720px;margin:0 auto;padding:28px clamp(16px,3vw,48px) 56px}
 .pg-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .pg-kicker{display:flex;align-items:center;gap:12px;margin:0;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pg-ink2)}

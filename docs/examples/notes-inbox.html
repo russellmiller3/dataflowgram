@@ -12,13 +12,13 @@
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
-:root[data-df-theme="dark"]{--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+:root{--pg-wash:linear-gradient(135deg,#e4e2fb 0%,#eceff8 42%,#dff2ee 100%);--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
   background-color:var(--pg-bg);
-  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px);
-  background-size:100% 100%,100% 100%,24px 24px;background-repeat:no-repeat,no-repeat,repeat;background-attachment:fixed,fixed,fixed}
+  background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px),var(--pg-wash);
+  background-size:100% 100%,100% 100%,24px 24px,100% 100%;background-repeat:no-repeat,no-repeat,repeat,no-repeat;background-attachment:fixed,fixed,fixed,fixed}
 main{max-width:1720px;margin:0 auto;padding:28px clamp(16px,3vw,48px) 56px}
 .pg-top{display:flex;align-items:center;justify-content:space-between;gap:16px}
 .pg-kicker{display:flex;align-items:center;gap:12px;margin:0;font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.82rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pg-ink2)}
@@ -85,6 +85,35 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 .df-k-time{--c:#A16207;--t:#FBF3D5}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
+.df-info[hidden]{display:none}
+.df-keyfold{margin-top:12px;border-top:1px dashed var(--df-line);padding-top:10px}
+.df-keyfold summary{cursor:pointer;font-size:.95rem;color:var(--df-ink2);list-style:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--df-line);border-radius:999px;background:var(--df-card)}
+.df-keyfold summary::-webkit-details-marker{display:none}
+.df-keyfold summary::before{content:'+';font-weight:700}
+.df-keyfold[open] summary::before{content:'−'}
+.df-hint{margin:10px 0 0;font-size:.95rem;color:var(--df-ink2)}
+.df-stepfold{margin-top:14px}
+.df-stepfold summary{cursor:pointer;font-size:.95rem;color:var(--df-ink2);list-style:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--df-line);border-radius:999px;background:var(--df-card)}
+.df-stepfold summary::-webkit-details-marker{display:none}
+.df-stepfold summary::before{content:'+';font-weight:700}
+.df-stepfold[open] summary::before{content:'−'}
+/* the tag on the drawing already says what moves, so the step card does not repeat it */
+.df-cap .df-carry{display:none!important}
+/* the everything list: one line per send */
+.df .df-all-row{display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;padding:6px 10px}
+.df .df-all-who{font-size:.95rem}
+.df .df-all-what{display:contents}
+.df .df-all-step{margin-left:auto}
+.df-allview .df-stepfold{display:none}
+/* progress dots: done, now, still to come */
+.df-dots{display:inline-flex;gap:5px;align-items:center;margin-right:4px}
+.df-dots i{width:8px;height:8px;border-radius:50%;background:var(--df-line);display:block}
+.df-dots i.done{background:color-mix(in srgb,var(--df-ink2) 55%,transparent)}
+.df-dots i.now{width:22px;border-radius:4px;background:var(--a,var(--df-ink))}
+/* the step list: finished steps get a tick and fade, steps to come stay plain */
+.df-steps button.done{opacity:.55}
+.df-steps button.done .df-num{font-size:0}
+.df-steps button.done .df-num::before{content:'✓';font-size:.95rem}
 .df-legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;align-items:center}
 .df-credit{margin:56px 0 0;text-align:right;font-size:.85rem;color:var(--df-ink2)}
 .df-allview :is(.df-cap,.df-nav,.df-item,.df-steps,.df-only-steps){display:none}
@@ -169,9 +198,9 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
 
 /* ---- look: soft gradients, see-through panels, faint texture; light and dark ---- */
 .df{
-  --df-ink:#121726;--df-ink2:#545d72;--df-line:rgba(18,24,48,.10);--df-head:rgba(18,24,48,.04);
-  --df-card:rgba(255,255,255,.74);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
-  --df-glow:0 1px 0 rgba(255,255,255,.95) inset,0 1px 2px rgba(18,24,48,.06),0 20px 44px -26px rgba(40,48,110,.38);
+  --df-ink:#121726;--df-ink2:#4b5468;--df-line:rgba(18,24,48,.15);--df-head:rgba(18,24,48,.045);
+  --df-card:rgba(255,255,255,.93);--df-solid:#ffffff;--df-node:#ffffff;--df-edge:rgba(18,24,48,.26);
+  --df-glow:0 1px 0 rgba(255,255,255,1) inset,0 1px 3px rgba(18,24,48,.08),0 24px 50px -24px rgba(40,48,110,.42);
   --df-leaves-bg:#fdecee;--df-leaves-ink:#9f1239;--df-ifnot-bg:#fff6e0;--df-ifnot-ink:#7a4b00;
   --df-dots:rgba(18,24,48,.07);--df-node-tint:13%;--df-node-on:20%;
   --df-node-shadow:drop-shadow(0 1px 1px rgba(18,24,48,.06)) drop-shadow(0 8px 14px color-mix(in srgb,var(--c) 16%,transparent));
@@ -239,18 +268,21 @@ html[data-df-theme="dark"] .df{--a-ink-mix:white;--a-ink-amt:45%}
         <g class="df-node df-k-person" style="--c:#1D4ED8;--t:#EEF3FF" data-node="phone" tabindex="0" role="button" aria-label="Sam's phone"><rect x="300" y="10" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 20) scale(.9167)"><rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/></g><text class="df-t" x="420" y="63" text-anchor="middle">Sam's phone</text><text class="df-s" x="420" y="82" text-anchor="middle">any email app</text></g><g class="df-node df-k-mail" style="--c:#B45309;--t:#FFF4DE" data-node="inbox" tabindex="0" role="button" aria-label="Notes inbox"><rect x="300" y="200" width="240" height="86" rx="4"/><g class="df-ico" transform="translate(409 210) scale(.9167)"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></g><text class="df-t" x="420" y="253" text-anchor="middle">Notes inbox</text><text class="df-s" x="420" y="272" text-anchor="middle">a shared mailbox</text></g><g class="df-node df-k-program" style="--c:#334155;--t:#EEF2F6" data-node="hub" tabindex="0" role="button" aria-label="The hub"><rect x="94.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(183.5 400) scale(.9167)"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></g><text class="df-t" x="194.5" y="443" text-anchor="middle">The hub</text><text class="df-s" x="194.5" y="462" text-anchor="middle">our program</text></g><g class="df-node df-k-ai" style="--c:#7C3AED;--t:#F3ECFF" data-node="model" tabindex="0" role="button" aria-label="AI model"><rect x="545.5" y="390" width="200" height="86" rx="4"/><g class="df-ico" transform="translate(634.5 400) scale(.9167)"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></g><text class="df-t" x="645.5" y="443" text-anchor="middle">AI model</text><text class="df-out-l" x="551.5" y="407">OUTSIDE</text><text class="df-s" x="645.5" y="462" text-anchor="middle">returns fields</text></g><g class="df-node df-k-store" style="--c:#15803D;--t:#E8F6EC" data-node="lists" tabindex="0" role="button" aria-label="Lists"><rect x="10" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(79 590) scale(.9167)"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></g><text class="df-t3" x="90" y="633" text-anchor="middle">Lists</text><text class="df-s3" x="90" y="652" text-anchor="middle">rows of records</text></g><g class="df-node df-k-files" style="--c:#0F766E;--t:#E3F5F2" data-node="files" tabindex="0" role="button" aria-label="File library"><rect x="340" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(409 590) scale(.9167)"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></g><text class="df-t3" x="420" y="633" text-anchor="middle">File library</text><text class="df-s3" x="420" y="652" text-anchor="middle">saved attachments</text></g><g class="df-node df-k-outside" style="--c:#BE123C;--t:#FDEBEF" data-node="ledger" tabindex="0" role="button" aria-label="Ledger export"><rect x="670" y="580" width="160" height="86" rx="4"/><g class="df-ico" transform="translate(739 590) scale(.9167)"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></g><text class="df-t3" x="750" y="633" text-anchor="middle">Ledger export</text><text class="df-out-l" x="676" y="597">OUTSIDE</text><text class="df-s3" x="750" y="652" text-anchor="middle">the money figures</text></g>
         <g class="df-packets"></g>
       </svg></div>
-      <p class="df-info" aria-live="polite">Tap any box to see what it is.</p>
+      <p class="df-info" aria-live="polite" hidden></p>
+      <details class="df-keyfold"><summary>Key: what the colours, icons and lines mean</summary>
+      <p class="df-hint">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span>A person</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>A mailbox</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg><span>Our program</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg><span>An AI model</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9h18"/><path d="M9 3v18"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg><span>Stored rows</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg><span>Stored files</span></span><span class="df-key df-kind"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 18v-7"/><path d="M11.119 2.205a2 2 0 0 1 1.762 0l7.84 3.846A.5.5 0 0 1 20.5 7h-17a.5.5 0 0 1-.22-.949z"/><path d="M14 18v-7"/><path d="M18 18v-7"/><path d="M3 22h18"/><path d="M6 18v-7"/></svg><span>Another company's system</span></span></div>
       <div class="df-legend"><small>Steps</small><span class="df-key act" style="--a:#2563EB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></svg>Send</span><span class="df-key act" style="--a:#475569"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Check</span><span class="df-key act" style="--a:#0E7490"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v16"/><path d="M20.001 19A2 2 0 0022 17V5a2 2 0 00-1.999-2L16 3.002A5 5 0 0012 5a5 5 0 00-4-2H4a2 2 0 00-2 2v12a2 2 0 001.999 2H8a5 5 0 014 2 5 5 0 014-2z"/></svg>Read</span><span class="df-key act" style="--a:#7C3AED"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/><path d="M20 2v4"/><path d="M22 4h-4"/><circle cx="4" cy="20" r="2"/></svg>Think</span><span class="df-key act" style="--a:#15803D"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 21h8"/><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/></svg>Write</span><span class="df-key act" style="--a:#0F766E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>Save</span><span class="df-key act" style="--a:#C2410C"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 18v-2a4 4 0 0 0-4-4H4"/><path d="m9 17-5-5 5-5"/></svg>Reply</span></div>
       <div class="df-legend df-linekey"><small>Lines</small><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Bold: data goes along this line in this step</span><span class="df-key df-only-steps"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-past"/></svg>Faint: used in an earlier step</span><span class="df-key df-only-all"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-all"/></svg>Coloured: carries data, in the sender's colour</span><span class="df-key"><svg viewBox="0 0 34 10" class="df-ln"><path d="M1 5H33" class="df-ln-idle"/></svg>Grey: joined, no data in this view</span><span class="df-key"><svg viewBox="0 0 34 14" class="df-ln"><rect x="1" y="1" width="32" height="12" rx="3" class="df-ln-out"/></svg>Red: outside your system; data sent there leaves you</span></div>
+      </details>
     </div>
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       <div class="df-seg" role="group" aria-label="Scenario"><button type="button" data-s="file" aria-pressed="true">Files a note</button><button type="button" data-s="ask" aria-pressed="false">Asks a question</button></div>
-      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
+      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <div class="df-nav"><button type="button" class="df-back">Back</button><button type="button" class="df-play" aria-pressed="false"></button><button type="button" class="df-next">Next step</button><button type="button" class="df-motion" aria-pressed="false" title="Switch the moving tags and dashes on or off">Motion: off</button></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
-      <ol class="df-steps"></ol>
+      <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
       <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
@@ -795,6 +827,16 @@ function mount(root, data, prefix) {
       g.classList.toggle('dim', !on && !seen);
     });
     q('.df-count').textContent = 'Step ' + (v.index + 1) + ' of ' + v.count;
+    const dotsBox = q('.df-dots');
+    if (dotsBox) {
+      dotsBox.innerHTML = '';
+      for (let k = 0; k < v.count; k++) {
+        const d = document.createElement('i');
+        if (k < v.index) d.className = 'done';
+        if (k === v.index) d.className = 'now';
+        dotsBox.appendChild(d);
+      }
+    }
     const badge = q('.df-act');
     badge.innerHTML = act.icon + '<span></span>';
     badge.lastChild.textContent = act.label;
@@ -825,6 +867,7 @@ function mount(root, data, prefix) {
     qa('.df-steps button').forEach((b, k) => {
       if (k === v.index) { b.setAttribute('aria-current', 'step'); b.style.setProperty('--a', tone); }
       else b.removeAttribute('aria-current');
+      b.classList.toggle('done', k < v.index);
     });
     root.setAttribute('data-scenario', v.scenario);
     root.setAttribute('data-step', String(v.index + 1));
@@ -853,6 +896,8 @@ function mount(root, data, prefix) {
   function build() {
     list.innerHTML = '';
     const scn = data.scenarios.find((s) => s.id === cur);
+    const foldLabel = q('.df-stepfold-s');
+    if (foldLabel) foldLabel.textContent = 'All ' + scn.steps.length + ' steps';
     scn.steps.forEach((st, k) => {
       const act = data.actions[st.action];
       const li = document.createElement('li');
@@ -913,6 +958,7 @@ function mount(root, data, prefix) {
   qa('.df-node').forEach((g) => {
     function pick() {
       const n = data.nodes[g.getAttribute('data-node')];
+      info.hidden = false;
       info.innerHTML = '';
       const b = document.createElement('b');
       b.textContent = n.label + '. ';
