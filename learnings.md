@@ -100,3 +100,5 @@ Tests: 35 of 35 pass (run through Runner).
 - **Every diagram names its source** (Russell: "always source, even if it's a footnote so we dont get
   sharpshooter'd"). New `source` field, shown as a footnote under the diagram; the check warns when it is missing.
   All 4 examples and all 7 client tabs now carry one, with what was added by us marked. Tests: 46 of 46.
+- **Outer boxes sat 10 units from the drawing's edge,** so they looked jammed against their frame. Fix: 24 units on every
+  side, for every diagram. The spacing test now checks a margin of 20 to 30 units, equal on both sides, top and bottom.
