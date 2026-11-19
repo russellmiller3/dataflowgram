@@ -144,6 +144,19 @@ When the user points at code ("draw the data flow of the checkout folder"), read
 - **Name what leaves.** If data goes to another company, make that part `outside` so the reader sees the warning.
 - **Text is readable:** labels render at about 15 pixels on a computer screen. On a phone the drawing shrinks to fit.
 
+## When a book stands in for a slide deck
+
+A client book is often shown on a call instead of slides. These rules come from that use:
+
+- **Tabs follow the client's own needs.** Each tab answers a need the client stated (on a call or in their documents). A data detail is a walkthrough inside a tab, not a tab of its own.
+- **Tabs follow the build order, and the names say so.** Start each tab name with its step number ("2 · One shared place for notes"). The plan tab comes first; what is built last (often the app) comes last.
+- **Never gloss over loading the data.** Give step 1 its own tab: take stock, tidy, match, reconcile against the system of record, client review, load and recount. Show the bad data expected, with the fix for each, and a sample reconciliation report whose counts add up.
+- **Plan tab:** a timeline, a card per step, a table of "your need, where you said it, which step", what we need from the client, and how the data stays safe.
+- **Every box is a short phrase**, 3 to 6 words. A table cell, a card line or a step box must be read in a glance on a call. Cut words; do not add bullets to a crowded box.
+- **When there are 2 ways to do a thing, show both as equals** side by side, each with a real example (what to type, where to send it). Do not call one "the main way".
+- **Sketches of an app are labelled sample data**, and the intro of each page tab is 1 short sentence.
+- **After any change, give the reader the link to the page** and print it again: one page per tab.
+
 ## Tests
 
 `node --test <skill>/scripts/dataflow.test.mjs` runs 40 tests. They step through scenarios and check which line lights and in which direction, the trail, the leaving warning, the side panel, links to a step, the tag fade, the credit line, that boxes do not overlap, that text from the description cannot break the page, and that a wrong description is refused with a message that names the fault.
