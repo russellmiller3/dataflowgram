@@ -1,6 +1,6 @@
 # Dataflowgram
 
-**Interactive data-flow diagrams for Claude.** Describe the parts of a system and the steps; Claude builds one page that shows what moves, where it goes, and why, one step at a time.
+**Interactive data-flow diagrams for any AI agent.** Describe the parts of a system and the steps; your agent builds one page that shows what moves, where it goes, and why, one step at a time.
 
 ![An online order, step by step](docs/images/demo.gif)
 
@@ -30,7 +30,7 @@ Every kind of part (a person, a mailbox, a program, an AI model, a table...) and
 
 ## Install
 
-**As a Claude Code plugin:**
+**In Claude Code, as a plugin:**
 
 ```
 /plugin marketplace add russellmiller3/dataflowgram
@@ -43,6 +43,8 @@ Every kind of part (a person, a mailbox, a program, an AI model, a table...) and
 git clone https://github.com/russellmiller3/dataflowgram.git
 cp -r dataflowgram/skills/dataflowgram ~/.claude/skills/
 ```
+
+**In any other agent** (Codex, Cursor, Gemini CLI and others): point it at `skills/dataflowgram/SKILL.md`. The skill is one instruction file and one Node.js script, so any agent that can read a file and run a command can use it.
 
 It needs Node.js 18 or later, and nothing else: the icons are stored in the skill, so it works offline.
 
@@ -58,13 +60,13 @@ Every diagram carries a small credit in its lower right corner, "Made with Dataf
 
 ## Use it
 
-Ask Claude in plain words:
+Ask your agent in plain words:
 
 > Make an interactive data flow of what happens when a customer pays on our website.
 
 > Show me, step by step, how our support emails get sorted and who sees them.
 
-Claude writes a short description of the parts and steps, checks it, and builds the page.
+The agent writes a short description of the parts and steps, checks it, and builds the page.
 
 ## Build one by hand
 

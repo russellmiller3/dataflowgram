@@ -1,6 +1,6 @@
 {
   "name": "dataflowgram",
-  "description": "Interactive, step-by-step data-flow diagrams for Claude, by Russell Miller.",
+  "description": "Interactive, step-by-step data-flow diagrams for any AI agent, by Russell Miller.",
   "owner": {
     "name": "Russell Miller",
     "url": "https://russellmiller.io"

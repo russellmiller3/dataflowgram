@@ -20,7 +20,7 @@ const cards = names.map((n) => {
 fs.writeFileSync(path.join(docs, 'index.html'), `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Dataflowgram</title>
-<meta name="description" content="Interactive, step-by-step data-flow diagrams, built by Claude from a short description.">
+<meta name="description" content="Interactive, step-by-step data-flow diagrams, built by any AI agent from a short description.">
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#E9EFF6;color:#14233A;font-family:"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;line-height:1.5;font-size:16px}
@@ -37,7 +37,7 @@ a{color:#1D4ED8}
 </style></head>
 <body><main>
 <h1>Dataflowgram</h1>
-<p>Interactive data-flow diagrams for Claude. Describe the parts and the steps; get a page where each step lights the line that moves, names what is moving, and shows a sample of the real item. Open an example and press Play.</p>
+<p>Interactive data-flow diagrams for any AI agent. Describe the parts and the steps; get a page where each step lights the line that moves, names what is moving, and shows a sample of the real item. Open an example and press Play.</p>
 <p><a href="https://github.com/russellmiller3/dataflowgram">Get the skill on GitHub</a></p>
 <div class="grid">
 ${cards.join('\n')}

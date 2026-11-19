@@ -2,7 +2,7 @@
   "name": "dataflowgram",
   "version": "1.0.0",
   "private": true,
-  "description": "Interactive, step-by-step data-flow diagrams for Claude.",
+  "description": "Interactive, step-by-step data-flow diagrams for any AI agent.",
   "type": "module",
   "license": "SEE LICENSE IN LICENSE",
   "author": "Russell Miller (https://russellmiller.io)",
