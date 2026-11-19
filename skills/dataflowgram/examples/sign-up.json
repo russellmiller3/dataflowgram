@@ -1,6 +1,7 @@
 {
   "title": "Sign-up with an email check",
   "intro": "A new user signs up, and the account only goes live once they click the link in their email.",
+  "source": "A made-up example for this project. The names, amounts and emails are invented.",
   "rows": [
     [
       "visitor"

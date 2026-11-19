@@ -1,47 +1,206 @@
 {
   "title": "Support email, sorted by AI",
   "intro": "A customer email arrives. An AI model sorts it, and the urgent ones reach a person at once.",
+  "source": "A made-up example for this project. The names, amounts and emails are invented.",
   "rows": [
-    ["customer"],
-    ["helpdesk"],
-    ["triage", "model"],
-    ["tickets", "lead"]
+    [
+      "customer"
+    ],
+    [
+      "helpdesk"
+    ],
+    [
+      "triage",
+      "model"
+    ],
+    [
+      "tickets",
+      "lead"
+    ]
   ],
   "parts": {
-    "customer": { "label": "Customer", "sub": "writes in by email", "kind": "person", "info": "Anyone who emails the support address." },
-    "helpdesk": { "label": "Support inbox", "sub": "help@ mailbox", "kind": "mail", "info": "The shared mailbox that receives every support email." },
-    "triage": { "label": "Sorting program", "sub": "our program", "kind": "program", "icon": "list-checks", "info": "It reads each new email, asks the AI model to sort it, and files the result." },
-    "model": { "label": "AI model", "sub": "at an outside provider", "kind": "ai", "outside": true, "info": "It reads the email and returns a topic and an urgency. It runs at an outside company, so the email leaves your system." },
-    "tickets": { "label": "Ticket queue", "sub": "1 row per email", "kind": "store", "icon": "ticket", "info": "Every email becomes a ticket with tags and a place in a queue." },
-    "lead": { "label": "Billing lead", "sub": "gets urgent alerts", "kind": "person", "icon": "bell", "info": "The person who handles urgent billing problems." }
+    "customer": {
+      "label": "Customer",
+      "sub": "writes in by email",
+      "kind": "person",
+      "info": "Anyone who emails the support address."
+    },
+    "helpdesk": {
+      "label": "Support inbox",
+      "sub": "help@ mailbox",
+      "kind": "mail",
+      "info": "The shared mailbox that receives every support email."
+    },
+    "triage": {
+      "label": "Sorting program",
+      "sub": "our program",
+      "kind": "program",
+      "icon": "list-checks",
+      "info": "It reads each new email, asks the AI model to sort it, and files the result."
+    },
+    "model": {
+      "label": "AI model",
+      "sub": "at an outside provider",
+      "kind": "ai",
+      "outside": true,
+      "info": "It reads the email and returns a topic and an urgency. It runs at an outside company, so the email leaves your system."
+    },
+    "tickets": {
+      "label": "Ticket queue",
+      "sub": "1 row per email",
+      "kind": "store",
+      "icon": "ticket",
+      "info": "Every email becomes a ticket with tags and a place in a queue."
+    },
+    "lead": {
+      "label": "Billing lead",
+      "sub": "gets urgent alerts",
+      "kind": "person",
+      "icon": "bell",
+      "info": "The person who handles urgent billing problems."
+    }
   },
   "lines": [
-    ["customer", "helpdesk"],
-    ["helpdesk", "triage"],
-    ["triage", "model"],
-    ["triage", "tickets"],
-    ["triage", "lead"]
+    [
+      "customer",
+      "helpdesk"
+    ],
+    [
+      "helpdesk",
+      "triage"
+    ],
+    [
+      "triage",
+      "model"
+    ],
+    [
+      "triage",
+      "tickets"
+    ],
+    [
+      "triage",
+      "lead"
+    ]
   ],
   "scenarios": [
     {
       "id": "urgent",
       "label": "An urgent email",
       "steps": [
-        { "action": "send", "flow": ["customer>helpdesk"], "text": "A customer writes in: the app charged them twice.",
-          "carry": { "icon": "mail", "label": "support email" },
-          "item": { "title": "Charged twice!!", "fields": [["From", "jo@example.com"], ["To", "help@app.example"]], "body": "Hi, my card was charged $29 twice this morning. Please fix this today." } },
-        { "action": "read", "flow": ["helpdesk>triage"], "text": "The sorting program picks up the new email.", "time": "within 1 minute",
-          "carry": { "icon": "mail", "label": "the email" } },
-        { "action": "think", "flow": ["triage<>model"], "text": "The AI model reads the email and returns a topic, an urgency and the mood.", "time": "about 3 seconds",
-          "carry": { "icon": "tags", "label": "topic + urgency" },
-          "item": { "title": "What the model returned", "fields": [["Topic", "Billing"], ["Urgency", "High"], ["Mood", "Upset"], ["Summary", "Charged $29 twice today"]] } },
-        { "action": "write", "flow": ["triage>tickets"], "text": "The program files the ticket at the top of the billing queue.",
-          "carry": { "icon": "ticket", "label": "ticket #881" },
-          "item": { "title": "New ticket #881", "fields": [["Queue", "Billing"], ["Place", "1 of 14"], ["Tags", "billing, urgent"]] } },
-        { "action": "send", "flow": ["triage>lead"], "text": "Because it is urgent, the billing lead gets a phone alert.",
+        {
+          "action": "send",
+          "flow": [
+            "customer>helpdesk"
+          ],
+          "text": "A customer writes in: the app charged them twice.",
+          "carry": {
+            "icon": "mail",
+            "label": "support email"
+          },
+          "item": {
+            "title": "Charged twice!!",
+            "fields": [
+              [
+                "From",
+                "jo@example.com"
+              ],
+              [
+                "To",
+                "help@app.example"
+              ]
+            ],
+            "body": "Hi, my card was charged $29 twice this morning. Please fix this today."
+          }
+        },
+        {
+          "action": "read",
+          "flow": [
+            "helpdesk>triage"
+          ],
+          "text": "The sorting program picks up the new email.",
+          "time": "within 1 minute",
+          "carry": {
+            "icon": "mail",
+            "label": "the email"
+          }
+        },
+        {
+          "action": "think",
+          "flow": [
+            "triage<>model"
+          ],
+          "text": "The AI model reads the email and returns a topic, an urgency and the mood.",
+          "time": "about 3 seconds",
+          "carry": {
+            "icon": "tags",
+            "label": "topic + urgency"
+          },
+          "item": {
+            "title": "What the model returned",
+            "fields": [
+              [
+                "Topic",
+                "Billing"
+              ],
+              [
+                "Urgency",
+                "High"
+              ],
+              [
+                "Mood",
+                "Upset"
+              ],
+              [
+                "Summary",
+                "Charged $29 twice today"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "write",
+          "flow": [
+            "triage>tickets"
+          ],
+          "text": "The program files the ticket at the top of the billing queue.",
+          "carry": {
+            "icon": "ticket",
+            "label": "ticket #881"
+          },
+          "item": {
+            "title": "New ticket #881",
+            "fields": [
+              [
+                "Queue",
+                "Billing"
+              ],
+              [
+                "Place",
+                "1 of 14"
+              ],
+              [
+                "Tags",
+                "billing, urgent"
+              ]
+            ]
+          }
+        },
+        {
+          "action": "send",
+          "flow": [
+            "triage>lead"
+          ],
+          "text": "Because it is urgent, the billing lead gets a phone alert.",
           "ifNot": "a normal ticket waits in its queue, and nobody is alerted.",
-          "carry": { "icon": "bell", "label": "urgent alert" },
-          "item": { "title": "Phone alert", "body": "Urgent billing ticket #881: charged $29 twice today. Customer is upset." } }
+          "carry": {
+            "icon": "bell",
+            "label": "urgent alert"
+          },
+          "item": {
+            "title": "Phone alert",
+            "body": "Urgent billing ticket #881: charged $29 twice today. Customer is upset."
+          }
+        }
       ]
     }
   ]

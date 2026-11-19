@@ -439,7 +439,8 @@ export function compile(spec) {
       warnings.push(`"${first[1]}", the first thing "${pid}" talks to, is not directly below them: put it in the next row, in the same column (the middle of the row when "${pid}" is alone at the top)`);
     }
   }
-  return { title: spec.title || '', intro: spec.intro || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns, warnings };
+  // Every diagram says where it came from, so a reader can check any box instead of doubting the whole picture.
+  return { title: spec.title || '', intro: spec.intro || '', source: spec.source || '', credit: spec.credit !== false, width, height: fullHeight, nodes, edges, zones: zoneList, outsideRegion, rowY, scenarios: scns, warnings };
 }
 
 // The data the page's own script needs. "<" is written as a code so text can never close the script early.
@@ -508,6 +509,8 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-info{margin-top:10px;font-size:.95rem;color:var(--df-ink2);border-top:1px dashed var(--df-line);padding-top:10px}
 .df-info b{color:var(--df-ink)}
 .df-info[hidden]{display:none}
+.df-source{margin:10px 0 0;font-size:.85rem;color:var(--df-ink2)}
+.df-source span{font-weight:700}
 .df-keyfold{margin-top:12px;border-top:1px dashed var(--df-line);padding-top:10px}
 .df-keyfold summary{cursor:pointer;font-size:.95rem;color:var(--df-ink2);list-style:none;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--df-line);border-radius:999px;background:var(--df-card)}
 .df-keyfold summary::-webkit-details-marker{display:none}
@@ -749,6 +752,7 @@ export function renderFragment(spec, prefix = 'df') {
         <g class="df-packets"></g>
       </svg></div>
       <p class="df-info" aria-live="polite" hidden></p>
+      ${c.source ? `<p class="df-source"><span>Source:</span> ${esc(c.source)}</p>` : ''}
       <details class="df-keyfold"><summary>Key: what the colours, icons and lines mean</summary>
       <p class="df-hint">Tap any box to see what it is.</p>
       <div class="df-legend"><small>Parts</small>${partKeys}</div>
@@ -873,6 +877,8 @@ if (isMain) {
       console.log(names.length ? names.join('\n') : `no icon name contains "${a}"`);
     } else if (cmd === 'check' && a) {
       const out = compile(JSON.parse(fs.readFileSync(a, 'utf8')));
+      // Every diagram says where it came from, so a reader can check any box instead of doubting the whole picture.
+      if (!out.source) out.warnings.push('no "source": say where this flow comes from (a document and page, a call, the code), so a reader can check it');
       const steps = out.scenarios.reduce((t, s) => t + s.steps.length, 0);
       console.log(`ok: ${Object.keys(out.nodes).length} parts, ${out.edges.length} lines, ${out.scenarios.length} scenarios, ${steps} steps`);
       if (out.warnings.length) console.log(`warning: ${out.warnings.length} thing${out.warnings.length === 1 ? '' : 's'} to fix\n  ` + out.warnings.join('\n  '));

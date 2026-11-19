@@ -388,6 +388,22 @@ test('on a phone the page fits the screen: the stacked column can shrink, and th
   assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
 });
 
+test('a diagram shows where it came from, and the check names a diagram that does not say', async () => {
+  // 19 November 2026: "we should always source, even if it's a footnote so we dont get sharpshooter'd"
+  const spec = { ...example(), source: 'Client requirements, page 2; call of 17 November' };
+  const html = renderFragment(spec, 'demo');
+  assert.match(html, /<p class="df-source"><span>Source:<\/span> Client requirements, page 2; call of 17 November<\/p>/);
+  assert.doesNotMatch(renderFragment(example(), 'demo'), /class="df-source"/, 'no source, no empty footnote');
+  // the check command, as a person runs it
+  const { execFileSync } = await import('node:child_process');
+  const { writeFileSync, mkdtempSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const dir = mkdtempSync(tmpdir() + '/df-');
+  const run = (s) => { writeFileSync(dir + '/s.json', JSON.stringify(s)); return execFileSync('node', [new URL('./dataflow.mjs', import.meta.url).pathname, 'check', dir + '/s.json'], { encoding: 'utf8' }); };
+  assert.match(run({ ...example(), source: undefined }), /no "source": say where this flow comes from/);
+  assert.doesNotMatch(run(spec), /no "source"/);
+});
+
 test('the check warns when the system a person talks to is not directly below them', () => {
   // 19 November 2026: "the main system the person is interacting with should always go below and center"
   const spec = (middle) => ({ title: 'T', rows: [['p'], middle],

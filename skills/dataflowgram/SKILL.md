@@ -38,6 +38,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 | Field | What it holds |
 |---|---|
 | `title`, `intro` | Page heading and one line under it |
+| `source` | Where the flow comes from, shown as a footnote under the diagram: the document and page, the call and its date, the code folder. Mark what you added yourself ("Added by ..."). The check warns when it is missing |
 | `rows` | Part names, top to bottom, 1 to 3 parts in each row |
 | `parts` | For each part: `label`, `sub` (second line), `kind`, optional `icon`, `info` (shown when the box is tapped), optional `outside` (true or false) |
 | `lines` | Pairs of parts joined by a line: parts side by side in one row, or in neighbouring rows |

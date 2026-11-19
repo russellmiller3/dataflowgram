@@ -97,3 +97,6 @@ Tests: 35 of 35 pass (run through Runner).
   column. The check now warns when the first thing a person talks to is not directly below them; it caught 2 more
   diagrams (a client briefing tab and the sign-up example), both fixed. Its test failed with the check switched off.
   Tests: 45 of 45.
+- **Every diagram names its source** (Russell: "always source, even if it's a footnote so we dont get
+  sharpshooter'd"). New `source` field, shown as a footnote under the diagram; the check warns when it is missing.
+  All 4 examples and all 7 client tabs now carry one, with what was added by us marked. Tests: 46 of 46.
