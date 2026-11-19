@@ -159,3 +159,7 @@ Tests: 35 of 35 pass (run through Runner).
 - **Mark-up toolbar moved to a highlighter-yellow strip across the top** (owner request); the page moves down 50 pixels
   while marking up, so the strip covers nothing. The Mark up button turns the same yellow while on. Checked: a note lands
   where clicked and keeps its place in the tab after Done.
+- **A note can be typed in again after its arrow is moved.** After a click or a drag, the page redrew the note and then
+  put the keyboard in the old, replaced box, so typing went nowhere (owner report). The keyboard now goes to the new
+  box after the redraw, cursor at the end. Checked by hand: typed, stretched the arrow, kept typing, clicked away, clicked
+  back in and added text; 0 errors.

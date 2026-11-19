@@ -294,21 +294,34 @@
           it.tipSet = false;
         }
         tagDiagram(it); save(); render();
-        var nn = d.a.querySelector('.mk-note[data-i="' + sel + '"]');
-        if (nn) { pendingFocus = nn; setTimeout(function () { nn.focus(); }, 0); }
+        typeInto(d.a, sel);
         return;
       }
       if (!d.moved) { drop(sel); undoStack.pop(); render(); return; } // a click with no drag makes no box
       if (it.type === 'move') { aiming = sel; it.to = [it.x2, it.y2]; }
-    } else if (!d.moved) {
-      undoStack.pop();
-      if (it.type === 'note') { // a plain click on a note opens it for typing
-        var n = d.a.querySelector('.mk-note[data-i="' + sel + '"]');
-        if (n) setTimeout(function () { n.focus(); }, 0);
-      }
-    }
+    } else if (!d.moved) undoStack.pop();
     tagDiagram(it);
     save(); render();
+    // a note clicked, moved or re-aimed is ready for typing again
+    if (it.type === 'note') typeInto(d.a, sel);
+  }
+  // Put the keyboard in note i, after the redraw has made its box, with the cursor at the end of the text.
+  function typeInto(a, i) {
+    var n = a.querySelector('.mk-note[data-i="' + i + '"]');
+    if (!n) return;
+    pendingFocus = n;
+    var go = function () {
+      if (!n.isConnected) return;
+      n.focus();
+      var r = document.createRange();
+      r.selectNodeContents(n);
+      r.collapse(false);
+      var s = window.getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+    };
+    go();
+    setTimeout(go, 0);
   }
   document.addEventListener('pointermove', move);
   document.addEventListener('pointerup', up);
