@@ -181,3 +181,7 @@ Tests: 35 of 35 pass (run through Runner).
   on the left, each with an icon and its own colour (Note brown, Move blue, Delete red); the chosen one fills with its
   colour, as in Figma. Undo and Clear all are quiet icon-and-word buttons on the right; only Done is filled. Checked in a
   browser at 1,400 and 858 pixels wide.
+- **Clear all asks "Sure?" on the button, then fades the marks; the 3 tools are separate raised buttons** (owner: the
+  pop-up was jarring; the joined tools looked like a slider toggle). First click turns Clear all red with "Sure?" for 3
+  seconds; a second click fades every mark out over 0.35 seconds; Undo restores them. Each tool now has its own coloured
+  border and a raised edge; the chosen one fills and sits down. Checked in a browser: no pop-up used, marks 1 then 0.

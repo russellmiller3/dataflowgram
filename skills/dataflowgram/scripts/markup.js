@@ -403,10 +403,24 @@
     var act = b.dataset.act;
     if (act === 'undo' && undoStack.length) { data.items = JSON.parse(undoStack.pop()); sel = -1; aiming = -1; save(); render(); }
     else if (act === 'clear' && data.items.length) {
-      // every mark on every tab; Undo brings them all back
-      var n = data.items.length;
-      if (!window.confirm('Remove all ' + n + ' mark' + (n === 1 ? '' : 's') + ' on every tab? Undo brings them back.')) return;
-      remember(); data.items = []; sel = -1; aiming = -1; save(); render();
+      // first click asks "Sure?" on the button itself; a second click within 3 seconds fades every mark away.
+      // Undo brings them all back.
+      var label = b.querySelector('span');
+      if (!b.classList.contains('mk-sure')) {
+        b.classList.add('mk-sure');
+        label.textContent = 'Sure?';
+        clearTimeout(b.timer);
+        b.timer = setTimeout(function () { b.classList.remove('mk-sure'); label.textContent = 'Clear all'; }, 3000);
+        return;
+      }
+      clearTimeout(b.timer);
+      b.classList.remove('mk-sure');
+      label.textContent = 'Clear all';
+      document.body.classList.add('mk-fading');
+      setTimeout(function () {
+        remember(); data.items = []; sel = -1; aiming = -1; save(); render();
+        document.body.classList.remove('mk-fading');
+      }, 350);
     }
     else if (act === 'done') setOn(false);
   });

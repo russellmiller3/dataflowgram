@@ -912,11 +912,13 @@ body.mk-on .mk-note{cursor:move}
 body.mk-on .mk-bar{display:flex}
 .mk-bar button{font:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s,color .12s,transform .08s}
 .mk-bar svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
-/* the marks: a palette of tools, each in its mark's own colour; the chosen one fills with that colour */
-.mk-tools{display:flex;gap:4px;padding:3px;background:#fff;border-radius:9px;box-shadow:inset 0 0 0 1px rgba(74,53,16,.18)}
-.mk-tool{font-size:.95rem;font-weight:650;padding:7px 13px;border-radius:7px;border:0;background:transparent;color:var(--mkc)}
-.mk-tool:hover{background:color-mix(in srgb,var(--mkc) 10%,#fff)}
-.mk-tool[aria-pressed="true"]{background:var(--mkc);color:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+/* the marks: 3 separate raised buttons, each in its mark's own colour; the chosen one fills with that colour */
+.mk-tools{display:flex;gap:8px}
+.mk-tool{font-size:.95rem;font-weight:650;padding:7px 14px;border-radius:8px;border:2px solid var(--mkc);background:#fff;color:var(--mkc);box-shadow:0 2px 0 color-mix(in srgb,var(--mkc) 45%,#000),0 3px 8px rgba(0,0,0,.12)}
+.mk-tool:hover{background:color-mix(in srgb,var(--mkc) 12%,#fff)}
+.mk-tool[aria-pressed="true"]{background:var(--mkc);color:#fff;box-shadow:0 1px 0 color-mix(in srgb,var(--mkc) 45%,#000);transform:translateY(1px)}
+.mk-sure{background:#E11D48!important;color:#fff!important}
+body.mk-fading .mk-layer{opacity:0;transition:opacity .35s}
 .mk-t-note{--mkc:#8A5A2B}
 .mk-t-move{--mkc:#2563EB}
 .mk-t-del{--mkc:#E11D48}
