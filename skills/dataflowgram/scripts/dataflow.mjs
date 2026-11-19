@@ -331,6 +331,11 @@ export function compile(spec) {
   const ids = new Set();
   // Steps that move data but name nothing: the reader sees a line light up with no idea what moved.
   const warnings = [];
+  // A person belongs at the top: the reader starts where the person starts (19 November 2026).
+  const people = Object.keys(parts).filter((id) => parts[id].kind === 'person');
+  if (people.length && !rows[0].some((id) => parts[id] && parts[id].kind === 'person')) {
+    warnings.push(`no person is in the top row: move ${people.map((id) => `"${id}"`).join(' or ')} to row 1, so the reader starts where the person starts`);
+  }
   const scns = scenarios.map((s, si) => {
     if (!s.id || !ID.test(s.id)) fail(`scenario ${si + 1} needs an "id" of lower-case letters, digits and hyphens`);
     if (ids.has(s.id)) fail(`scenario id "${s.id}" is used twice`);
@@ -859,7 +864,7 @@ if (isMain) {
       const out = compile(JSON.parse(fs.readFileSync(a, 'utf8')));
       const steps = out.scenarios.reduce((t, s) => t + s.steps.length, 0);
       console.log(`ok: ${Object.keys(out.nodes).length} parts, ${out.edges.length} lines, ${out.scenarios.length} scenarios, ${steps} steps`);
-      if (out.warnings.length) console.log(`warning: ${out.warnings.length} step${out.warnings.length === 1 ? '' : 's'} with no tag\n  ` + out.warnings.join('\n  '));
+      if (out.warnings.length) console.log(`warning: ${out.warnings.length} thing${out.warnings.length === 1 ? '' : 's'} to fix\n  ` + out.warnings.join('\n  '));
     } else if (cmd === 'book' && a && b) {
       const book = JSON.parse(fs.readFileSync(a, 'utf8'));
       const dir = path.dirname(path.resolve(a));

@@ -388,6 +388,20 @@ test('on a phone the page fits the screen: the stacked column can shrink, and th
   assert.match(html, /@media \(max-width:480px\)\{\.df-nav\{grid-template-columns:1fr 1fr\}\}/);
 });
 
+test('the check warns when no person is in the top row', () => {
+  // 19 November 2026: "always have person at top of diagram"
+  const base = (rows) => ({ title: 'T', rows, parts: { p: { label: 'P', kind: 'person' }, a: { label: 'A', kind: 'program' } }, lines: [['p', 'a']],
+    scenarios: [{ id: 's', label: 'S', steps: [{ action: 'send', flow: ['p>a'], text: 'P asks', carry: { icon: 'mail', label: 'a question' } }] }] });
+  const low = compile(base([['a'], ['p']]));
+  assert.equal(low.warnings.length, 1);
+  assert.match(low.warnings[0], /no person is in the top row: move "p" to row 1/);
+  assert.deepEqual(compile(base([['p'], ['a']])).warnings, [], 'a person on top is fine');
+  // a diagram with no person at all is fine too
+  const nobody = compile({ title: 'T', rows: [['a']], parts: { a: { label: 'A', kind: 'program' } }, lines: [],
+    scenarios: [{ id: 's', label: 'S', steps: [{ action: 'think', at: ['a'], text: 'A works' }] }] });
+  assert.deepEqual(nobody.warnings, []);
+});
+
 test('the check names every step that moves data but carries no tag', () => {
   // 18 November 2026: a client's 72 moving steps had no tags, and nothing said so
   const spec = { title: 'T', rows: [['a', 'b']], parts: { a: { label: 'A', kind: 'program' }, b: { label: 'B', kind: 'store' } }, lines: [['a', 'b']],

@@ -88,3 +88,7 @@ Tests: 35 of 35 pass (run through Runner).
 - **Icons with a rectangle showed as empty squares** (mail, table-2 and 32 others on one client page). The box and tag
   styles fill every rectangle, and that fill covered the icon lines drawn under it. Fix: an icon's own rectangles are
   outlines only. Measured in a browser: 34 of 34 icon rectangles filled before, 0 after. Tests: 43 of 43.
+- **A person belongs at the top of the diagram.** On a client tab the person sat in the bottom row, under the hub, so
+  the reader started in the middle of the story. New rule in the skill: the person goes in row 1, what they talk to
+  directly goes below, then the program and its storage. The check now warns when no person is in the top row; its
+  test failed when the warning was switched off. Tests: 44 of 44.
