@@ -108,3 +108,9 @@ Tests: 35 of 35 pass (run through Runner).
   7-tab client page gives 7 pages (5 sideways, 2 upright), each example 1 page. First tries spilled 1 to 4 pages: a
   credit pinned to the page edge landed mid-page on upright pages, so each page now carries its own credit line.
   Tests: 47 of 47.
+- **Mark up: a reader draws on a diagram and sends it back.** Built on marker.js 3 (linkware, stored in the skill so pages
+  work offline). Arrows, circles, boxes, typed notes and pen marks; "Save a copy with my notes" downloads the same page
+  with the marks inside; the `notes` command reads each mark and the box it points at. Chosen over a Capsule file because
+  Capsule needs its app installed. Checked by hand in a browser: marks drawn, kept, saved in a copy, read back with
+  browser storage empty. Faults found and fixed on the way: notes started with the word "Text"; the copy kept the page's
+  own button; saved marks did not reappear (they were restored before the editor was ready). Tests: 48 of 48.
