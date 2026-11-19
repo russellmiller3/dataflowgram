@@ -15,9 +15,16 @@
   at once" ("1, 3"; a long list shortens to "1, 4 +2"). The gap between side-by-side boxes grew 30 units
   to fit the badge.
 
+- **The step buttons did not match, and Motion sat among them.** Fix: one row of 4 buttons of one size and
+  shape, each an icon plus a word (Start over, Back, Play, Next step); Next step is the only filled one.
+  Start over goes back to step 1 (the Home key does the same) and greys out on step 1. Motion became a
+  labelled switch, "Moving tags: off", below the step list.
+- **A later style rule silently beat the new padding**, so "Start over" wrapped onto 2 lines and the row ran
+  5 pixels past the panel. Fix: one padding rule, words kept on one line. Checked on a screenshot.
+
 no trigger: design requests from Russell, not a repeated mistake; no single tool action shows them starting.
 
-Tests: 38 of 38 pass.
+Tests: 39 of 39 pass.
 
 ## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
 

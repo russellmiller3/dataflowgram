@@ -168,6 +168,7 @@ export function mount(root, data, prefix) {
   if (link) { cur = link.scenario; i = link.index; }
   const list = q('.df-steps');
   const back = q('.df-back');
+  const restart = q('.df-restart');
   const next = q('.df-next');
   const play = q('.df-play');
   const info = q('.df-info');
@@ -608,6 +609,7 @@ export function mount(root, data, prefix) {
     q('.df-text').textContent = v.text;
     showItem(v, tone);
     back.disabled = v.first;
+    if (restart) restart.disabled = v.first;
     next.disabled = v.last;
     qa('.df-steps button').forEach((b, k) => {
       if (k === v.index) { b.setAttribute('aria-current', 'step'); b.style.setProperty('--a', tone); }
@@ -681,8 +683,9 @@ export function mount(root, data, prefix) {
   qa('.df-view button').forEach((b) => b.addEventListener('click', () => setView(b.getAttribute('data-view'))));
   const motionBtn = q('.df-motion');
   const showMotion = () => {
-    motionBtn.setAttribute('aria-pressed', motionOn ? 'true' : 'false');
-    motionBtn.textContent = motionOn ? 'Motion: on' : 'Motion: off';
+    motionBtn.setAttribute('aria-checked', motionOn ? 'true' : 'false');
+    const state = motionBtn.querySelector('.df-motion-state');
+    if (state) state.textContent = motionOn ? 'on' : 'off';
     motionBtn.hidden = asksForLess; // nothing to switch when the computer asks for no movement
   };
   motionBtn.addEventListener('click', () => {
@@ -694,11 +697,13 @@ export function mount(root, data, prefix) {
   showMotion();
   if (new RegExp('[#&]' + prefix + '=all\\b').test(window.location.hash || '')) setView('all');
   back.addEventListener('click', () => { stop(); if (i > 0) { i -= 1; draw(); } });
+  if (restart) restart.addEventListener('click', () => { stop(); i = 0; draw(); });
   next.addEventListener('click', () => { stop(); i += 1; draw(); });
   play.addEventListener('click', () => { if (timer) stop(); else start(); });
   root.addEventListener('keydown', (e) => {
     if (e.key === 'ArrowRight') { stop(); i += 1; draw(); }
     if (e.key === 'ArrowLeft' && i > 0) { stop(); i -= 1; draw(); }
+    if (e.key === 'Home') { stop(); i = 0; draw(); }
   });
   qa('.df-node').forEach((g) => {
     function pick() {
