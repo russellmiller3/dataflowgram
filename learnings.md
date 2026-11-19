@@ -80,3 +80,6 @@ Tests: 35 of 35 pass (run through Runner).
   through has the same number of emoji to its left; no emoji inside boxes; the gap between side-by-side boxes widens
   until each arrow label fits on its arrow. New checker names every line that would bend; its test failed when the
   checker was broken on purpose. The khan skill now ships in the package, with no personal names. Tests: 41 of 41.
+- **The step buttons moved down whenever a step had more text,** so the reader had to click a different spot each
+  time. Fix: the buttons sit above the step card, in the same place on every step. Checked on a 1-line and a
+  4-line step. Tests: 42 of 42.

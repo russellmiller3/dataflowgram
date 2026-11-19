@@ -564,7 +564,7 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-act{display:inline-flex;align-items:center;gap:5px;color:#fff;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border-radius:3px;padding:3px 8px 3px 6px}
 .df-act svg{width:15px;height:15px}
 .df-text{margin:6px 0 0;font-size:1.05rem}
-.df-nav{display:grid;grid-template-columns:auto auto auto 1fr;gap:8px;margin-top:12px}
+.df-nav{display:grid;grid-template-columns:auto auto auto 1fr;gap:8px;margin:0 0 12px}
 .df-nav button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;font-weight:600;white-space:nowrap}
 @media (max-width:480px){.df-nav{grid-template-columns:1fr 1fr}}
 .df-nav button svg{width:17px;height:17px;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
@@ -741,8 +741,8 @@ export function renderFragment(spec, prefix = 'df') {
     <div>
       <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
-      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <div class="df-nav"><button type="button" class="df-restart" title="Back to step 1 (Home key)">${iconSvg('rotate-ccw')}<span>Start over</span></button><button type="button" class="df-back" title="Previous step (left arrow key)">${iconSvg('chevron-left')}<span>Back</span></button><button type="button" class="df-play" aria-pressed="false" title="Run the steps by themselves"></button><button type="button" class="df-next" title="Next step (right arrow key)"><span>Next step</span>${iconSvg('chevron-right')}</button></div>
+      <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
       <button type="button" class="df-motion" role="switch" aria-checked="false" title="Make the tags travel along their lines"><span class="df-switch" aria-hidden="true"></span><span>Moving tags: <b class="df-motion-state">off</b></span></button>
