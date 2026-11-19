@@ -61,3 +61,7 @@ Tests: 35 of 35 pass (run through Runner).
 
 - **Russell: "phone view not needed."** These pages are read on a laptop or desktop. Do not test, screenshot or fix
   phone widths. The phone fix already shipped stays, because it costs nothing.
+
+- **People who cannot describe their process got no help.** The skill now has Claude guess first: read what exists, show
+  a rough sketch in the chat with `?` on each guess, ask at most 3 questions with choices, then build. People correct a
+  picture faster than they describe one from memory. The test count in the skill file was also out of date (21, now 40).
