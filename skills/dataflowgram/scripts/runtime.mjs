@@ -98,9 +98,17 @@ export function arrowLabel(label, dir, dx, dy) {
   return label + (sign >= 0 ? ' \u2193' : ' \u2191');
 }
 
+// The name a reader uses for a step. With 2 or more processes in one diagram, each process gets a letter in the
+// order they are listed: A1, A2 ... then B1, B2. With 1 process the steps stay 1, 2, 3.
+export function stepName(scenarios, id, n) {
+  if (!Array.isArray(scenarios) || scenarios.length < 2) return String(n);
+  const k = scenarios.findIndex((s) => s && s.id === id);
+  return (k >= 0 ? String.fromCharCode(65 + k) : '') + n;
+}
+
 // The words on a tag's number badge: the step, or the steps, that send this item.
-export function stepBadge(steps) {
-  const list = (steps || []).filter((n) => Number.isFinite(n));
+export function stepBadge(steps, name = String) {
+  const list = (steps || []).filter((n) => Number.isFinite(n)).map((n) => name(n));
   if (list.length === 0) return '';
   if (list.length <= 2) return list.join(', ');
   return list.slice(0, 2).join(', ') + ' +' + (list.length - 2);
@@ -419,7 +427,7 @@ export function mount(root, data, prefix) {
         const named = lane.sends.filter((s) => s.label);
         named.forEach((s, j) => {
           // the tag itself says which way it goes, because a wide tag can cover its line's arrowhead
-          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''), stepBadge(s.steps));
+          const pk = makePacket(p, 'f', { label: arrowLabel(s.label, lane.dir, end.x - start.x, end.y - start.y), icon: s.icon }, toneOfNode(s.from, ''), stepBadge(s.steps, (n) => stepName(data.scenarios, cur, n)));
           // candidate places: on its own lane first, then a little off it
           const spots = [];
           const stack = (j - (named.length - 1) / 2) * 30; // tags that share a lane start stacked around its middle
@@ -485,7 +493,7 @@ export function mount(root, data, prefix) {
         } else {
           what.appendChild(el('span', '', shortText(s.text)));
         }
-        what.appendChild(el('span', 'df-all-step', (s.steps.length > 1 ? 'steps ' : 'step ') + s.steps.join(', ')));
+        what.appendChild(el('span', 'df-all-step', (s.steps.length > 1 ? 'steps ' : 'step ') + s.steps.map((n) => stepName(data.scenarios, cur, n)).join(', ')));
         row.appendChild(who);
         row.appendChild(what);
         rows.push({ row, first: Math.min(...s.steps) });
@@ -576,7 +584,7 @@ export function mount(root, data, prefix) {
       g.classList.toggle('seen', !on && seen);
       g.classList.toggle('dim', !on && !seen);
     });
-    q('.df-count').textContent = 'Step ' + (v.index + 1) + ' of ' + v.count;
+    q('.df-count').textContent = 'Step ' + stepName(data.scenarios, cur, v.index + 1) + ' of ' + v.count;
     const dotsBox = q('.df-dots');
     if (dotsBox) {
       dotsBox.innerHTML = '';
@@ -661,7 +669,7 @@ export function mount(root, data, prefix) {
       chip.innerHTML = act.icon;
       chip.setAttribute('title', act.label);
       num.className = 'df-num';
-      num.textContent = String(k + 1);
+      num.textContent = stepName(data.scenarios, cur, k + 1);
       txt.textContent = shortText(st.text);
       b.type = 'button';
       b.appendChild(chip);
