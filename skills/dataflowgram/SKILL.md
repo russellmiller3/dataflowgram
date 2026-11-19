@@ -13,7 +13,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 - a side panel shows a sample of the real item: the email, the row, the request;
 - a red note appears when data leaves the owner's system, such as to a payment provider or an AI model;
 - earlier steps stay faintly coloured, so the last step shows the whole path;
-- the "Everything at once" switch shows a still picture: every line lit, every item named on it with an arrow for its direction, and a list of who sends what to whom. A line used both ways is drawn as 2 lanes.
+- the "Everything at once" switch shows a still picture: every line lit, every item named on it with an arrow for its direction, and a list of who sends what to whom, in step order. A line used both ways is drawn as 2 lanes.
 
 **Colour means "which part".** Each part gets its own colour, and data takes the colour of the part that sends it. No 2 parts joined by a line share a colour, and neither do 2 parts that send to the same part. A part keeps the colour of its kind when that colour is free. The builder does this; do not set colours by hand.
 
@@ -33,7 +33,7 @@ description: Build an interactive, step-by-step data-flow diagram as one HTML pa
 6. Link to the still picture of everything: add `#<block-id>=all`.
 7. Several diagrams in one page, one tab each: write a book file `{ "title": "...", "intro": "...", "diagrams": ["a.json", "b.json"] }` (file names next to the book, or the descriptions themselves), then run `node <skill>/scripts/dataflow.mjs book book.json out.html`. Link to a tab with `#tab=<number>`. Inside a book, diagram number k has the block id `d<k>`. A book can also hold plain page tabs, so the page can stand in for a slide deck (a plan and timeline, screen sketches): `{ "title": "Plan", "intro": "...", "htmlFile": "plan.html", "print": "wide", "printScale": 0.8 }`. The file is inserted as written; style it with the page's colour variables (`--pg-ink`, `--pg-ink2`, `--pg-bg`, `--pg-line`) so it works in dark mode. `printScale` (0.4 to 1) shrinks a long tab to fit one sheet; check the page count after printing to PDF.
 8. Print or save as PDF: the page's Print button (or the browser's own Print) gives one page per diagram. A drawing wider than tall prints sideways; the rest print upright. Each page shows everything at once, the steps of every scenario, the source and the credit. To make the PDF yourself: `"<Chrome>" --headless=new --no-pdf-header-footer --print-to-pdf=out.pdf file:///path/out.html`.
-9. Get feedback on a diagram: send the page file. The reader presses Mark up on a diagram, draws arrows, circles, boxes or pen marks and types notes, presses Done, then "Save a copy with my notes" and emails that file back. Nothing to install; the marks travel inside the file. Read them with `node <skill>/scripts/dataflow.mjs notes <file they sent.html> <spec.json or book.json>`: each mark, its typed text, and the box it points at. Fix the description, rebuild, and send the new page.
+9. Get feedback on a diagram: send the page file. The reader presses Mark up at the top of the page and uses 3 marks straight on any tab: Note (click the thing, then type; drag the note away and an arrow runs back to the spot), Move this (box it, then click where it goes) and Delete this (box it). A click selects a mark to drag it; its corner × (or the Delete key) removes it; Clear all removes every mark, and Undo brings them back. They press Done, then "Save a copy with my notes" and emails that file back. The header buttons run in the order a reader uses them: Mark up, then "Save a copy with my notes" right beside it (caramel, the mark-up colour family; it appears once there is a mark), then Print, then Light / dark at the far right. Nothing to install; the marks travel inside the file. Read them with `node <skill>/scripts/dataflow.mjs notes <file they sent.html> <spec.json or book.json>`: each mark, its typed text, and the box it points at. Fix the description, rebuild, and send the new page.
 
 ## The description file
 
@@ -143,6 +143,20 @@ When the user points at code ("draw the data flow of the checkout folder"), read
 - **Give the steps that matter an `item`.** A real-looking sample is what makes the diagram click.
 - **Name what leaves.** If data goes to another company, make that part `outside` so the reader sees the warning.
 - **Text is readable:** labels render at about 15 pixels on a computer screen. On a phone the drawing shrinks to fit.
+
+## When a book stands in for a slide deck
+
+A client book is often shown on a call instead of slides. These rules come from that use:
+
+- **Tabs follow the client's own needs.** Each tab answers a need the client stated (on a call or in their documents). A data detail is a walkthrough inside a tab, not a tab of its own.
+- **Tabs follow the build order, and the names say so.** Start each tab name with its step number ("2 · One shared place for notes"). The plan tab comes first; what is built last (often the app) comes last.
+- **Never gloss over loading the data.** Give step 1 its own tab: take stock, tidy, match, reconcile against the system of record, client review, load and recount. Show the bad data expected, with the fix for each, and a sample reconciliation report whose counts add up.
+- **Plan tab:** a timeline, a card per step, a table of "your need, where you said it, which step", what we need from the client, and how the data stays safe.
+- **Every box is a short phrase**, 3 to 6 words. A table cell, a card line or a step box must be read in a glance on a call. Cut words; do not add bullets to a crowded box.
+- **When there are 2 ways to do a thing, show both as equals** side by side, each with a real example (what to type, where to send it). Do not call one "the main way".
+- **Sketches of an app are labelled sample data**, and the intro of each page tab is 1 short sentence.
+- **The client's own people appear by name only if the client named them**; otherwise by role ("the analyst"). An invented teammate reads as a stranger on a call.
+- **After any change, give the reader the link to the page** and print it again: one page per tab.
 
 ## Tests
 

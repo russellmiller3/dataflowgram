@@ -11,7 +11,6 @@ import { fileURLToPath } from 'node:url';
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ICONS = JSON.parse(fs.readFileSync(path.join(HERE, '..', 'assets', 'lucide-icons.json'), 'utf8')).icons;
 // Mark-up tools, stored in the skill so a page works offline and sends nothing anywhere.
-const MARKERJS = fs.readFileSync(path.join(HERE, '..', 'assets', 'markerjs3.umd.js'), 'utf8');
 const MARKUP = fs.readFileSync(path.join(HERE, 'markup.js'), 'utf8');
 
 // A kind is what a part is. Each kind has one colour and one default icon.
@@ -609,6 +608,15 @@ ${Object.entries(KINDS).map(([k, v]) => `.df-k-${k}{--c:${v.color};--t:${v.tint}
 .df-seg{display:flex;flex-wrap:wrap;border:1px solid var(--df-line);border-radius:3px;overflow:hidden;background:var(--df-card);width:max-content;max-width:100%;margin-bottom:12px}
 .df-seg button{font:inherit;font-size:.95rem;border:0;border-right:1px solid var(--df-line);background:transparent;padding:8px 12px;cursor:pointer;color:var(--df-ink)}
 .df-seg button:last-child{border-right:0}
+.df-scen{display:flex;flex-wrap:wrap;align-items:flex-end;gap:2px 18px;margin:0 0 14px;border-bottom:1px solid var(--df-line)}
+.df-scen-l{width:100%;font-size:.8125rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--df-ink2)}
+.df-scen button{font:inherit;font-size:1rem;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-1px;padding:6px 0 7px;cursor:pointer;color:var(--df-ink2)}
+.df-scen button:hover{color:var(--df-ink)}
+.df-scen button[aria-pressed="true"]{color:var(--df-ink);font-weight:650;border-bottom-color:var(--df-ink)}
+.df-viewrow{display:flex;align-items:center;gap:10px;margin-top:10px}
+.df-viewrow-l{font-size:.95rem;color:var(--df-ink2)}
+.df-viewrow .df-seg{margin:0}
+.df-viewrow .df-seg button{font-size:.875rem;padding:5px 10px}
 .df-seg button[aria-pressed="true"]{background:var(--df-ink);color:#fff}
 .df-cap{background:var(--df-card);border:1px solid var(--df-line);border-left:5px solid var(--df-ink);border-radius:4px;padding:12px 14px;min-height:112px}
 .df-caphead{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -765,7 +773,8 @@ export function renderFragment(spec, prefix = 'df') {
     })
     .join('');
   const seg = c.scenarios.length > 1
-    ? `<div class="df-seg" role="group" aria-label="Scenario">${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
+    // walkthrough choices look like tabs under a label, not like the play controls below them
+    ? `<div class="df-scen" role="group" aria-label="Walkthrough"><span class="df-scen-l">Walkthrough</span>${c.scenarios.map((s, k) => `<button type="button" data-s="${s.id}" aria-pressed="${k === 0}">${esc(s.label)}</button>`).join('')}</div>`
     : '';
   const partKeys = usedKinds.map((k) => `<span class="df-key df-kind">${iconSvg(KINDS[k].icon)}<span>${esc(KINDS[k].label)}</span></span>`).join('');
   const stepKeys = usedActions.map((a) => `<span class="df-key act" style="--a:${ACTIONS[a].color}">${iconSvg(ACTIONS[a].icon)}${esc(ACTIONS[a].label)}</span>`).join('');
@@ -776,8 +785,13 @@ export function renderFragment(spec, prefix = 'df') {
   const shape = printShape(c);
   // Fit one page: the more steps to list, the shorter the drawing (in inches; a line of the list is about 0.16 inch).
   const cols = shape === 'wide' ? 3 : 2;
-  const lines = Math.ceil(c.scenarios.reduce((t, s) => t + s.steps.length + 2, 0) / cols) + 2;
-  const printH = Math.max(2.6, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
+  // a long step wraps: count the lines each step really takes in its column (about 55 characters a line),
+  // and the lines the source footnote takes across the page (about 170 characters a line)
+  const perLine = 55;
+  const stepLines = c.scenarios.reduce((t, s) => t + 2 + s.steps.reduce((u, st) => u + Math.max(1, Math.ceil(String(st.text || '').length / perLine)), 0), 0);
+  const sourceLines = c.source ? Math.ceil(String(c.source).length / 170) : 0;
+  const lines = Math.ceil(stepLines / cols) + 2 + sourceLines;
+  const printH = Math.max(2.2, (shape === 'wide' ? 4.5 : 7) - Math.max(0, lines - 8) * 0.17).toFixed(2);
   const firstSentence = (t) => (String(t).match(/^.*?[.?!](?=\s|$)/) || [String(t)])[0];
   const printSteps = `<div class="df-printsteps">${c.scenarios.map((s) => `<div><h4>${esc(s.label)}</h4><ol>${s.steps.map((st) => `<li>${esc(firstSentence(st.text))}</li>`).join('')}</ol></div>`).join('')}</div>`;
   return `<style>${CSS}${PRINT_CSS}</style>
@@ -804,13 +818,13 @@ export function renderFragment(spec, prefix = 'df') {
       </details>
     </div>
     <div>
-      <div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div>
       ${seg}
       <div class="df-nav"><button type="button" class="df-restart" title="Back to step 1 (Home key)">${iconSvg('rotate-ccw')}<span>Start over</span></button><button type="button" class="df-back" title="Previous step (left arrow key)">${iconSvg('chevron-left')}<span>Back</span></button><button type="button" class="df-play" aria-pressed="false" title="Run the steps by themselves"></button><button type="button" class="df-next" title="Next step (right arrow key)"><span>Next step</span>${iconSvg('chevron-right')}</button></div>
       <div class="df-cap" aria-live="polite"><div class="df-caphead"><span class="df-count"></span><span class="df-dots" aria-hidden="true"></span><span class="df-act"></span><span class="df-time" hidden></span></div><p class="df-text"></p><p class="df-carry" hidden></p><p class="df-leaves" hidden></p><p class="df-ifnot" hidden></p></div>
       <section class="df-item" aria-live="polite"><h4 class="df-item-h">What moves in this step</h4><div class="df-item-card"></div></section>
       <details class="df-stepfold"><summary class="df-stepfold-s">All steps</summary><ol class="df-steps"></ol></details>
       <button type="button" class="df-motion" role="switch" aria-checked="false" title="Make the tags travel along their lines"><span class="df-switch" aria-hidden="true"></span><span>Moving tags: <b class="df-motion-state">off</b></span></button>
+      <div class="df-viewrow"><span class="df-viewrow-l">View</span><div class="df-seg df-view" role="group" aria-label="View"><button type="button" data-view="steps" aria-pressed="true">Step by step</button><button type="button" data-view="all" aria-pressed="false">Everything at once</button></div></div>
       <section class="df-all" hidden><h4 class="df-item-h">Everything sent, line by line</h4><div class="df-all-list"></div></section>
     </div>
   </div>
@@ -844,9 +858,9 @@ function pageShell({ title, intro, theme, body, extraCss = '', extraScript = '' 
 </script>
 <style>
 *{box-sizing:border-box}
-:root{--pg-wash:linear-gradient(135deg,#e4e2fb 0%,#eceff8 42%,#dff2ee 100%);--pg-bg:#eef0f7;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(99,102,241,.20);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
-@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
-:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0b0c16;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(124,92,255,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
+:root{--pg-wash:linear-gradient(135deg,#dbe7f8 0%,#eaf0f8 42%,#ddf0f1 100%);--pg-bg:#edf2f8;--pg-ink:#121726;--pg-ink2:#545d72;--pg-dot:rgba(18,24,48,.085);--pg-glow1:rgba(37,99,235,.17);--pg-glow2:rgba(20,184,166,.14);--pg-line:rgba(18,24,48,.12);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-df-theme="light"]){--pg-wash:none;--pg-bg:#0a0f1a;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(37,99,235,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}}
+:root[data-df-theme="dark"]{--pg-wash:none;--pg-bg:#0a0f1a;--pg-ink:#e9ebf3;--pg-ink2:#9ca3b8;--pg-dot:rgba(255,255,255,.065);--pg-glow1:rgba(37,99,235,.24);--pg-glow2:rgba(20,184,166,.10);--pg-line:rgba(255,255,255,.16);color-scheme:dark}
 body{margin:0;min-height:100vh;color:var(--pg-ink);font-family:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.5;
   background-color:var(--pg-bg);
   background-image:radial-gradient(70% 45% at 50% -8%,var(--pg-glow1),transparent 70%),radial-gradient(45% 35% at 95% 30%,var(--pg-glow2),transparent 70%),radial-gradient(var(--pg-dot) 1px,transparent 1.4px),var(--pg-wash);
@@ -861,33 +875,81 @@ h1{font-family:"Inter",ui-sans-serif,system-ui,sans-serif;font-weight:650;font-s
   background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
 .pg-mode svg{width:16px;height:16px}
 .pg-btns{display:flex;gap:8px}
-.pg-sendnotes{border-color:#E11D48!important;color:#BE123C!important}
+/* Save a copy sits beside Mark up in the same warm family: caramel, not the yellow of Mark up and never red */
+.pg-sendnotes{background:#F4DDB8!important;border-color:#C8945A!important;color:#6B4214!important;font-weight:600}
+.pg-sendnotes:hover{background:#EDCF9E!important}
 .pg-sendnotes[hidden]{display:none!important}
 .df-scroll{position:relative}
-.df-mk-open{position:absolute;top:10px;right:10px;display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:.85rem;font-weight:600;padding:6px 11px;border-radius:999px;cursor:pointer;color:var(--df-ink);background:var(--df-card);border:1px solid var(--df-line);box-shadow:0 2px 6px rgba(0,0,0,.08)}
-.df-mk-open svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.df-mk-shade{position:fixed;inset:0;z-index:1000;background:rgba(10,12,22,.55);display:flex;align-items:center;justify-content:center;padding:20px}
-.df-mk-box{background:#fff;color:#111827;border-radius:10px;padding:14px;width:min(1400px,100%);max-height:100%;display:flex;flex-direction:column;gap:8px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.df-mk-bar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.df-mk-bar button{font:inherit;font-size:.9rem;font-weight:600;padding:7px 12px;border-radius:6px;border:1px solid #CBD5E1;background:#F8FAFC;color:#111827;cursor:pointer}
-.df-mk-bar .df-mk-main{background:#111827;color:#fff;border-color:#111827}
-.df-mk-gap{flex:1}
-.df-mk-help{margin:0;font-size:.85rem;color:#475569}
-.df-mk-area{flex:1;min-height:0;overflow:auto}
-.df-mk-area mjs-marker-area{display:block;width:100%;height:min(72vh,900px)}
-@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.df-mk-open{display:none}}
+/* mark up: a clear layer over each tab; marks are drawn on the page itself */
+main,.pg-panel{position:relative}
+.mk-layer{position:absolute;inset:0;z-index:20;pointer-events:none}
+body.mk-on .mk-layer{pointer-events:auto;cursor:crosshair}
+.mk-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.mk-svg *{pointer-events:none}
+body.mk-on .mk-svg [data-i]{pointer-events:visiblePainted;cursor:move}
+body.mk-on .mk-svg rect[data-i]{pointer-events:all}
+.mk-note-line{stroke:#6B4423;stroke-width:3;stroke-linecap:round}
+.mk-note-dot{fill:#6B4423;stroke:#FDF6A3;stroke-width:1.5}
+.mk-ah{fill:#6B4423}
+.mk-move{fill:rgba(37,99,235,.06);stroke:#2563EB;stroke-width:3;stroke-dasharray:8 5}
+.mk-move-line{stroke:#2563EB;stroke-width:3.5;stroke-linecap:round}
+.mk-mh{fill:#2563EB}
+.mk-move-t{fill:#1D4ED8;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.mk-del{fill:rgba(225,29,72,.08);stroke:#E11D48;stroke-width:3}
+.mk-del-x{stroke:#E11D48;stroke-width:3;stroke-linecap:round}
+.mk-del-t{fill:#BE123C;font:700 14px "Inter",ui-sans-serif,system-ui,sans-serif;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.mk-move.mk-sel,.mk-del.mk-sel{stroke-width:5;filter:drop-shadow(0 0 4px rgba(0,0,0,.25))}
+.mk-handle{fill:#fff;stroke:#6B4423;stroke-width:3;cursor:grab!important}
+.mk-handle-move{stroke:#2563EB}
+.mk-x{position:absolute;width:22px;height:22px;border-radius:50%;border:0;background:#4A3510;color:#F8E3A3;font:700 15px/22px "Inter",ui-sans-serif,system-ui,sans-serif;text-align:center;padding:0;cursor:pointer;pointer-events:auto;box-shadow:0 1px 4px rgba(0,0,0,.3);z-index:2}
+.mk-x:hover{background:#BE123C;color:#fff}
+.mk-note{position:absolute;min-width:140px;max-width:280px;padding:7px 10px;background:#FDF6A3;border:1px solid #C9B847;border-radius:4px;color:#4A2E14;font:500 15px/1.4 "Inter",ui-sans-serif,system-ui,sans-serif;box-shadow:0 3px 10px rgba(0,0,0,.18);white-space:pre-wrap;outline:none;pointer-events:none}
+body.mk-on .mk-note{pointer-events:auto}
+body.mk-on .mk-note{cursor:move}
+.mk-note:focus{cursor:text;box-shadow:0 0 0 3px rgba(107,68,35,.25),0 3px 10px rgba(0,0,0,.18)}
+.mk-note.mk-sel{border-color:#6B4423}
+.mk-note:empty::before{content:"Type a note";color:#9CA3AF}
+/* marking up: a soft butter-yellow strip across the top; the page moves down so the strip covers nothing */
+.mk-bar{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;flex-wrap:wrap;justify-content:space-between;gap:8px 12px;align-items:center;background:#F8E3A3;color:#4A3510;padding:8px 16px;border-bottom:1px solid #D9B556;box-shadow:0 2px 10px rgba(74,53,16,.14);font-family:"Inter",ui-sans-serif,system-ui,sans-serif}
+body.mk-on .mk-bar{display:flex}
+.mk-bar button{font:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer;transition:background .12s,color .12s,transform .08s}
+.mk-bar svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+/* the marks: 3 separate raised buttons, each in its mark's own colour; the chosen one fills with that colour */
+.mk-tools{display:flex;gap:8px}
+.mk-tool{font-size:.95rem;font-weight:650;padding:7px 14px;border-radius:8px;border:2px solid var(--mkc);background:#fff;color:var(--mkc);box-shadow:0 2px 0 color-mix(in srgb,var(--mkc) 45%,#000),0 3px 8px rgba(0,0,0,.12)}
+.mk-tool:hover{background:color-mix(in srgb,var(--mkc) 12%,#fff)}
+.mk-tool[aria-pressed="true"]{background:var(--mkc);color:#fff;box-shadow:0 1px 0 color-mix(in srgb,var(--mkc) 45%,#000);transform:translateY(1px)}
+.mk-sure{background:#E11D48!important;color:#fff!important}
+body.mk-fading .mk-layer{opacity:0;transition:opacity .35s}
+.mk-t-note{--mkc:#8A5A2B}
+.mk-t-move{--mkc:#2563EB}
+.mk-t-del{--mkc:#E11D48}
+/* the page actions: quieter, apart on the right; only Done is filled */
+.mk-utils{display:flex;gap:4px;align-items:center}
+.mk-util{font-size:.875rem;font-weight:600;color:#4A3510;background:transparent;border:0;border-radius:6px;padding:6px 9px}
+.mk-util:hover{background:rgba(255,255,255,.6)}
+.mk-done{font-size:.875rem;font-weight:700;background:#4A3510;color:#fff;border:0;border-radius:7px;padding:7px 14px;margin-left:4px}
+.mk-hint{flex:1;text-align:center;min-width:180px;font-size:.875rem;color:#6B4E16;padding:3px 8px;border-radius:4px;transition:background .3s}
+.mk-hint.mk-flash{background:#fff;font-weight:700}
+/* Mark up stands out a little when off (pale yellow), and matches the strip when on */
+.pg-markup{background:#FFF7DC!important;border-color:#E6CB78!important;color:#5B4513!important}
+.pg-markup[aria-pressed="true"]{background:#F8E3A3!important;color:#4A3510!important;border-color:#D9B556!important}
+/* every button visibly presses in when clicked */
+button{transition:transform .08s,filter .08s}
+button:active{transform:translateY(1px) scale(.97);filter:brightness(.9)}
+@media print{body{background:#fff!important;min-height:0}main{padding:0;max-width:none}.pg-top{display:none}h1{font-size:18pt;margin:0}.lede{font-size:10pt;margin:4px 0 8px}.mk-bar,.mk-layer{display:none!important}}
 ${extraCss}</style>
 </head>
 <body>
 <main>
 <div class="pg-top"><p class="pg-kicker">Interactive data flow</p>
-<div class="pg-btns"><button type="button" class="pg-mode" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button></div></div>
+<div class="pg-btns"><button type="button" class="pg-mode pg-markup" aria-pressed="false" title="Draw arrows, circles, boxes and notes on this page">${iconSvg('pencil')}<span>Mark up</span></button><button type="button" class="pg-mode pg-sendnotes" hidden title="Save this page as a file with your marks inside, to email back">${iconSvg('download')}<span>Save a copy with my notes</span></button><button type="button" class="pg-mode pg-print" title="One page per diagram">${iconSvg('printer')}<span>Print</span></button><button type="button" class="pg-mode pg-theme" aria-label="Switch light or dark">${iconSvg('sun-moon')}<span>Light / dark</span></button></div></div>
 <h1>${esc(title || 'Data flow')}</h1>
 ${intro ? `<p class="lede">${esc(intro)}</p>` : ''}
 ${body}
 </main>
 <script>
-(function(){var b=document.querySelector('.pg-mode');if(!b)return;b.addEventListener('click',function(){
+(function(){var b=document.querySelector('.pg-theme');if(!b)return;b.addEventListener('click',function(){
 var r=document.documentElement;var cur=r.getAttribute('data-df-theme')||(window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 var next=cur==='dark'?'light':'dark';r.setAttribute('data-df-theme',next);try{localStorage.setItem('df-theme',next);}catch(e){}});})();
 (function(){var p=document.querySelector('.pg-print');if(p)p.addEventListener('click',function(){window.print();});
@@ -896,8 +958,6 @@ window.addEventListener('beforeprint',function(){was=r.getAttribute('data-df-the
 window.addEventListener('afterprint',function(){if(was)r.setAttribute('data-df-theme',was);else r.removeAttribute('data-df-theme');});})();
 ${extraScript}</script>
 <script type="application/json" id="df-marks">{}</script>
-<script>/* marker.js 3, (c) Alan Mendelevich, linkware licence: https://markerjs.com */
-${MARKERJS}</script>
 <script>
 ${MARKUP}</script>
 </body>
@@ -934,8 +994,12 @@ export function renderBook(book) {
     return `<section class="pg-panel pg-${shape}${k === 0 ? '' : ' pg-off'}" data-panel="${k + 1}" aria-label="${esc(titleOf(s, k))}">${printTitle}${lede}${content}</section>`;
   }).join('\n');
   const extraCss = '.pg-tabs{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 22px}\n'
-    + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-bg) 60%,transparent);border:1px solid var(--pg-line);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}\n'
-    + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink)}\n'
+    // tabs stand apart from the page: a solid tinted fill and a firm edge; under the mouse a cool steel-and-teal sheen moves across them
+    + '.pg-tab{font:inherit;font-size:.95rem;padding:8px 14px;border-radius:999px;cursor:pointer;color:var(--pg-ink);background:color-mix(in srgb,var(--pg-ink) 9%,var(--pg-bg));border:1px solid color-mix(in srgb,var(--pg-ink) 28%,transparent);box-shadow:0 1px 0 color-mix(in srgb,var(--pg-ink) 12%,transparent);transition:border-color .2s}\n'
+    + '.pg-tab:hover,.pg-tab:focus-visible{background-image:linear-gradient(115deg,#c9d3db,#a9bccb,#9fc2bd,#dde3e7,#b4c0cc,#c9d3db);background-size:300% 100%;color:#1f2430;border-color:color-mix(in srgb,var(--pg-ink) 45%,transparent);animation:pg-opal 8s linear infinite}\n'
+    + '@keyframes pg-opal{to{background-position:300% 0}}\n'
+    + '@media (prefers-reduced-motion:reduce){.pg-tab:hover,.pg-tab:focus-visible{animation:none}}\n'
+    + '.pg-tab[aria-pressed="true"]{background:var(--pg-ink);color:var(--pg-bg);border-color:var(--pg-ink);animation:none}\n'
     + '.pg-off{position:absolute;left:-20000px;top:0;width:calc(100vw - 96px);max-width:1624px;visibility:hidden}\n'
     + '.pg-panel-lede{color:var(--pg-ink2);margin:0 0 16px;max-width:760px}\n'
     + '.pg-print-title{display:none}\n'
@@ -962,21 +1026,43 @@ export function readNotes(html, specs) {
   const m = /<script type="application\/json" id="df-marks">([\s\S]*?)<\/script>/.exec(html);
   const marks = m ? JSON.parse(m[1] || '{}') : {};
   const out = [];
+  const isPageTab = (s) => s && (typeof s.html === 'string' || typeof s.htmlFile === 'string');
+  const boxFinder = (c) => (x, y) => {
+    const nodes = Object.values(c.nodes);
+    const inside = nodes.find((n) => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
+    if (inside) return inside.label;
+    const near = nodes.map((n) => [Math.hypot(n.x + n.w / 2 - x, n.y + n.h / 2 - y), n]).sort((p, q) => p[0] - q[0])[0];
+    return near ? `near ${near[1].label}` : '';
+  };
+  // marks drawn on the page itself: each knows its tab, and, when it sits on a diagram, the point in drawing units
+  const KIND = { note: 'Note', move: 'Move', del: 'Delete', arrow: 'Arrow', ellipse: 'Circle', rect: 'Box', pen: 'Pen' };
+  for (const it of Array.isArray(marks.items) ? marks.items : []) {
+    const byBlock = /^d(\d+)$/.exec(it.on || '');
+    const byTab = /^p(\d+)$/.exec(it.anchor || '');
+    const k = byBlock ? Number(byBlock[1]) - 1 : byTab ? Number(byTab[1]) - 1 : 0;
+    const spec = specs[k];
+    let diagram = spec ? spec.title || '' : '';
+    let at = '';
+    let from = '';
+    if (spec && !isPageTab(spec) && it.on) {
+      const c = compile(spec);
+      diagram = c.title;
+      const boxAt = boxFinder(c);
+      if (Array.isArray(it.at)) at = boxAt(it.at[0], it.at[1]);
+      if (Array.isArray(it.from)) from = boxAt(it.from[0], it.from[1]);
+    }
+    out.push({ diagram, kind: KIND[it.type] || String(it.type || ''), text: String(it.text || '').trim(), at, from });
+  }
+  // older copies: marks drawn with marker.js on a picture of one diagram
   for (const [id, state] of Object.entries(marks)) {
     const k = id === 'df' ? 0 : Number((/^d(\d+)$/.exec(id) || [])[1]) - 1;
     const spec = specs[k];
-    if (!spec || !state || !Array.isArray(state.markers)) continue;
+    if (!spec || isPageTab(spec) || !state || !Array.isArray(state.markers)) continue;
     const c = compile(spec);
     // the marks were drawn on a picture of the drawing; scale back to the drawing's own units
     const sx = c.width / (state.width || c.width);
     const sy = c.height / (state.height || c.height);
-    const boxAt = (x, y) => {
-      const nodes = Object.values(c.nodes);
-      const inside = nodes.find((n) => x >= n.x && x <= n.x + n.w && y >= n.y && y <= n.y + n.h);
-      if (inside) return inside.label;
-      const near = nodes.map((n) => [Math.hypot(n.x + n.w / 2 - x, n.y + n.h / 2 - y), n]).sort((p, q) => p[0] - q[0])[0];
-      return near ? `near ${near[1].label}` : '';
-    };
+    const boxAt = boxFinder(c);
     for (const mk of state.markers) {
       const kind = String(mk.typeName || '').replace(/Marker$/, '');
       let at;
@@ -1025,7 +1111,14 @@ if (isMain) {
         : [src];
       const notes = readNotes(fs.readFileSync(a, 'utf8'), specs);
       if (!notes.length) console.log('no marks in this page');
-      notes.forEach((n, i) => console.log(`${i + 1}. [${n.diagram}] ${n.kind}${n.text ? `: "${n.text}"` : ''}${n.from ? ` from ${n.from}` : ''}${n.at ? ` at ${n.at}` : ''}`));
+      // each mark as the instruction it gives: move what, to where; delete what; a question about what
+      const say = (n) => {
+        if (n.kind === 'Move') return `Move ${n.from || 'the boxed part'} to ${n.at || 'the marked spot'}`;
+        if (n.kind === 'Delete') return `Delete ${n.at || 'the crossed-out part'}`;
+        if (n.kind === 'Note') return `Note${n.at ? ` on ${n.at}` : ''}: "${n.text}"`;
+        return `${n.kind}${n.text ? `: "${n.text}"` : ''}${n.from ? ` from ${n.from}` : ''}${n.at ? ` at ${n.at}` : ''}`;
+      };
+      notes.forEach((n, i) => console.log(`${i + 1}. [${n.diagram}] ${say(n)}`));
     } else if ((cmd === 'build' || cmd === 'fragment') && a && b) {
       const spec = JSON.parse(fs.readFileSync(a, 'utf8'));
       fs.writeFileSync(b, cmd === 'build' ? renderPage(spec) : renderFragment(spec, c || 'df'));

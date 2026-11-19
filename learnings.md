@@ -29,7 +29,7 @@ no trigger: design requests from Russell, not a repeated mistake; no single tool
 
 Tests: 40 of 40 pass.
 
-## 18 November 2026: building it for a real client set (Rellim, 7 diagrams)
+## 18 November 2026: building it for a real client set (7 diagrams)
 
 - **Fixed-width boxes refused real words.** All 7 of the client's diagrams failed the label check, by 1 to
   4 characters. Fix: a box grows to fit its longest label or second line, up to a cap (320, 280 and 220
@@ -119,3 +119,78 @@ Tests: 35 of 35 pass (run through Runner).
   printing a 10-tab client page to PDF: first 13 pages (3 page tabs spilled, and their narrow-screen layout stacked the
   cards on paper); with print layouts and scales set, 10 pages. Tests: 49 of 49; the new test fails when the print scale
   is removed.
+- **Book tabs stand apart from the page and shimmer on hover.** The old tabs were a see-through fill the same colour
+  as the page, so they read as text, not buttons. Now: a solid tinted fill and a firmer edge; under the mouse a moving
+  steel-and-teal sheen (first tried pastel opal colours; the owner found them too soft) (still when the computer asks for less motion). Checked in a browser, light and dark. Not yet published:
+  a change to how public pages look waits for the owner to see it.
+- **Background in blue tones, slower hover sheen.** The page and website wash moved from lavender and indigo to
+  blue and teal, in light and dark; the tab hover sheen now takes 8 seconds a pass instead of 3. Owner asked for both.
+  README pictures and the moving demo retaken in the new colours.
+- **Long step sentences no longer push a diagram onto a second printed page.** The drawing height on paper counted
+  steps, not the lines they wrap to. A client tab with 4 walkthroughs and a long source printed on 2 pages. It now
+  counts wrapped lines (about 55 characters a line) and the source footnote. Checked: client page 10 tabs = 10 pages;
+  each of the 4 examples 1 page. The test fails under the old rule.
+- **Walkthrough choices look like tabs; the view switch moved down.** The walkthrough buttons were styled like the
+  play controls, so choosing what to watch looked the same as running it. They are now underlined tabs under a
+  "Walkthrough" label. "Step by step / Everything at once" moved below the steps, beside "Moving tags", since both only
+  change how the diagram is shown. Checked in a browser: switching walkthrough and view both work. Tests 49 of 49.
+  README pictures retaken with the new controls.
+- **The skill now says how a book stands in for a slide deck:** tabs follow the client's stated needs and the build
+  order, step 1 (loading the data) gets its own tab, every box is a short phrase, two equal ways sit side by side.
+  Taken from the owner's notes on a client page, 19 November 2026.
+- **Mark up now draws straight on the page; marker.js is gone.** The owner found the separate editor window clunky. marker.js
+  can only mark up a picture of a diagram, so it needed that window and could not reach plain page tabs. Our own layer
+  (about 300 lines) sits over every tab: arrow, circle, box, typed note, pen, undo, delete, drag to move. Marks are
+  stored as fractions of the tab, plus the point in drawing units when on a diagram, so the notes command still names
+  the box. A saved copy carries its own name, so it never shows the original's marks from the same browser (found in
+  testing and fixed). Pages are 140 KB smaller. Checked by hand in a browser: drew, typed, moved, deleted, undid, reloaded,
+  opened a sent-back copy, read it back with the notes command. Tests 50 of 50; the new test fails without the reader.
+  Limit: on a text tab a mark can shift slightly if the window width changes, because the text rewraps.
+- **Mark up has 3 marks that say what the reader wants, not 5 drawing tools.** Owner: "wrong primitives". Note (legal-pad
+  yellow, brown text, optional arrow to the thing it asks about; the note moves, the arrow keeps pointing), Move this
+  (blue dashed box plus a "Move here" arrow) and Delete this (red box with an X). The notes command now reads them as
+  instructions: "Move The hub to near Claude", "Delete the founder's phone", "Note on notes@ inbox: ...". Toolbar cut to one
+  row. Checked by hand in a browser: drew all 3, typed, read back from a copy. Tests 50 of 50.
+- **Notes: fixed a crash and added a ready arrow.** Removing the note being typed in set off its own clean-up, which
+  removed the box a second time: "Failed to execute remove on Element" (owner report). Notes now tidy up only when the
+  reader moves on, never while being removed. Each new note comes with a short arrow beside it; dragging the tip keeps
+  it, otherwise it goes when the note is done; an empty note goes too; a click on empty space finishes the open note.
+  Checked by hand in a browser with an error listener: 0 errors.
+- **Mark-up toolbar moved to a highlighter-yellow strip across the top** (owner request); the page moves down 50 pixels
+  while marking up, so the strip covers nothing. The Mark up button turns the same yellow while on. Checked: a note lands
+  where clicked and keeps its place in the tab after Done.
+- **A note can be typed in again after its arrow is moved.** After a click or a drag, the page redrew the note and then
+  put the keyboard in the old, replaced box, so typing went nowhere (owner report). The keyboard now goes to the new
+  box after the redraw, cursor at the end. Checked by hand: typed, stretched the arrow, kept typing, clicked away, clicked
+  back in and added text; 0 errors.
+- **Notes start by pointing, then typing, like Figma or Acrobat comments** (owner asked which is more natural). A click
+  on the thing drops a dot there and opens the note beside it; drag the note away and an arrow runs back to the dot. No
+  arrow that appears and disappears. A note being typed can still be dragged: a short click moves the cursor, a drag
+  moves the box. **Clear all** removes every mark after a confirm; Undo brings them back. The page now moves down by the
+  strip's real height (it wraps to 2 rows on a narrow window). Checked by hand in a browser: 0 errors.
+- **Skill rule: name the client's people only as the client named them, else by role.** A client page used an invented
+  teammate, "Dave", in 8 places; the client asked who Dave was. Replaced with "the analyst".
+- **"Remove mark" button replaced by a × on the selected mark** (owner: Undo and Remove mark looked the same). Undo takes
+  back the last action; the × removes the mark it sits on. Checked by hand: × removed a Delete mark, Undo restored it.
+- **Buttons press in when clicked; picking a tool flashes its instruction; softer yellow** (owner: "click note, nothing
+  happens"; strip too bright). Could not reproduce a fault: Note was already the chosen tool, so clicking it changed
+  nothing visible. Now every button dips when pressed, and the instruction ("Now click the thing, then type") flashes on
+  each tool click. Strip and the on-state Mark up button are soft butter yellow (#F8E3A3); off, Mark up is pale yellow.
+  Also fixed: a note left empty when the page closed came back as a blank box; empty notes are now dropped on load.
+- **The 3 marks look like tools; page actions look like actions** (owner: they looked alike). Marks sit in a white palette
+  on the left, each with an icon and its own colour (Note brown, Move blue, Delete red); the chosen one fills with its
+  colour, as in Figma. Undo and Clear all are quiet icon-and-word buttons on the right; only Done is filled. Checked in a
+  browser at 1,400 and 858 pixels wide.
+- **Clear all asks "Sure?" on the button, then fades the marks; the 3 tools are separate raised buttons** (owner: the
+  pop-up was jarring; the joined tools looked like a slider toggle). First click turns Clear all red with "Sure?" for 3
+  seconds; a second click fades every mark out over 0.35 seconds; Undo restores them. Each tool now has its own coloured
+  border and a raised edge; the chosen one fills and sits down. Checked in a browser: no pop-up used, marks 1 then 0.
+- **Header buttons follow the order a reader uses them; Save a copy is caramel, not red** (owner, 19 November 2026: save
+  should sit next to Mark up in a friendly colour from the same family). The order is now Mark up, Save a copy, Print,
+  Light / dark. Light / dark had been found as "the first header button", so moving it would have wired Mark up to the
+  theme; it now has its own name. A test checks the order, the name and that Save is not red. Checked in a browser: a
+  real note made Save appear beside Mark up, light / dark switched both ways, 0 page errors.
+- **The "Everything at once" list reads in step order** (owner, 19 November 2026: "steps should always be in order").
+  Rows were grouped by line, so a reply on the same line as step 1 sat second: the list read 1, 8, 2, 8, 3. Each row
+  now sits by its first step. A test runs the page in headless Chrome in that view and reads the numbers top to bottom;
+  with the sort removed it read 1, 7, 2, 7, 3 and failed. Checked on 6 client diagrams in a browser: all in order.

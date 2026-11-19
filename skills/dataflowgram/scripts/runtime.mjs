@@ -389,6 +389,7 @@ export function mount(root, data, prefix) {
       placedTags.push({ x: Number(r.getAttribute('x')) + w / 2, y: Number(r.getAttribute('y')) + h / 2, w, h: h - 8 });
     });
     const vb = svg.viewBox.baseVal;
+    const rows = []; // the "Everything at once" list, filled below and then put in step order
     wires.forEach((wire) => {
       const p = q('[data-edge="' + wire.edge + '"]');
       const len = p.getTotalLength();
@@ -487,9 +488,12 @@ export function mount(root, data, prefix) {
         what.appendChild(el('span', 'df-all-step', (s.steps.length > 1 ? 'steps ' : 'step ') + s.steps.join(', ')));
         row.appendChild(who);
         row.appendChild(what);
-        allList.appendChild(row);
+        rows.push({ row, first: Math.min(...s.steps) });
       });
     });
+    // 19 November 2026, owner: "steps should always be in order". Rows were grouped by line, so a reply on the
+    // same line as step 1 sat second with "step 8". Now every row sits in the order of its first step.
+    rows.sort((a, b) => a.first - b.first).forEach((r) => allList.appendChild(r.row));
     qa('.df-node').forEach((g) => {
       const on = !!used[g.getAttribute('data-node')];
       g.classList.toggle('on', false);
@@ -669,13 +673,13 @@ export function mount(root, data, prefix) {
     });
   }
 
-  qa('.df-seg:not(.df-view) button').forEach((b) => {
+  qa('.df-scen button').forEach((b) => {
     b.setAttribute('aria-pressed', b.getAttribute('data-s') === cur ? 'true' : 'false');
     b.addEventListener('click', () => {
       stop();
       cur = b.getAttribute('data-s');
       i = 0;
-      qa('.df-seg:not(.df-view) button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
+      qa('.df-scen button').forEach((o) => o.setAttribute('aria-pressed', o === b ? 'true' : 'false'));
       build();
       draw();
     });

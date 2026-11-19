@@ -3,6 +3,8 @@ import { checkSketch } from './sketch-check.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import os from 'node:os';
+import { execFileSync } from 'node:child_process';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { compile, renderFragment, renderPage, KINDS, ACTIONS, colourParts, regionOf, gapFor, boxWidth, renderBook, printShape, readNotes } from './dataflow.mjs';
@@ -381,6 +383,19 @@ test('the page stays calm: the key and the full step list fold away, and progres
   assert.match(html, /\.df-cap \.df-carry\{display:none!important\}/, 'the step card does not repeat the tag');
 });
 
+const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+test('"Everything at once" lists every send in step order, not grouped by line', { skip: !fs.existsSync(CHROME) && 'needs Google Chrome to run the page' }, () => {
+  // 19 November 2026, owner: "steps should always be in order". The list read step 1, 8, 2, 8, 3 because a reply on
+  // the same line as step 1 was listed with it. A real browser runs the page in the "Everything at once" view and the
+  // test reads the step numbers top to bottom, as a reader would.
+  const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'df-order-')), 'page.html');
+  fs.writeFileSync(file, renderPage(example()));
+  const dom = execFileSync(CHROME, ['--headless=new', '--disable-gpu', '--virtual-time-budget=3000', '--dump-dom', 'file://' + file + '#df=all'], { encoding: 'utf8', timeout: 60000, stdio: ['ignore', 'pipe', 'ignore'] });
+  const steps = [...dom.matchAll(/class="df-all-step">steps? (\d+)/g)].map((m) => Number(m[1]));
+  assert.ok(steps.length >= 5, 'the list has its rows (' + steps.length + ')');
+  assert.deepEqual(steps, [...steps].sort((a, b) => a - b), 'rows read in step order: ' + steps.join(', '));
+});
+
 test('on a phone the page fits the screen: the stacked column can shrink, and the step buttons go 2 by 2', () => {
   // 19 November 2026: at 390 pixels wide the page ran past the screen edge
   const html = renderFragment(example(), 'demo');
@@ -393,8 +408,15 @@ test('a reader marks up a page, sends it back, and each mark is read with the bo
   const spec = example();
   const page = renderPage(spec);
   assert.match(page, /<script type="application\/json" id="df-marks">\{\}<\/script>/, 'a place in the page for the marks');
-  assert.match(page, /globalThis:t\|\|self\)\.markerjs3=\{\}/, 'the mark-up tools are inside the page, so it works offline');
+  assert.match(page, /class="pg-mode pg-markup"/, 'one Mark up button for the whole page');
+  assert.doesNotMatch(page, /markerjs3/, 'no outside drawing library: marks are drawn on the page itself');
+  assert.match(page, /\.mk-layer\{position:absolute;inset:0/, 'a clear layer over each tab holds the marks');
   assert.match(page, /class="pg-mode pg-sendnotes" hidden/, 'a "Save a copy with my notes" button, hidden until there are marks');
+  // 19 November 2026: "save a copy with my notes should be next to markup ... reorder buttons so that markup, save copy, then print, then light dark on far right"
+  const order = [...page.matchAll(/<button type="button" class="pg-mode ([a-z-]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(order, ['pg-markup', 'pg-sendnotes', 'pg-print', 'pg-theme'], 'Mark up, then Save a copy beside it, then Print, then Light / dark at the far right');
+  assert.match(page, /querySelector\('\.pg-theme'\)/, 'light / dark is found by its own name, so moving it never wires another button to it');
+  assert.doesNotMatch(page, /\.pg-sendnotes\{[^}]*#(E11D48|BE123C)/i, 'Save a copy is not red: it is a warm colour from the mark-up family');
   // the page as it comes back: the marks drawn on a picture twice the drawing's size
   const c = compile(spec);
   const [a, b] = Object.values(c.nodes);
@@ -413,6 +435,32 @@ test('a reader marks up a page, sends it back, and each mark is read with the bo
   assert.equal(notes[2].at, a.label, 'a pen mark is placed by where it was drawn');
   // a page with no marks reads as none
   assert.deepEqual(readNotes(page, [spec]), []);
+});
+
+test('marks drawn on the page itself are read back with their tab and the box under them', () => {
+  // 19 November 2026: "why does it have to open up a separate window why can't it be directly on the page"
+  const spec = example();
+  const c = compile(spec);
+  const [a, b] = Object.values(c.nodes);
+  const mid = (n) => [n.x + n.w / 2, n.y + n.h / 2];
+  const plan = { title: 'Plan', html: '<p>Week 1</p>' };
+  // the 3 marks say what the reader wants: move this there, delete this, a question about this
+  const marks = { v: 3, items: [
+    { anchor: 'p2', type: 'move', x1: 0.1, y1: 0.1, x2: 0.2, y2: 0.2, to: [0.5, 0.5], on: 'd2', from: mid(a), at: mid(b) },
+    { anchor: 'p2', type: 'note', x1: 0.3, y1: 0.3, tip: [0.25, 0.25], text: ' wrong system? ', on: 'd2', at: mid(b) },
+    { anchor: 'p2', type: 'del', x1: 0.4, y1: 0.4, x2: 0.5, y2: 0.5, on: 'd2', at: mid(a) },
+    { anchor: 'p1', type: 'note', x1: 0.5, y1: 0.5, tip: null, text: 'Week 1 is too soon' },
+  ] };
+  const page = renderBook({ title: 'Deck', diagrams: [plan, spec] });
+  const back = page.replace('<script type="application/json" id="df-marks">{}</script>', `<script type="application/json" id="df-marks">${JSON.stringify(marks)}</script>`);
+  const notes = readNotes(back, [plan, spec]);
+  assert.equal(notes.length, 4);
+  assert.deepEqual(notes[0], { diagram: c.title, kind: 'Move', text: '', at: b.label, from: a.label }, 'move what, to where');
+  assert.deepEqual(notes[1], { diagram: c.title, kind: 'Note', text: 'wrong system?', at: b.label, from: '' }, 'a note names the box its arrow points at');
+  assert.deepEqual(notes[2], { diagram: c.title, kind: 'Delete', text: '', at: a.label, from: '' }, 'delete what');
+  assert.deepEqual(notes[3], { diagram: 'Plan', kind: 'Note', text: 'Week 1 is too soon', at: '', from: '' }, 'a note on a plain page tab names its tab');
+  // the page offers exactly the 3 marks
+  assert.match(page, /var TOOLS = \[\['note', 'Note'\], \['move', 'Move this'\], \['del', 'Delete this'\]\];/);
 });
 
 test('printing gives one page per diagram, turned to suit its shape, with every step listed', async () => {
@@ -441,6 +489,13 @@ test('printing gives one page per diagram, turned to suit its shape, with every 
   const heightOf = (s) => Number(/--df-print-h:([\d.]+)in/.exec(renderFragment(s, 'x'))[1]);
   const many = { ...wideSpec, scenarios: [...wideSpec.scenarios, ...wideSpec.scenarios.map((s) => ({ ...s, id: s.id + '-b' }))] };
   assert.ok(heightOf(many) < heightOf(wideSpec), 'twice the steps, a shorter drawing');
+  // 19 November 2026: a client tab with long step sentences spilled onto a second page.
+  // The same number of steps, written longer, wraps to more lines, so the drawing must be shorter still.
+  const wordy = { ...many, scenarios: many.scenarios.map((s) => ({ ...s, steps: s.steps.map((st) => ({ ...st, text: st.text + ' ' + 'It then does more, and the list wraps onto further lines.'.repeat(3) })) })) };
+  assert.ok(heightOf(wordy) < heightOf(many), 'longer step sentences, a shorter drawing');
+  // a long source footnote takes room too
+  const sourced = { ...many, source: 'x'.repeat(700) };
+  assert.ok(heightOf(sourced) < heightOf({ ...many, source: 'x' }), 'a long source, a shorter drawing');
 });
 
 test('a diagram shows where it came from, and the check names a diagram that does not say', async () => {
@@ -546,7 +601,7 @@ test('a book can hold plain page tabs (a plan, sketches) beside its diagrams', (
 });
 
 test('boxes grow to fit their words, share one width per row size, and stop at a cap', () => {
-  // 18 November 2026: Jason's diagrams had second lines 1 to 4 characters too long for fixed boxes
+  // 18 November 2026: a client's diagrams had second lines 1 to 4 characters too long for fixed boxes
   assert.equal(boxWidth(2, ['A'], ['short']), 200, 'short words keep the narrow box');
   const w = boxWidth(2, ['Claude'], ['reads PDFs and writes reports']);
   assert.ok(w > 200 && w >= 29 * 7.2 + 28, `a 29-character second line widens the box to ${w}`);
