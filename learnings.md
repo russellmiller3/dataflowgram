@@ -215,3 +215,5 @@ Tests: 35 of 35 pass (run through Runner).
   off any diagram records the words under it (a tab button, a heading, a line), so the notes command can say
   "points at 4 · Portfolio numbers". 2 real-click tests failed first (tip clamped at 0; no words recorded); 57 of 57
   pass. Checked by hand on the client set in light and dark.
+
+- 2026-11-22: called through the symlinked skill folder (~/.claude/skills/dataflowgram), every command exited 0 and wrote nothing, because the run-as-command check compared the shortcut path with the real path. It now compares real paths. A new test builds a page through a temporary shortcut; it failed on the old code (53 pass, 1 fail) and passes now (54 of 54). Also added: a client proposal book opens with a one-picture overview tab (what we heard, what we propose) before any detail.

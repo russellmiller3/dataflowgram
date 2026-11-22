@@ -899,3 +899,16 @@ test('an icon drawn with a rectangle keeps its lines visible inside boxes and ta
     assert.ok(html.lastIndexOf(filler) < at, filler + ' comes before the icon rule');
   }
 });
+
+test('the command line works when the skill folder is reached through a shortcut', () => {
+  // 22 November 2026: through a symlinked skill folder, "book" exited 0 and wrote nothing
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'df-link-'));
+  const link = path.join(dir, 'skill');
+  fs.symlinkSync(path.dirname(HERE), link);
+  const spec = path.join(dir, 'tiny.json');
+  const out = path.join(dir, 'out.html');
+  fs.writeFileSync(spec, JSON.stringify(tiny()));
+  execFileSync(process.execPath, [path.join(link, 'scripts', 'dataflow.mjs'), 'build', spec, out]);
+  assert.ok(fs.existsSync(out), 'the page was written');
+  assert.match(fs.readFileSync(out, 'utf8'), /Order to shelf/);
+});

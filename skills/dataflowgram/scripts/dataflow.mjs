@@ -1090,7 +1090,10 @@ export function readNotes(html, specs) {
   return out;
 }
 
-const isMain = process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+// compare real paths: when the skill folder is reached through a shortcut (symlink), the two spellings differ and
+// the command would otherwise exit 0 having done nothing
+const realOf = (p) => { try { return fs.realpathSync(p); } catch (e) { return path.resolve(p); } };
+const isMain = process.argv[1] && realOf(process.argv[1]) === realOf(fileURLToPath(import.meta.url));
 if (isMain) {
   const [cmd, a, b, c] = process.argv.slice(2);
   try {
