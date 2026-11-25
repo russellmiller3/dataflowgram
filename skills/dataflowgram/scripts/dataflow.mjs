@@ -382,7 +382,7 @@ export function compile(spec) {
       const flows = []; // who sends to whom, on which line
       const lit = [];
       let focus = null; // the part whose colour the step takes: the one that SENDS the data
-      (st.flow || []).forEach((f) => {
+      [].concat(st.flow || []).forEach((f) => {
         const m = /^([a-z][a-z0-9-]*)\s*(<>|>)\s*([a-z][a-z0-9-]*)$/.exec(String(f));
         if (!m) fail(`${where}: flow "${f}" must read "part>part" (one way) or "part<>part" (both ways)`);
         const [, a, op, b] = m;
@@ -396,7 +396,7 @@ export function compile(spec) {
         [a, b].forEach((id) => { if (!lit.includes(id)) lit.push(id); });
         if (!focus) focus = a;
       });
-      (st.at || []).forEach((id) => {
+      [].concat(st.at || []).forEach((id) => {
         if (!nodes[id]) fail(`${where}: "at" names "${id}", which is not a part`);
         if (!lit.includes(id)) lit.push(id);
         if (!focus) focus = id;
@@ -415,7 +415,7 @@ export function compile(spec) {
       }
       // data that goes from a part inside the owner's system to a part outside it
       const leaves = [];
-      (st.flow || []).forEach((f) => {
+      [].concat(st.flow || []).forEach((f) => {
         const [, a, op, b] = /^([a-z][a-z0-9-]*)\s*(<>|>)\s*([a-z][a-z0-9-]*)$/.exec(String(f));
         const pairs = op === '<>' ? [[a, b], [b, a]] : [[a, b]];
         pairs.forEach(([from, to]) => {
