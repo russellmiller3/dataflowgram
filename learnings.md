@@ -1,5 +1,14 @@
 # Learnings
 
+## 25 November 2026: a step's part may be written as text
+
+- **A step written as `"at": "miner"` crashed the builder** with a bare TypeError, not a message naming the
+  fault. The skill's own guide says "`at`: the part that works", so text was a natural way to write it.
+  Fix: `at` and `flow` now take one text value or a list. Proof: a new test fails on the old code with that
+  TypeError and passes now; 55 of 55 tests pass. Next: none.
+
+no trigger: the builder now accepts the text form, and the test holds it.
+
 ## 19 November 2026: calmer to read
 
 - **The light page had no depth, and panels blended into it.** Fix: a diagonal colour wash behind the light
