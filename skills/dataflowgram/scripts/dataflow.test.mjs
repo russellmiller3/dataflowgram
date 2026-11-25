@@ -172,6 +172,19 @@ test('text from the description cannot break out of the page', () => {
   assert.equal(html.split('</script>').length, 2, 'exactly 1 closing script tag');
 });
 
+test('a step may name its working part or its flow as plain text, not only as a list', () => {
+  const asText = tiny();
+  asText.scenarios[0].steps[0].flow = 'till>stock';
+  asText.scenarios[0].steps[3].at = 'till';
+  const a = compile(asText).scenarios[0].steps;
+  const b = compile(tiny()).scenarios[0].steps;
+  assert.deepEqual(a[0].edges, b[0].edges, 'a text flow lights the same line as a list flow');
+  assert.deepEqual(a[3].nodes, ['till'], 'a text working part is lit');
+  const ghost = tiny();
+  ghost.scenarios[0].steps[3].at = 'ghost';
+  assert.throws(() => compile(ghost), /"at" names "ghost", which is not a part/);
+});
+
 test('a wrong description is refused with a message that names the fault', () => {
   const bad = (change, pattern) => {
     const spec = tiny();
